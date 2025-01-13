@@ -1,0 +1,46 @@
+/* Estilos generales */
+p {
+  text-align: justify;
+  font-size: 18px;
+}
+
+.btn-outline-primary {
+  background-color: #FB8747;
+  color: black;
+  border-color: #FB8747;
+  width: 200px;
+  height: 60px;
+}
+
+.btn-outline-primary:hover {
+  background-color: #F4B15B;
+  border-color: #F4B15B;
+  color: #0F0E49;
+}
+
+.titulo {
+  background-color: #E9E9F7;
+}
+
+a {
+  cursor: pointer;
+}
+
+/* Estilos para pantallas más pequeñas (menos de 1200px) */
+@media (max-width: 1200px) {
+  .navbar-expand-lg {
+      flex-direction: column;
+  }
+
+  .navbar-nav .nav-item {
+      margin: 10px 0;
+  }
+
+  .col-4,
+  .col-5,
+  .col-6 {
+      width: 100%;
+      margin: 0 auto;
+  }
+}
+

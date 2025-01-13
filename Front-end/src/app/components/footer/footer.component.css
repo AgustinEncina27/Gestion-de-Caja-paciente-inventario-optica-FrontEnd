@@ -1,0 +1,22 @@
+.footer {
+    background-color: #150D3e;
+    border-color: #150D3e;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.footer img {
+    cursor: pointer;
+}
+
+.footer a {
+    color: #FB8747;
+    cursor: pointer;
+}
+
+@media (max-width: 800px) {
+    .footer {
+        flex-direction: column;
+        align-items: center;
+    }
+}

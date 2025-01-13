@@ -1,0 +1,85 @@
+.btn-outline-primary{
+    background-color: #FB8747;
+    color: black;
+    border-color: #FB8747
+}
+
+.btn-outline-primary:hover{
+    background-color: #F4B15B;
+    border-color: #F4B15B;
+    color: #0F0E49;
+}
+
+.nuestroCatalogo {
+  background-color: #FB8747;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centra horizontalmente los elementos en .nuestroCatalogo */
+}
+
+.nuestroCatalogo p {
+  font-size: 50px;
+  color: black;
+  font-weight: bold;
+  margin: 0; /* Elimina el margen predeterminado del párrafo */
+  text-align: center; /* Centra el texto dentro del párrafo */
+}
+
+.filtros {
+  background-color: #F9BF74;
+  display: flex;
+  flex-wrap: wrap; /* Asegura que los elementos se envuelvan a una nueva línea cuando no haya suficiente espacio */
+}
+
+.filtros .dropdown {
+  margin-right: 10px; /* Agrega un margen entre los elementos para separarlos */
+}
+
+/* CSS */
+.card-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0; /* Inicialmente, establecemos la opacidad en 0 */
+  transition: opacity 1s; /* Agregamos una transición suave para la opacidad */
+  z-index: 2;
+  
+  /* Puntas redondas en la parte superior */
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.show1 {
+  opacity: 1; /* Cuando se agrega la clase 'show', la opacidad será 1 */
+  display: flex;
+}
+    
+.show1 {
+  display: flex;
+}
+
+.show {
+  transition: opacity 0.7s;
+}
+
+@media (max-width: 700px) {
+  .filtros .dropdown {
+      margin-bottom: 10px; /* Puedes ajustar el margen según tus preferencias */
+      width: 100%; /* Asegura que ocupen todo el ancho disponible */
+      text-align: center;
+  }
+}
+
+

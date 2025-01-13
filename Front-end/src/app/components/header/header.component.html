@@ -1,0 +1,76 @@
+<nav class="navbar p-0">
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.facebook.com/profile.php?id=100072610396385" target="_blank"><img src="/assets/iconos/facebook.svg" class="iconos" alt="Facebook"></a>
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.instagram.com/optica.urbana21/" target="_blank"><img src="/assets/iconos/instagram.svg" class="iconos" alt="Instagram"></a>
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" [routerLink]="['/visitanos']" ><img src="/assets/iconos/geo-alt.svg" class="iconos me-1">VISITANOS</a>
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://wa.me/+5493772432787" target="_blank"><img src="/assets/iconos/telephone.svg" class="iconos me-1" alt="Teléfono">+54 9 3772-432787</a>
+  <div *ngIf="!authService.isAuthenticated()" class="col ">
+    <a [routerLink]="['/login']" class="btn btn-outline-primary rounded-0 col-12 navbar-item headerA d-flex align-items-center justify-content-center">INICIAR SESIÓN</a>
+  </div>
+  <div class="dropdown col" *ngIf="authService.isAuthenticated()">
+    <a class="btn btn-outline-primary dropdown-toggle col-12 rounded-0 headerA d-flex align-items-center justify-content-center" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
+      HOLA {{authService.user.username}}
+    </a>
+    <ul class="dropdown-menu" >
+          <li><a (click)="longOut()" class="dropdown-item cerrarSesion" >Cerrar Sesión</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Navbar 2-->
+<nav class="navbar navbar2 p-3 navbar-expand-lg bg-transparent text-body d-flex justify-content-around">
+  <a class="navbar-brand m-1 " [routerLink]="['/inicio']">
+    <img src="/assets/avatar.jpg" alt="Bootstrap" width="150" height="150">
+  </a>
+  <button class="navbar-toggler m-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse m-1" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0 centrar-horizontalmente d-flex align-items-stretch">
+      <li class="nav-item">
+        <a class="nav-link " aria-current="page" [routerLink]="['/inicio']">CATÁLOGO</a>
+      </li>
+      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDGafasDeSol+'/0']">GAFAS DE SOL</a>
+      </li>
+      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDRecetas+'/0']">RECETAS</a>
+      </li>
+      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDAccesorios+'/0']">ACCESORIOS</a>
+      </li>
+      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link" [routerLink]="['/cristaleria']">CRISTALERÍA</a>
+      </li>
+      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link" [routerLink]="['/sobreNosotros']">SOBRE NOSOTROS</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link" [routerLink]="['/crearProducto']">CREAR PRODUCTO</a>
+      </li>
+      <li class="nav-item dropdown" *ngIf="authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          ADMINISTRAR
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+          <li><a class="dropdown-item" [routerLink]="['/adminitrarCategoria']">Categorías</a></li>
+          <li><a class="dropdown-item" [routerLink]="['/adminitrarMarca']">Marcas</a></li>
+          <li><a class="dropdown-item" [routerLink]="['/adminitrarMetodoPago']">Método de Pago</a></li>
+          <li><a class="dropdown-item" [routerLink]="['/adminitrarLocal']">Ópticas</a></li>
+          <li><a class="dropdown-item" [routerLink]="['/adminitrarPaciente']">Pacientes</a></li>
+        </ul>
+      </li>
+      <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link" [routerLink]="['/adminitrarCaja']">CAJA</a>
+      </li>
+      <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link" [routerLink]="['/adminitrarCaja']">ESTADÍSTICAS</a>
+      </li>
+    </ul>
+  </div>
+  
+  <a type="button" id="botonImagen" class="btn btn-success btn-lg  rounded m-1 " 
+  href="https://wa.me/+5493772432787" target="_blank" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+  <img src="/assets/iconos/whatsapp.svg"  alt="Bootstrap">Whatsapp</a> 
+</nav>
+
+

@@ -1,0 +1,90 @@
+.btn-outline-primary{
+  background-color: #FB8747;
+  color: black;
+  border-color: #FB8747
+}
+
+.btn-outline-primary:hover {
+  background-color: #F4B15B;
+  border-color: #F4B15B
+}
+
+.iconos{
+  margin-right: 1%;
+}
+
+.navbar{
+  width: 100%;
+  margin-right: 0px;
+}
+
+.centrar-horizontalmente {
+  width: 100%; /* Asegura que el ul ocupe todo el ancho disponible */
+  justify-content: center;
+}
+
+.navbar-nav li {
+  margin: 0 10px; /* Añade un espacio entre los elementos (ajusta según lo desees) */
+}
+
+#botonImagen img {
+  filter: invert(100%) sepia(8%) saturate(2%) hue-rotate(62deg) brightness(113%) contrast(100%);
+}
+
+.cerrarSesion{
+  width: 300px;
+  height: 30px;
+}
+
+.headerA{
+  height: 40px;
+}
+
+@media (max-width: 992px) {
+
+  .navbar-toggler {
+    order: 2; /* Cambia el orden del botón del navbar-toggler */
+  }
+
+  .navbar-collapse {
+    order: 3; /* Cambia el orden de la lista <ul> */
+  }
+
+  #botonImagen {
+    order: 1; /* Cambia el orden del botón de WhatsApp para que aparezca antes de la lista <ul> */
+    margin-top: 10px; /* Agrega un margen superior para separar el botón de WhatsApp de la lista <ul> */
+  }
+}
+
+@media (max-width: 920px) {
+  .headerA{
+    height: 60px;
+  }
+
+  .cerrarSesion{
+    width: 300px;
+    height: 30px;
+  }
+
+  .navbar .btn.btn-outline-primary:not(:last-child) {
+    font-size: 0;
+  }
+}
+
+@media (max-width: 590px) {
+  .headerA{
+    height: 80px;
+  }
+  .cerrarSesion{
+    width: 300px;
+    height: 30px;
+  }  
+}
+
+@media (max-width: 530px) {
+  .navbar2 {
+    flex-direction: column; /* Cambia la dirección a columna para que los elementos se apilen uno encima del otro */
+  } 
+}
+
+

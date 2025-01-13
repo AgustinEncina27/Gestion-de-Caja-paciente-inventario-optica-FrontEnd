@@ -1,0 +1,138 @@
+<div class="nuestroCatalogo d-flex flex-wrap justify-content-around">
+  <p style="font-size: 50px; color: black;" class="fw-bold my-4">Listado de Movimientos</p>
+</div>
+
+<!-- Filtros -->
+<div class="d-flex flex-wrap justify-content-evenly mb-4 filtros p-2">
+  <!-- Filtro por Local -->
+  <div class="input-group m-1" style="width: 300px;">
+    <select class="form-select" [(ngModel)]="localSeleccionado" (change)="aplicarFiltros()">
+      <option value="0">Todos los locales</option>
+      <option *ngFor="let local of locales" [value]="local.id">{{ local.nombre }}</option>
+    </select>
+  </div>
+
+  <!-- Filtro por Tipo de Movimiento -->
+  <div class="input-group m-1" style="width: 300px;">
+    <select class="form-select" [(ngModel)]="tipoMovimientoSeleccionado" (change)="aplicarFiltros()">
+      <option value="">Todos los tipos</option>
+      <option value="ENTRADA">ENTRADA</option>
+      <option value="SALIDA">SALIDA</option>
+    </select>
+  </div>
+
+  <!-- Filtro por N° Ficha -->
+  <div class="input-group m-1" style="width: 300px;">
+    <input type="text" class="form-control" placeholder="N° Ficha" [(ngModel)]="nroFicha" (keyup.enter)="aplicarFiltros()" />
+  </div>
+
+  <!-- Filtro por Fecha -->
+  <div class="input-group m-1" style="width: 300px;">
+    <input type="date" class="form-control" [(ngModel)]="fechaSeleccionada" (change)="aplicarFiltros()" />
+  </div>
+
+  <!-- Filtro por Método de Pago -->
+  <div class="input-group m-1" style="width: 300px;">
+    <select class="form-select" [(ngModel)]="metodoPagoSeleccionado" (change)="aplicarFiltros()">
+      <option value="">Todos los métodos</option>
+      <option *ngFor="let metodo of metodosPago" [value]="metodo.nombre">{{ metodo.nombre }}</option>
+    </select>
+  </div>
+
+  <!-- Botón Limpiar Filtro -->
+  <button class="btn btn-secondary m-1" (click)="limpiarFiltros()">Limpiar Filtros</button>
+
+  <!-- Botón Registrar Movimiento -->
+  <button class="btn btn-success m-1" [routerLink]="['/crearMovimiento']">Registrar Movimiento</button>
+</div>
+
+<!-- Totales Dinámicos -->
+<div class="container text-center mb-3">
+  <div class="row g-2 align-items-center justify-content-center">
+    <!-- Iterar sobre los totales -->
+    <div class="col-auto" *ngFor="let key of getKeys(totales)">
+      <p class="fw-bold mb-1">Total {{ key }}</p>
+      <div class="input-group">
+        <input
+          class="form-control"
+          [type]="mostrarTotales ? 'text' : 'password'"
+          [value]="totales[key] | currency"
+          readonly
+        />
+        <button class="btn btn-outline-secondary" type="button" (click)="mostrarTotales = !mostrarTotales">
+          <i [class]="mostrarTotales ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+        </button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+
+<!-- Mensaje de advertencia -->
+<div class="alert alert-warning mx-5" role="alert" *ngIf="movimientos.length == 0">
+  No se encontraron movimientos
+</div>
+
+<!-- Tabla de movimientos -->
+<div class="container mt-5 mb-2" *ngIf="movimientos.length > 0" >
+  <div class="table-responsive" *ngIf="authService.hasRole('ROLE_ADMIN')">
+    <table class="table table-striped table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Fecha</th>
+          <th>N° Ficha</th>
+          <th>Local</th>
+          <th>Movimiento</th>
+          <th>Método</th>
+          <th>Modo de Cobro</th>
+          <th>Monto</th>
+          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Filas de movimientos -->
+        <tr *ngFor="let movimiento of movimientos">
+          <td>{{movimiento.fecha}}</td>
+          <td>{{movimiento.paciente.ficha}}</td>
+          <td>{{movimiento.local.nombre}}</td>
+          <td>{{movimiento.tipoMovimiento}}</td>
+          <td>{{movimiento.metodoPago.nombre}}</td>
+          <td>{{movimiento.metodoPago.nombre}}</td>
+          <td>{{movimiento.total}}</td>
+          <td *ngIf="authService.hasRole('ROLE_ADMIN')" class="text-center">
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-primary btn-sm me-2" [routerLink]="'/editarMovimiento/' + movimiento.id">Editar</button>
+              <button class="btn btn-danger btn-sm" (click)="eliminarMovimiento(movimiento)">Eliminar</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+ <!-- Paginador -->
+<nav aria-label="Page navigation" *ngIf="paginador && paginador.totalPages > 1 && authService.hasRole('ROLE_ADMIN')">
+  <ul class="pagination justify-content-center mt-3">
+    <!-- Botón Anterior -->
+    <li class="page-item" [class.disabled]="paginador.first">
+      <a class="page-link cursor-pointer" (click)="cambiarPagina(paginador.number - 1)" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+
+    <!-- Páginas -->
+    <li *ngFor="let page of pages" [class.active]="paginador.number === page" class="page-item">
+      <a class="page-link cursor-pointer" (click)="cambiarPagina(page)">{{ page + 1 }}</a>
+    </li>
+
+    <!-- Botón Siguiente -->
+    <li class="page-item" [class.disabled]="paginador.last">
+      <a class="page-link cursor-pointer" (click)="cambiarPagina(paginador.number + 1)" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+</div>

@@ -1,0 +1,125 @@
+<div class="d-flex justify-content-center my-5 cont">
+  <div class="card bg-light text-dark shadow-sm" style="width: 80%; border: 1px solid #ddd;">
+    <!-- Encabezado -->
+    <div class="card-header text-white fw-bold" style="background-color: #f57c42;">
+      {{titulo}}
+    </div>
+    <div class="card-body">
+      <form #pacienteForm="ngForm">
+
+        <!-- Primera fila -->
+        <div class="row mb-4">
+          <!-- Nombre Completo -->
+          <div class="col-md-6">
+            <label for="InputNombreCompleto" class="form-label fw-bold">Nombre Completo</label>
+            <input type="text" class="form-control" id="InputNombreCompleto" 
+                   [(ngModel)]="paciente.nombreCompleto" name="nombreCompleto" required>
+          </div>
+          <!-- Dirección -->
+          <div class="col-md-6">
+            <label for="InputDirección" class="form-label fw-bold">Dirección</label>
+            <input type="text" class="form-control" id="InputDirección" 
+                   [(ngModel)]="paciente.direccion" name="direccion" required>
+          </div>
+        </div>
+
+        <!-- Segunda fila -->
+        <div class="row mb-4">
+          <!-- Celular -->
+          <div class="col-md-6">
+            <label for="InputCelular" class="form-label fw-bold">Celular</label>
+            <input type="text" class="form-control" id="InputCelular" 
+                   [(ngModel)]="paciente.celular" name="celular" required>
+          </div>
+          <!-- Documento -->
+          <div class="col-md-6">
+            <label for="InputDocumento" class="form-label fw-bold">Documento/Pasaporte</label>
+            <input type="text" class="form-control" id="InputDocumento" 
+                   [(ngModel)]="paciente.documento" name="documento" required>
+          </div>
+        </div>
+
+        <!-- Tercera fila -->
+        <div class="row mb-4">
+          <!-- Correo -->
+          <div class="col-md-6">
+            <label for="InputCorreo" class="form-label fw-bold">Correo</label>
+            <input type="text" class="form-control" id="InputCorreo" 
+                   [(ngModel)]="paciente.correo" name="correo" required>
+          </div>
+          <!-- Médico -->
+          <div class="col-md-6">
+            <label for="InputMedico" class="form-label fw-bold">Médico</label>
+            <input type="text" class="form-control" id="InputMedico" 
+                   [(ngModel)]="paciente.medico" name="medico" required>
+          </div>
+        </div>
+
+        <!-- Cuarta fila -->
+        <div class="row mb-4">
+          <!-- Fecha de Control -->
+          <div class="col-md-6">
+            <label for="InputFechaDeControl" class="form-label fw-bold">Fecha De Control</label>
+            <input type="date" class="form-control" id="InputFechaDeControl" 
+                   [(ngModel)]="paciente.fechaDeControl" name="fechaDeControl" required>
+          </div>
+          <!-- Graduación -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold" for="InputGraduacion">Graduación</label>
+            <textarea type="text" class="form-control" id="InputGraduacion" 
+                      [(ngModel)]="paciente.graduacion" name="graduacion" required></textarea>
+          </div>
+        </div>
+
+        <!-- Quinta fila -->
+        <div class="row mb-4">
+          <!-- Local -->
+          <div class="col-md-6">
+            <p class="form-label fw-bold">Local</p>
+            <div class="form-check mx-1" *ngFor="let local of locales">
+              <input class="form-check-input" type="radio" name="local" [id]="+local.id+'local'" 
+                     (change)="selecionLocal(local)" [checked]="localSeleccionado(local)">
+              <label class="form-check-label" [for]="+local.id+'local'">
+                {{local.nombre}}
+              </label>
+            </div>
+          </div>
+          <!-- Género -->
+          <div class="col-md-6">
+            <label for="InputGenero" class="form-label fw-bold">Género</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="genero" id="hombreGenero" 
+                     (change)="selecionGenero('Hombre')" [checked]="generoSeleccionado('Hombre')">
+              <label class="form-check-label" for="hombreGenero">Hombre</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="genero" id="mujerGenero" 
+                     (change)="selecionGenero('Mujer')" [checked]="generoSeleccionado('Mujer')">
+              <label class="form-check-label" for="mujerGenero">Mujer</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="genero" id="xGenero" 
+                     (change)="selecionGenero('X')" [checked]="generoSeleccionado('X')">
+              <label class="form-check-label" for="xGenero">X</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-primary me-2" (click)="crearPaciente()" 
+                  *ngIf="paciente.id==null" 
+                  [disabled]="!pacienteForm.form.valid || local.id===undefined || !genero">
+            Crear Paciente
+          </button>
+          <button type="submit" class="btn btn-success" (click)="editarPaciente()" 
+                  *ngIf="paciente.id!=null" 
+                  [disabled]="!pacienteForm.form.valid || local.id===undefined || !genero">
+            Editar Paciente
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="d-flex justify-content-center my-5 cont">
+    <div class="card bg-light text-dark shadow-sm" style="width: 80%; border: 1px solid #ddd;">
+      <!-- Encabezado -->
+      <div class="card-header text-white fw-bold" style="background-color: #f57c42;">
+        {{titulo}}
+      </div>
+      <div class="card-body">
+        <!-- Lista de Ópticas -->
+        <div class="mb-3 mx-3 group mt-3">
+          <p id="listaLocales" class="form-label fw-bold">Lista de ópticas</p>
+          <div class="form-check" *ngFor="let local of locales">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" [id]="local.id"
+                   (change)="toggleLocalSelection(local)">
+            <label class="form-check-label" [for]="local.id">
+              {{local.nombre}}
+            </label>
+          </div>
+          <button type="button" class="btn btn-outline-secondary mt-3" (click)="limpiarSeleccion();">
+            Limpiar selección
+          </button>
+        </div>  
+  
+        <!-- Formulario -->
+        <form #localForm="ngForm">
+          <!-- Nombre del Local -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label for="InputLocal" class="form-label fw-bold">Nombre del Local</label>
+              <input type="text" class="form-control" id="InputLocal" [(ngModel)]="local.nombre" 
+                     name="local" required>
+            </div>
+          </div>
+  
+          <!-- Dirección del Local -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label for="InputLocalDireccion" class="form-label fw-bold">Dirección del Local</label>
+              <input type="text" class="form-control" id="InputLocalDireccion" [(ngModel)]="local.direccion" 
+                     name="localDireccion" required>
+            </div>
+          </div>
+  
+          <!-- Botones -->
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success me-2" (click)="crearLocal()" 
+                    [disabled]="!localForm.form.valid || local.id!=null">
+              Crear Local
+            </button>
+            <button type="submit" class="btn btn-primary me-2" (click)="editarLocal()" 
+                    [disabled]="local.id==null">
+              Editar Local
+            </button>
+            <button type="submit" class="btn btn-danger" (click)="eliminarLocal()" 
+                    [disabled]="local.id==null">
+              Eliminar Local
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

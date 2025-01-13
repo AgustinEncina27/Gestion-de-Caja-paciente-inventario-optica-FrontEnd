@@ -1,0 +1,10 @@
+.wrapper {
+    min-height: 100vh; /* Establece la altura mínima al 100% de la altura de la ventana */
+    display: flex;
+    flex-direction: column; /* Coloca los elementos en una columna */
+  }
+  
+  .content {
+    flex: 1; /* El contenido principal ocupa todo el espacio disponible */
+  }
+  

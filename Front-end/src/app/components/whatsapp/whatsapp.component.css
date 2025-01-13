@@ -1,0 +1,20 @@
+.whatsapp-container {
+    position: fixed;
+    bottom: 20px; /* Ajusta la distancia desde la parte inferior según tus preferencias */
+    right: 20px; /* Ajusta la distancia desde el lado derecho según tus preferencias */
+    z-index: 999; /* Asegura que esté por encima de otros elementos */
+    background-color: #25d366; /* Color verde principal de WhatsApp */
+    border-radius: 50%; /* Hace que la imagen sea un círculo perfecto */
+}
+
+
+.whatsapp-container img {
+    width: 60px; /* Ajusta el tamaño del ícono según tus preferencias */
+    height: auto; /* Ajusta la altura para que sea un círculo perfecto */
+    border: none;
+    filter: invert(100%) sepia(100%) saturate(31%) hue-rotate(62deg) brightness(106%) contrast(109%);
+}
+
+.whatsapp-container:hover {
+    background-color: #3CA425;
+}

@@ -1,0 +1,109 @@
+<div class="container mt-4">
+  <h2 class="text-center">{{ titulo }}</h2>
+  <form #movimientoForm="ngForm" (ngSubmit)="guardarMovimiento()">
+    <!-- Local -->
+    <div class="mb-3">
+      <label for="local" class="form-label">Local</label>
+      <select class="form-select" [(ngModel)]="movimiento.local" name="local" required>
+        <option *ngFor="let local of locales" [ngValue]="local">{{ local.nombre }}</option>
+      </select>
+    </div>
+
+    <!-- Paciente por ficha -->
+    <div class="mb-3">
+      <label for="fichaPaciente" class="form-label">Número de Ficha del Paciente</label>
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="fichaPaciente"
+          name="fichaPaciente"
+          placeholder="Ingrese N° de ficha"
+        />
+        <button type="button" class="btn btn-primary" (click)="buscarPaciente()">Buscar</button>
+      </div>
+      <div *ngIf="pacienteEncontrado" class="mt-2">
+        <p><strong>Paciente:</strong> {{ pacienteEncontrado.nombreCompleto }}</p>
+      </div>
+    </div>
+
+    <!-- Tipo de Movimiento -->
+    <div class="mb-3">
+      <label for="tipoMovimiento" class="form-label">Tipo de Movimiento</label>
+      <select class="form-select" [(ngModel)]="movimiento.tipoMovimiento" name="tipoMovimiento" required>
+        <option value="ENTRADA">Entrada</option>
+        <option value="SALIDA">Salida</option>
+      </select>
+    </div>
+
+    <!-- Fecha -->
+    <div class="mb-3">
+      <label for="fecha" class="form-label">Fecha</label>
+      <input type="date" class="form-control" [(ngModel)]="movimiento.fecha" name="fecha" required />
+    </div>
+
+    <!-- Método de Pago -->
+    <div class="mb-3">
+      <label for="metodoPago" class="form-label">Método de Pago</label>
+      <select class="form-select" [(ngModel)]="movimiento.metodoPago" name="metodoPago" (change)="calcularTotal()" required>
+        <option *ngFor="let metodo of metodosPago" [ngValue]="metodo" >{{ metodo.nombre }}</option>
+      </select>
+    </div>
+
+    <!-- Detalles del Movimiento -->
+    <div class="mb-3">
+      <label class="form-label">Detalles del Movimiento</label>
+      <div class="input-group mb-2">
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="codigoProducto"
+          name="codigoProducto"
+          placeholder="Ingrese código del producto"
+        />
+        <button type="button" class="btn btn-primary" (click)="buscarProducto()">Buscar Producto</button>
+      </div>
+      <div *ngIf="productoEncontrado" class="mb-2">
+        <p><strong>El producto ha sido encontrado</strong> </p>
+      </div>
+      <div *ngFor="let detalle of detalles; let i = index" class="input-group mb-2">
+        <span class="form-control">{{ detalle.producto.modelo }} ({{ detalle.producto.precio | currency }})</span>
+        <input
+          type="number"
+          placeholder="Cantidad"
+          class="form-control"
+          [(ngModel)]="detalle.cantidad"
+          name="cantidad{{ i }}"
+          (change)="verificarCantidad(detalle)"
+          required
+        />
+        <span class="form-control">{{ detalle.subtotal | currency }}</span>
+        <button type="button" class="btn btn-danger" (click)="eliminarDetalle(i)">Eliminar</button>
+      </div>
+      <button type="button" class="btn btn-primary" (click)="agregarDetalle()">Agregar Detalle</button>
+    </div>
+
+    <!-- Total -->
+    <div class="mb-3">
+      <label for="total" class="form-label">Total</label>
+      <input type="number" class="form-control" [(ngModel)]="movimiento.total" name="total" readonly />
+    </div>
+
+    <!-- Total -->
+    <div class="mb-3">
+      <label for="totalConImpuestos" class="form-label">Total con impuestos</label>
+      <input type="number" class="form-control" [(ngModel)]="movimiento.totalImpuesto" name="totalImpuesto" readonly />
+    </div>
+
+    <!-- Botones -->
+    <div class="text-center">
+      <button
+        type="submit"
+        class="btn btn-success"
+        [disabled]="!movimientoForm.valid || !pacienteEncontrado || detalles.length === 0"
+      >
+        Guardar Movimiento
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,23 @@
+<div class="m-0 row justify-content-center mt-5">
+    <div class="col-5 card border-dark text-center ">
+        <div class="card-header mt-1">{{titulo}}</div>
+        <div class="card-body">
+            <form #loginForm="ngForm" method="post">
+                <div class="form-group col sm-6 mb-1">
+                    <input type="text" [(ngModel)]="user.username" class="form-control" name="username" id="username" placeholder="Nombre se usuario" autofocus required autocomplete="username">
+                </div>
+                
+                
+                <div class="form-group col sm-6">   
+                    <input type="password" [(ngModel)]="user.password" class="form-control" name="password" id="password" placeholder="Contraseña"  required>
+                </div>
+
+                <div class="form-group col sm-6">   
+                    <input (click)="login()" type="submit" class="btn btn-outline-dark m-3 btn-shadow " value="Iniciar Sesión" [disabled]="!loginForm.form.valid">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

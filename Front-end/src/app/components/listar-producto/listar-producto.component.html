@@ -1,0 +1,135 @@
+<div class=" nuestroCatalogo d-flex flex-wrap justify-content-around  ">
+  <p style="font-size: 50px; color: black;" class="fw-bold my-4">NUESTRO CATÁLOGO</p>
+</div>
+<div class="d-flex justify-content-evenly mb-4 filtros p-2">
+  <div class="dropdown" >
+    <button class="btn  btn-light dropdown-toggle " type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
+      Categorias
+    </button>
+    <ul class="dropdown-menu" >
+      <li *ngFor="let categoria of categorias">
+        <div class="form-check ms-1">
+          <input class="form-check-input" type="radio" name="flexRadioDefault1" [id]="+categoria.id+'categoria'" (click)="cargarProductoPorCategoria(categoria.id)" [checked]="categoria.id==0 ? categoriaEstaTildado(-1) : categoriaEstaTildado(categoria.id)">
+          <label class="form-check-label" [for]="+categoria.id+'categoria'">
+            {{categoria.nombre}}
+          </label>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="dropdown" >
+    <button class="btn  btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
+      Genero
+    </button>
+    <ul class="dropdown-menu" >
+      <li>
+        <div class="form-check ms-1">
+          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="todosGenero" (click)="cargarProductoPorGenero('-1')" [checked]="generoEstaTildado('-1')">
+          <label class="form-check-label" for="todosGenero">
+            Todos
+          </label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check ms-1">
+          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="hombreGenero" (click)="cargarProductoPorGenero('Hombre')" [checked]="generoEstaTildado('Hombre')">
+          <label class="form-check-label" for="hombreGenero">
+            Hombre
+          </label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check ms-1">
+          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="mujerGenero" (click)="cargarProductoPorGenero('Mujer')" [checked]="generoEstaTildado('Mujer')">
+          <label class="form-check-label" for="mujerGenero">
+            Mujer
+          </label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check ms-1">
+          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="ninosGenero" (click)="cargarProductoPorGenero('Niños')" [checked]="generoEstaTildado('Niños')">
+          <label class="form-check-label" for="ninosGenero">
+            Niños
+          </label>
+        </div>
+      </li>
+      <li>
+        <div class="form-check ms-1">
+          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="unisexGenero" (click)="cargarProductoPorGenero('Unisex')" [checked]="generoEstaTildado('Unisex')">
+          <label class="form-check-label" for="unisexGenero">
+            Unisex
+          </label>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="dropdown" >
+    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
+      Marcas
+    </button>
+    <ul class="dropdown-menu" >
+      <li *ngFor="let marca of marcas">
+        <div class="form-check ms-1">
+          <input class="form-check-input" type="radio" name="flexRadioDefault3" [id]="+marca.id+'marca'" (click)="cargarProductoPorMarca(marca.id)" [checked]="marca.id==0 ? marcaEstaTildado(-1) : marcaEstaTildado(marca.id)">
+          <label class="form-check-label" [for]="+marca.id+'marca'" >
+            {{marca.nombre}}
+          </label>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="alert alert-warning mx-5" role="alert" *ngIf="productos.length==0">
+  No se encontraron productos 
+</div>
+
+<div class="container mt-5" *ngIf="productos.length > 0">
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Modelo</th>
+          <th>Marca</th>
+          <th>Categoria</th>
+          <th>Material</th>
+          <th>Genero</th>
+          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Costo</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Descripción</th>
+          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Ejemplo de filas -->
+        <tr *ngFor="let producto of productos">
+          <td>{{producto.modelo}}</td>
+          <td>{{producto.marca.nombre}}</td>
+          <td>
+            <div *ngFor="let categoria of producto.categorias">
+              <p class="card-text">{{categoria.nombre}}</p>
+            </div>
+          </td>
+          <td>{{producto.material}}</td>
+          <td>{{producto.genero}}</td>
+          <td *ngIf="authService.hasRole('ROLE_ADMIN')">${{producto.costo}}</td>
+          <td>${{producto.precio}}</td>
+          <!-- Iterar sobre productoLocales -->
+          <td>
+            <div *ngFor="let productoLocal of producto.productoLocales">
+              {{ productoLocal.local.nombre }}-Stock:{{ productoLocal.stock }}
+            </div>
+          </td>          
+          <td>{{producto.descripcion}}</td>
+          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+            <button class="btn btn-primary btn-sm me-2" [routerLink]="'/editarProducto/' + producto.id">Editar</button>
+            <button class="btn btn-danger btn-sm" (click)="eliminarProducto(producto)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<paginator-nav *ngIf="paginador" [paginador]="paginador" [url]="url" [categoriaId]="categoriaId" [marcaId]="marcaId" [genero]="genero"></paginator-nav>
