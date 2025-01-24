@@ -1,0 +1,14 @@
+@media (max-width: 550px) {
+    .cont{
+        width: 100%;
+    }
+}
+
+.proveedor-lista-container {
+    max-height: 300px; /* Ajusta la altura máxima según tus necesidades */
+    overflow-y: auto; /* Habilita el scroll vertical */
+    border: 1px solid #ddd; /* Opcional: Agrega un borde para diferenciar el área */
+    padding: 10px; /* Espaciado interno */
+    background-color: #f8f9fa; /* Fondo claro para destacar el contenido */
+    border-radius: 5px; /* Bordes redondeados */
+  }

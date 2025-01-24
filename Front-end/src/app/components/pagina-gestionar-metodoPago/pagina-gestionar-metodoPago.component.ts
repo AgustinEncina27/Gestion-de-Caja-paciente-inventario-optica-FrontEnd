@@ -45,7 +45,7 @@ export class PaginaGestionarMetodosPagosComponent {
   crearMetodoPago(){
     this.metodoPagoService.crearMetodoPago(this.metodoPago).subscribe( 
       response=>{
-        Swal.fire('método de pago Creado', 'El método de pago fue cargado con éxito!','success')
+        Swal.fire('MÉTODO DE PAGO CREADO', 'El método de pago fue cargado con éxito!','success')
         this.router.navigate(['/inicio']);
       })
   }
@@ -53,7 +53,7 @@ export class PaginaGestionarMetodosPagosComponent {
   editarMetodoPago(){
     this.metodoPagoService.actualizarMetodoPago(this.metodoPago).subscribe( 
       response=>{
-        Swal.fire('Método de pago Editado', 'El método de pago fue editado con éxito!','success')
+        Swal.fire('MÉTODO DE PAGO EDITADO', 'El método de pago fue editado con éxito!','success')
         this.router.navigate(['/inicio']);
       })
   }
@@ -71,7 +71,7 @@ export class PaginaGestionarMetodosPagosComponent {
       if (result.isConfirmed) {
         this.metodoPagoService.eliminarMetodoPago(this.metodoPago.id).subscribe( 
           response=>{
-            Swal.fire('método de pago Eliminado', 'El método de pago fue eliminado con éxito!','success')
+            Swal.fire('MÉTODO DE PAGO ELIMINADO', 'El método de pago fue eliminado con éxito!','success')
             this.router.navigate(['/inicio']);
           })
       }

@@ -1,3 +1,4 @@
+import { Graduacion } from "./graduacion";
 import { Local } from "./local";
 
 export class Paciente {
@@ -8,11 +9,10 @@ export class Paciente {
     celular!: string;
     genero!: string;
     local!: Local;
-    graduacion!: string;
+    graduaciones: Graduacion[] = []; // Lista de graduaciones
     documento!:string;
     correo!:string;
     medico!:string;
-    fechaDeControl!: Date;
     creadoEn!: Date;
     ultimaActualizacion!:Date;
 }

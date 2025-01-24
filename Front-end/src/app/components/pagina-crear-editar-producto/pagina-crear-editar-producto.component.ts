@@ -10,6 +10,10 @@ import { ProductoService } from 'src/app/services/producto.service';
 import Swal from 'sweetalert2';
 import { Local } from 'src/app/models/local';
 import { LocalService } from 'src/app/services/local.service';
+import { MaterialProductoService } from 'src/app/services/materialProducto.service';
+import { MaterialProducto } from 'src/app/models/materialProducto';
+import { ProveedorService } from 'src/app/services/proveedor.service';
+import { Proveedor } from 'src/app/models/proveedor';
 
 @Component({
   selector: 'app-pagina-crear-producto',
@@ -18,14 +22,21 @@ import { LocalService } from 'src/app/services/local.service';
 })
 export class PaginaCrearEditarProductoComponent implements OnInit {
   categorias:Categoria[]=[];
+  selectedCategoriesCheckbox: Categoria[] = [];
+  newNameCategoryInput: string = '';
+
+  proveedores:Proveedor[]=[];
+  selectedProveedoresCheckbox: Proveedor[] = [];
+  newNameProveedorInput: string = '';
+
   marcas:Marca[]=[];
   marca:Marca=new Marca();
+  materialesProducto:MaterialProducto[]=[];
+  materialProducto:MaterialProducto=new MaterialProducto();
   locales:Local[]=[];
   localSeleccionado: Local | null = null;
   producto: Producto= new Producto();
   titulo:String ='Crear Producto';
-  selectedCategoriesCheckbox: Categoria[] = [];
-  newNameCategoryInput: string = '';
   genero:string='';
   localStocks: { [localId: number]: number } = {}; // Mapa para guardar el stock por local
   localSeleccionados: Set<number> = new Set(); // Conjunto de IDs de locales seleccionados
@@ -34,7 +45,9 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
     private productoService: ProductoService,
     private activatedRoute: ActivatedRoute,
     private categoriaService: CategoriaService,
+    private proveedorService: ProveedorService,
     private marcaService: MarcaService,
+    private materialProductoService: MaterialProductoService,
     private localService: LocalService,
     private router: Router
   ) {}
@@ -42,7 +55,9 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   ngOnInit(): void {
     this.cargarProducto();
     this.cargarCategorias();
+    this.cargarProveedores();
     this.cargarMarcas();
+    this.cargarMaterialProducto();
     this.cargarLocales();
   }
 
@@ -52,9 +67,21 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
     });
   }
 
+  cargarProveedores() {
+    this.proveedorService.getProveedores().subscribe(proveedores => {
+      this.proveedores = proveedores;
+    });
+  }
+
   cargarMarcas() {
     this.marcaService.getMarcas().subscribe(marcas => {
       this.marcas = marcas;
+    });
+  }
+
+  cargarMaterialProducto() {
+    this.materialProductoService.getMaterialesProducto().subscribe(materialesProducto => {
+      this.materialesProducto = materialesProducto;
     });
   }
 
@@ -76,6 +103,9 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
          
           //Carga la marca en la pagina
           this.marca = producto.marca;
+
+          //Carga el material en la pagina
+          this.materialProducto = producto.material;
           
           // Cargar los locales seleccionados y sus stocks
           this.localSeleccionados = new Set(
@@ -88,6 +118,9 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
           //Carga la categoria en la pagina
           this.selectedCategoriesCheckbox = producto.categorias;
 
+          //Carga la categoria en la pagina
+          this.selectedProveedoresCheckbox = producto.proveedores;
+
           //Carga el genero en la pagina
           this.genero = producto.genero;
         });
@@ -98,14 +131,16 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   crearProducto() {
     this.agregarLocalesYStocksAlProducto(); // Agregar locales y stocks al producto
     this.producto.categorias = this.selectedCategoriesCheckbox;
+    this.producto.proveedores = this.selectedProveedoresCheckbox;
     this.producto.genero = this.genero;
     this.producto.marca = this.marca;
+    this.producto.material = this.materialProducto;
     this.producto.creadoEn = new Date();
     this.producto.ultimaActualizacion = new Date();
   
     this.productoService.createProducto(this.producto).subscribe(
       response => {
-        Swal.fire('Producto creado', 'El producto ha sido guardado con éxito!', 'success');
+        Swal.fire('PRODUCTO CREADO', 'El producto ha sido guardado con éxito!', 'success');
         this.router.navigate(['/inicio']);
       }
     );
@@ -114,12 +149,15 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   editarProducto() {
     this.agregarLocalesYStocksAlProducto(); // Agregar locales y stocks al producto
     this.producto.categorias = this.selectedCategoriesCheckbox;
+    this.producto.proveedores = this.selectedProveedoresCheckbox;
     this.producto.genero = this.genero;
+    this.producto.marca = this.marca;
+    this.producto.material = this.materialProducto;
     this.producto.ultimaActualizacion = new Date();
-  
+    
     this.productoService.updateProducto(this.producto).subscribe(
       response => {
-        Swal.fire('Producto Editado', 'Se ha editado con éxito!', 'success');
+        Swal.fire('PRODUCTO EDITADO', 'Se ha editado con éxito!', 'success');
         this.router.navigate(['/inicio']);
       }
     );
@@ -127,6 +165,10 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
 
   selecionMarca(marca:Marca){
     this.marca=marca;
+  }
+
+  selecionMaterial(materialProducto:MaterialProducto){
+    this.materialProducto=materialProducto;
   }
 
   selecionLocal(local:Local){
@@ -147,6 +189,19 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
       this.selectedCategoriesCheckbox = this.selectedCategoriesCheckbox.filter(selectedCategory => selectedCategory.id !== categoria.id); 
     } else {
       this.selectedCategoriesCheckbox.push(categoria);
+    }
+  }
+
+  //Proveedores
+  isProveedorSelectedInCheckBox(proveedor: Proveedor): boolean {
+    return this.selectedProveedoresCheckbox.findIndex(selectedProveedor => selectedProveedor.id === proveedor.id) !== -1;
+  }
+  
+  toggleProveedorSelection(proveedor: Proveedor) {
+    if (this.isProveedorSelectedInCheckBox(proveedor)) {
+      this.selectedProveedoresCheckbox = this.selectedProveedoresCheckbox.filter(selectedProveedor => selectedProveedor.id !== proveedor.id); 
+    } else {
+      this.selectedProveedoresCheckbox.push(proveedor);
     }
   }
 
@@ -177,6 +232,13 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   //---------------------------------------------------
   marcaSeleccionado(marca:Marca): boolean {
     if(marca.id==this.marca.id && this.marca!==undefined){
+      return true
+    }
+    return false
+  }
+
+  materialProductoSeleccionado(materialProducto:MaterialProducto): boolean {
+    if(materialProducto.id==this.materialProducto.id && this.materialProducto!==undefined){
       return true
     }
     return false

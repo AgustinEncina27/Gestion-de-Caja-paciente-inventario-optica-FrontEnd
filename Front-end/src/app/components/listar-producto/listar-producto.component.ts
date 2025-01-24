@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Categoria } from 'src/app/models/categoria';
+import { Local } from 'src/app/models/local';
 import { Marca } from 'src/app/models/marca';
 import { Producto } from 'src/app/models/producto';
 import { AuthService } from 'src/app/services/auth.service';
 import { CategoriaService } from 'src/app/services/categoria.service';
+import { ExcelService } from 'src/app/services/excel.service';
+import { LocalService } from 'src/app/services/local.service';
 import { MarcaService } from 'src/app/services/marca.service';
 import { ProductoService } from 'src/app/services/producto.service';
 import Swal from 'sweetalert2';
-import { URL_BACKEND } from 'src/app/config/config';
 
 @Component({
   selector: 'app-listar-producto',
@@ -27,11 +29,15 @@ export class ListarProductoComponent {
  genero:string='-1';
  paginador: any;
  url:string='';
- URL_BACKEND: string=URL_BACKEND;
+ modeloSeleccionado: string = ''; // Código del modelo ingresado
+ locales: Local[] = [];
+ localSeleccionado: number | null = null;
 
  constructor(private productoService: ProductoService,
   private activateRoute: ActivatedRoute,
   public authService: AuthService,
+  private localService: LocalService,
+  private excelService: ExcelService,
   private categoriaService:CategoriaService,
   private marcaService:MarcaService,
   private router: Router){
@@ -43,11 +49,23 @@ export class ListarProductoComponent {
     this.cargarCategorias();
     this.cargarMarcas();
     this.cargarProductoModal();
+    this.cargarLocales();
   }
 
   cargarUrlActual(){
     this.activateRoute.url.subscribe((segments) => {
       this.url = '/' + segments.map((segment) => segment.path).join('/');
+    });
+  }
+
+  cargarLocales(): void {
+    this.localService.getLocales().subscribe({
+      next: (locales) => {
+        this.locales = locales;
+      },
+      error: (err) => {
+        console.error('Error al cargar locales:', err);
+      },
     });
   }
 
@@ -88,7 +106,7 @@ export class ListarProductoComponent {
         this.productoService.deleteProducto(productoAEliminar.id).subscribe(
           response=>{
             Swal.fire(
-              'Producto eliminado','El producto ha sido eliminada con éxito!','success'
+              'PRODUCTO ELIMINADO','El producto ha sido eliminadO con éxito!','success'
             )
             this.cargarProductos()
           }
@@ -203,5 +221,55 @@ export class ListarProductoComponent {
     return false
   }
 
+  buscarProductoPorModelo(): void {
+    if (this.modeloSeleccionado.trim() === '') {
+      Swal.fire('ERROR', 'Debes ingresar un código de modelo válido', 'warning');
+      return;
+    }
+  
+    this.productoService.getProductosPorModelo(this.modeloSeleccionado).subscribe({
+      next: (productos) => {
+        if (productos.length > 0) {
+          this.productos = productos; // Actualiza los productos mostrados
+        } else {
+          Swal.fire('SIN RESULTADOS', 'No se encontraron productos con ese modelo', 'info');
+        }
+      },
+      error: (err) => {
+        console.error('Error al buscar producto por modelo', err);
+      },
+      complete: () => {
+        console.log('Búsqueda de productos por modelo completada');
+      },
+    });
+  }
+
+  limpiarFiltros() {
+    this.modeloSeleccionado='';
+    this.cargarProductos()
+  }
+
+  generarStockLocal(): void {
+    if (this.localSeleccionado === null) {
+      Swal.fire('ERROR', 'Por favor selecciona un local', 'warning');
+      return;
+    }
+
+    this.excelService.generarExcelStock(this.localSeleccionado).subscribe({
+      next: (response) => {
+        const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Stock_Local_${this.localSeleccionado}.xlsx`;
+        link.click();
+        Swal.fire('ÉXITO', 'Excel generado correctamente', 'success');
+      },
+      error: (err) => {
+        console.error('Error al generar el Excel:', err);
+        Swal.fire('ERROR', 'No se pudo generar el Excel', 'error');
+      },
+    });
+  }
 
 }

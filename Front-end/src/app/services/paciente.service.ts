@@ -3,7 +3,7 @@ import { Paciente } from '../models/paciente';
 import { Observable,Subject,catchError,map,tap,throwError} from 'rxjs';
 import { HttpClient, HttpEvent, HttpRequest } from '@angular/common/http';
 
-import swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 import { URL_BACKEND } from '../config/config';
 
 @Injectable()
@@ -17,11 +17,11 @@ export class PacienteService {
       catchError(e=>{
         if (e.status == 400) {
           let error = e.error.errors.join(" ")
-          swal.fire("Error al obtener los pacientes",error,'error');
+          Swal.fire("ERROR AL OBTENER EL PACIENTE",error,'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+          Swal.fire(e.error.mensaje,e.error.error,'error');
         }
         return throwError(() => e);
       })
@@ -46,7 +46,7 @@ export class PacienteService {
     );
   }  
 
-  getPacientePorFicha(ficha: string): Observable<Paciente> {
+  getPacientePorFicha(ficha: number): Observable<Paciente> {
     return this.http.get<Paciente>(`${this.urlEndPointPaciente}/buscar-por-ficha/${ficha}`);
   }
 
@@ -54,13 +54,12 @@ export class PacienteService {
     return this.http.post<any>(this.urlEndPointPaciente,paciente).pipe(
       map((response: any)=>response.paciente as Paciente),
       catchError(e=>{
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          swal.fire("Error al crear el paciente",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+        if (e.status === 400 && e.error.mensaje) {
+          // Mostrar el mensaje enviado por el backend
+          Swal.fire('ERROR', e.error.mensaje, 'error');
+        } else {
+          // Manejo genérico de otros errores
+          Swal.fire('ERROR', 'Ocurrió un error al guardar el paciente', 'error');
         }
         return throwError(() => e);
       })
@@ -73,11 +72,11 @@ export class PacienteService {
       catchError(e=>{
         if (e.status == 400) {
           let error = e.error.errors.join(" ")
-          swal.fire("Error al crear el paciente",error,'error');
+          Swal.fire("ERROR AL CREAR EL PACIENTE",error,'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+          Swal.fire(e.error.mensaje,e.error.error,'error');
         }
         return throwError(() => e);
       })
@@ -86,15 +85,25 @@ export class PacienteService {
 
   deletePaciente(id:number): Observable<any>{
     return this.http.delete<any>(`${this.urlEndPointPaciente}/${id}`).pipe(
-      catchError(e=>{
-
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          swal.fire("Error al crear el paciente",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+      catchError(e => {
+        let error = "";
+    
+        switch (e.status) {
+          case 400:
+            error = e.error.errors.join(" ");
+            Swal.fire("ERROR AL ELIMINAR EL PACIENTE", error, 'error');
+            break;
+    
+          case 500:
+            Swal.fire("ERROR AL ELIMINAR EL PACIENTE", "Existen Movimientos en la Caja. Por favor elimine esos movimientos para continuar", 'error');
+            break;
+    
+          default:
+            if (e.error.mensaje) {
+              console.error(e.error.mensaje);
+              Swal.fire(e.error.mensaje, e.error.error, 'error');
+            }
+            break;
         }
         return throwError(() => e);
       })

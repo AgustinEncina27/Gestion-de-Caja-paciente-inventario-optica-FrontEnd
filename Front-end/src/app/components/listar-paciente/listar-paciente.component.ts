@@ -46,7 +46,7 @@ export class ListarPacienteComponent {
         this.pacienteService.deletePaciente(pacienteAEliminar.id).subscribe(
           response=>{
             Swal.fire(
-              'Paciente eliminado','El producto ha sido eliminada con éxito!','success'
+              'PACIENTE ELIMINADO','El paciente ha sido eliminado con éxito!','success'
             )
             this.cargarPacientes();
           }
@@ -64,7 +64,7 @@ export class ListarPacienteComponent {
         this.generarPaginador(response.totalPages); // Actualiza el paginador
       },
       error: error => {
-        Swal.fire('Error', 'Hubo un problema al cargar los pacientes.', 'error');
+        Swal.fire('ERROR', 'Hubo un problema al cargar los pacientes.', 'error');
         console.error(error);
       },
       complete: () => {
@@ -72,6 +72,7 @@ export class ListarPacienteComponent {
       }
     });
   }
+  
   
 
   buscarPorNombre() {
@@ -85,11 +86,11 @@ export class ListarPacienteComponent {
           this.paginador = response;
           this.generarPaginador(response.totalPages); // Actualiza el paginador
         } else {
-          Swal.fire('Sin resultados', 'No se encontraron pacientes con ese nombre.', 'info');
+          Swal.fire('SIN RESULTADOS', 'No se encontraron pacientes con ese nombre.', 'info');
         }
       },
       error: error => {
-        Swal.fire('Error', 'Hubo un problema al realizar la búsqueda.', 'error');
+        Swal.fire('ERROR', 'Hubo un problema al realizar la búsqueda.', 'error');
         console.error(error);
       }
     });
@@ -106,11 +107,11 @@ export class ListarPacienteComponent {
           this.paginador = response;
           this.generarPaginador(response.totalPages); // Actualiza el paginador
         } else {
-          Swal.fire('Sin resultados', 'No se encontraron pacientes con ese documento.', 'info');
+          Swal.fire('SIN RESULTADOS', 'No se encontraron pacientes con ese documento.', 'info');
         }
       },
       error: error => {
-        Swal.fire('Error', 'Hubo un problema al realizar la búsqueda.', 'error');
+        Swal.fire('ERROR', 'Hubo un problema al realizar la búsqueda.', 'error');
         console.error(error);
       }
     });

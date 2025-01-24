@@ -1,6 +1,8 @@
 import { Categoria } from "./categoria";
 import { Marca } from "./marca";
+import { MaterialProducto } from "./materialProducto";
 import { ProductoLocal } from "./productoLocal";
+import { Proveedor } from "./proveedor";
 
 
 export class Producto {
@@ -11,9 +13,10 @@ export class Producto {
     descripcion!: string;
     precio!: number;
     costo!: number;
-    material!: string;
+    material!: MaterialProducto;
     genero!:string;
     categorias!: Categoria[];
+    proveedores!: Proveedor[];
     creadoEn!: Date;
     ultimaActualizacion!:Date;
     showDetails:boolean=false;

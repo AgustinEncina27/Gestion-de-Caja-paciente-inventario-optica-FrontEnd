@@ -1,0 +1,14 @@
+@media (max-width: 550px) {
+    .cont{
+        width: 100%;
+    }
+}
+
+.scrollable-container {
+    max-height: 200px; /* Cambia este valor según tus necesidades */
+    overflow-y: auto;  /* Habilita el scroll vertical */
+    border: 1px solid #ccc; /* Opcional: agrega un borde */
+    padding: 10px; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondeados */
+    background-color: #f9f9f9; /* Fondo claro */
+  }

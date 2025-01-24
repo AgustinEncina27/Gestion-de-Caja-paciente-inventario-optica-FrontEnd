@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./pagina-gestionar-locales.component.css']
 })
 export class PaginaGestionarLocalesComponent {
-  titulo:string='Administrar Categorias';
+  titulo:string='Administrar Locales';
   local: Local= new Local;
   locales: Local[]= [];
   seleccionado = false;
@@ -45,7 +45,7 @@ export class PaginaGestionarLocalesComponent {
   crearLocal(){
     this.localService.crearLocal(this.local).subscribe( 
       response=>{
-        Swal.fire('local Creada', 'La local fue cargada con éxito!','success')
+        Swal.fire('LOCAL CREADO', 'La local fue cargado con éxito!','success')
         this.router.navigate(['/inicio']);
       })
   }
@@ -53,7 +53,7 @@ export class PaginaGestionarLocalesComponent {
   editarLocal(){
     this.localService.actualizarLocal(this.local).subscribe( 
       response=>{
-        Swal.fire('local Editada', 'El local fue editada con éxito!','success')
+        Swal.fire('LOCAL EDITADO', 'El local fue editado con éxito!','success')
         this.router.navigate(['/inicio']);
       })
   }
@@ -71,7 +71,7 @@ export class PaginaGestionarLocalesComponent {
       if (result.isConfirmed) {
         this.localService.eliminarLocal(this.local.id).subscribe( 
           response=>{
-            Swal.fire('local Eliminada', 'El local fue eliminada con éxito!','success')
+            Swal.fire('LOCAL ELIMINADO', 'El local fue eliminado con éxito!','success')
             this.router.navigate(['/inicio']);
           })
       }

@@ -51,23 +51,26 @@
           <div class="col-md-6">
             <label for="InputMedico" class="form-label fw-bold">Médico</label>
             <input type="text" class="form-control" id="InputMedico" 
-                   [(ngModel)]="paciente.medico" name="medico" required>
+                   [(ngModel)]="paciente.medico" name="medico" >
           </div>
         </div>
 
         <!-- Cuarta fila -->
         <div class="row mb-4">
-          <!-- Fecha de Control -->
           <div class="col-md-6">
-            <label for="InputFechaDeControl" class="form-label fw-bold">Fecha De Control</label>
-            <input type="date" class="form-control" id="InputFechaDeControl" 
-                   [(ngModel)]="paciente.fechaDeControl" name="fechaDeControl" required>
+            <!-- Botón para abrir el modal -->
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#graduacionesModal">
+              Gestionar Graduaciones
+            </button>
           </div>
-          <!-- Graduación -->
-          <div class="col-md-6">
-            <label class="form-label fw-bold" for="InputGraduacion">Graduación</label>
-            <textarea type="text" class="form-control" id="InputGraduacion" 
-                      [(ngModel)]="paciente.graduacion" name="graduacion" required></textarea>
+          <!-- Botón para registrar un movimiento -->
+          <div class="col-md-6" *ngIf="paciente?.id != null">
+            <button 
+              type="button" 
+              class="btn btn-secondary" 
+              [routerLink]="['/crearMovimiento', paciente.id]">
+              Registrar un movimiento
+            </button>
           </div>
         </div>
 
@@ -123,3 +126,97 @@
     </div>
   </div>
 </div>
+<!-- Modal para gestionar graduaciones -->
+<div class="modal fade" id="graduacionesModal" tabindex="-1" aria-labelledby="graduacionesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="graduacionesModalLabel">Historial de Graduaciones</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Tabla de graduaciones existentes -->
+        <h5 class="fw-bold mb-3">Graduaciones Existentes</h5>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>Ojo</th>
+                <th>Esférico</th>
+                <th>Cilíndrico</th>
+                <th>Eje</th>
+                <th>Adición</th>
+                <th>Cerca</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let graduacion of paciente.graduaciones; let i = index">
+                <td>{{ graduacion.ojo }}</td>
+                <td><input type="number" class="form-control" [(ngModel)]="graduacion.esferico"></td>
+                <td><input type="number" class="form-control" [(ngModel)]="graduacion.cilindrico"></td>
+                <td><input type="number" class="form-control" [(ngModel)]="graduacion.eje"></td>
+                <td><input type="number" class="form-control" [(ngModel)]="graduacion.adicion"></td>
+                <td><input type="number" class="form-control" [(ngModel)]="graduacion.cerca"></td>
+                <td><input type="date" class="form-control" [(ngModel)]="graduacion.fechaGraduacion"></td>
+                <td class="text-center">
+                  <button class="btn btn-danger btn-sm" (click)="eliminarGraduacion(i)">Eliminar</button>
+                </td>
+              </tr>
+              <tr *ngIf="paciente.graduaciones.length === 0">
+                <td colspan="7" class="text-center">No hay graduaciones registradas</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Formulario para agregar nueva graduación -->
+        <h5 class="fw-bold mt-4">Agregar Nueva Graduación</h5>
+        <div class="row g-3 align-items-center">
+          <div class="col-md-2">
+            <label class="form-label">Ojo</label>
+            <select class="form-select" [(ngModel)]="nuevaGraduacion.ojo">
+              <option value="DERECHO">Derecho</option>
+              <option value="IZQUIERDO">Izquierdo</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Esférico</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevaGraduacion.esferico" (change)="calcularGraduacionCerca(nuevaGraduacion.esferico,nuevaGraduacion.adicion)">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Cilíndrico</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevaGraduacion.cilindrico">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Eje</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevaGraduacion.eje" >
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Adición</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevaGraduacion.adicion" (change)="calcularGraduacionCerca(nuevaGraduacion.esferico,nuevaGraduacion.adicion)">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Cerca</label>
+            <input type="number" class="form-control" [(ngModel)]="nuevaGraduacion.cerca">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Fecha</label>
+            <input type="date" class="form-control" [(ngModel)]="nuevaGraduacion.fechaGraduacion">
+          </div>
+        </div>
+        <div class="text-end ">
+          <button class="btn btn-primary" (click)="agregarGraduacion()">Agregar</button>
+        </div>
+      </div>
+
+      <!-- Footer del modal -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="guardarGraduaciones()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+

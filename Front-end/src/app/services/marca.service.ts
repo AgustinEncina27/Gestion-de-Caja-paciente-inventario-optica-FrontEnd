@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map, tap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 import { Marca } from '../models/marca';
 
 import { URL_BACKEND } from '../config/config';
@@ -24,11 +24,11 @@ export class MarcaService{
       catchError(e=>{
         if (e.status == 400) {
           let error = e.error.errors.join(" ")
-          swal.fire("Error al crear la marca",error,'error');
+          Swal.fire("ERROR AL CREAR LA MARCA",error,'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+          Swal.fire(e.error.mensaje,e.error.error,'error');
         }
         return throwError(() => e);
       })
@@ -42,11 +42,11 @@ export class MarcaService{
 
         if (e.status == 400) {
           let error = e.error.errors.join(" ")
-          swal.fire("Error al actualizar la marca",error,'error');
+          Swal.fire("ERROR AL ACTUALIZAR LA MARCA",error,'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+          Swal.fire(e.error.mensaje,e.error.error,'error');
         }
         return throwError(() => e);
       })
@@ -55,14 +55,25 @@ export class MarcaService{
 
   eliminarMarca(id:number): Observable<any>{
     return this.http.delete<any>(`${this.urlEndPointMarca}/${id}`).pipe(
-      catchError(e=>{
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          swal.fire("Error al eliminar la marca",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+      catchError(e => {
+        let error = "";
+    
+        switch (e.status) {
+          case 400:
+            error = e.error.errors.join(" ");
+            Swal.fire("ERROR AL ELIMINAR LA MARCA", error, 'error');
+            break;
+    
+          case 500:
+            Swal.fire("ERROR AL ELIMINAR LA MARCA", "Existen Productos con la marca. Por favor elimine esos productos para continuar", 'error');
+            break;
+    
+          default:
+            if (e.error.mensaje) {
+              console.error(e.error.mensaje);
+              Swal.fire(e.error.mensaje, e.error.error, 'error');
+            }
+            break;
         }
         return throwError(() => e);
       })

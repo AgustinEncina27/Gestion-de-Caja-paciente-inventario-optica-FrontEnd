@@ -6,7 +6,7 @@ import {
 import { Router } from '@angular/router';
 import { Observable,catchError,throwError} from 'rxjs';
 import { AuthService } from '../auth.service';
-import swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 
 
 /** Pass untouched request through to the next request handler. */
@@ -25,11 +25,11 @@ export class AuthToken implements HttpInterceptor {
             this.authService.logOut()
           }
           this.router.navigate(['/login'])
-          swal.fire('Error Login','Necesitas logearte','error');
+          Swal.fire('ERROR LOGIN','Necesitas logearte','error');
         }
         if(e.status==403){
           this.router.navigate(['/inicio'])
-          swal.fire('Acceso denegado',`Hola ${this.authService.user.username}, no tenes acceso`,'warning');
+          Swal.fire('ACCESO DENEGADO',`Hola ${this.authService.user.username}, no tenes acceso`,'warning');
         }
         return throwError(() => e);
       })

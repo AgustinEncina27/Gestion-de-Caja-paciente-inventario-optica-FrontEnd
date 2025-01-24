@@ -26,9 +26,10 @@
   </button>
   <div class="collapse navbar-collapse m-1" id="navbarSupportedContent">
     <ul class="navbar-nav me-auto mb-2 mb-lg-0 centrar-horizontalmente d-flex align-items-stretch">
-      <li class="nav-item">
-        <a class="nav-link " aria-current="page" [routerLink]="['/inicio']">CATÁLOGO</a>
+      <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">
+        <a class="nav-link " aria-current="page" [routerLink]="['/inicio']">INVENTARIO</a>
       </li>
+      <!-- 
       <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
         <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDGafasDeSol+'/0']">GAFAS DE SOL</a>
       </li>
@@ -38,6 +39,7 @@
       <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
         <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDAccesorios+'/0']">ACCESORIOS</a>
       </li>
+      -->
       <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
         <a class="nav-link" [routerLink]="['/cristaleria']">CRISTALERÍA</a>
       </li>
@@ -54,9 +56,11 @@
         <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
           <li><a class="dropdown-item" [routerLink]="['/adminitrarCategoria']">Categorías</a></li>
           <li><a class="dropdown-item" [routerLink]="['/adminitrarMarca']">Marcas</a></li>
+          <li><a class="dropdown-item" [routerLink]="['/adminitrarMaterial']">Materiales</a></li>
           <li><a class="dropdown-item" [routerLink]="['/adminitrarMetodoPago']">Método de Pago</a></li>
-          <li><a class="dropdown-item" [routerLink]="['/adminitrarLocal']">Ópticas</a></li>
+          <li><a class="dropdown-item" [routerLink]="['/adminitrarLocal']">Locales</a></li>
           <li><a class="dropdown-item" [routerLink]="['/adminitrarPaciente']">Pacientes</a></li>
+          <li><a class="dropdown-item" [routerLink]="['/adminitrarProveedor']">Proveedores</a></li>
         </ul>
       </li>
       <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">

@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./pagina-gestionar-marcas.component.css']
 })
 export class PaginaGestionarMarcasComponent {
-  titulo:string='Administrar Categorias';
+  titulo:string='Administrar Marcas';
   marca: Marca= new Marca;
   marcas: Marca[]= [];
   seleccionado = false;
@@ -45,7 +45,7 @@ export class PaginaGestionarMarcasComponent {
   crearMarca(){
     this.marcaService.crearMarca(this.marca).subscribe( 
       response=>{
-        Swal.fire('Marca Creada', 'La marca fue cargada con éxito!','success')
+        Swal.fire('MARCA CREADA', 'La marca fue cargada con éxito!','success')
         this.router.navigate(['/inicio']);
       })
   }
@@ -53,7 +53,7 @@ export class PaginaGestionarMarcasComponent {
   editarMarca(){
     this.marcaService.actualizarMarca(this.marca).subscribe( 
       response=>{
-        Swal.fire('Marca Editada', 'La Marca fue editada con éxito!','success')
+        Swal.fire('MARCA EDITADA', 'La Marca fue editada con éxito!','success')
         this.router.navigate(['/inicio']);
       })
   }
@@ -71,7 +71,7 @@ export class PaginaGestionarMarcasComponent {
       if (result.isConfirmed) {
         this.marcaService.eliminarMarca(this.marca.id).subscribe( 
           response=>{
-            Swal.fire('Marca Eliminada', 'La marca fue eliminada con éxito!','success')
+            Swal.fire('MARCA ELIMINADA', 'La marca fue eliminada con éxito!','success')
             this.router.navigate(['/inicio']);
           })
       }

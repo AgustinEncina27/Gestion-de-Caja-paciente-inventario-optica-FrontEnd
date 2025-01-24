@@ -2,7 +2,18 @@
   <p style="font-size: 50px; color: black;" class="fw-bold my-4">NUESTRO CATÁLOGO</p>
 </div>
 <div class="d-flex justify-content-evenly mb-4 filtros p-2">
-  <div class="dropdown" >
+  <div *ngIf="authService.hasRole('ROLE_ADMIN')">
+    <div class="input-group">
+      <input 
+        type="text" 
+        id="modeloInput" 
+        class="form-control" 
+        placeholder="Ingresa el código del modelo..." 
+        [(ngModel)]="modeloSeleccionado">
+      <button class="btn btn-primary" (click)="buscarProductoPorModelo()">Buscar</button>
+    </div>
+  </div>
+  <div class="dropdown" *ngIf="!authService.hasRole('ROLE_ADMIN')">
     <button class="btn  btn-light dropdown-toggle " type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
       Categorias
     </button>
@@ -17,7 +28,7 @@
       </li>
     </ul>
   </div>
-  <div class="dropdown" >
+  <div class="dropdown" *ngIf="!authService.hasRole('ROLE_ADMIN')">
     <button class="btn  btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
       Genero
     </button>
@@ -64,7 +75,7 @@
       </li>
     </ul>
   </div>
-  <div class="dropdown" >
+  <div class="dropdown" *ngIf="!authService.hasRole('ROLE_ADMIN')">
     <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
       Marcas
     </button>
@@ -78,6 +89,17 @@
         </div>
       </li>
     </ul>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRole('ROLE_ADMIN')">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generarStockModal">
+      Generar Stock del Local
+    </button>
+  </div>
+
+  <!-- Botón Limpiar Filtro -->
+  <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRole('ROLE_ADMIN')">
+    <button class="btn btn-secondary " (click)="limpiarFiltros()">Limpiar Filtros</button>
   </div>
 </div>
 
@@ -112,7 +134,7 @@
               <p class="card-text">{{categoria.nombre}}</p>
             </div>
           </td>
-          <td>{{producto.material}}</td>
+          <td>{{producto.material.nombre}}</td>
           <td>{{producto.genero}}</td>
           <td *ngIf="authService.hasRole('ROLE_ADMIN')">${{producto.costo}}</td>
           <td>${{producto.precio}}</td>
@@ -132,4 +154,44 @@
     </table>
   </div>
 </div>
-<paginator-nav *ngIf="paginador" [paginador]="paginador" [url]="url" [categoriaId]="categoriaId" [marcaId]="marcaId" [genero]="genero"></paginator-nav>
+<paginator-nav *ngIf="paginador && modeloSeleccionado===''" [paginador]="paginador" [url]="url" [categoriaId]="categoriaId" [marcaId]="marcaId" [genero]="genero"></paginator-nav>
+
+<!-- Modal para seleccionar local -->
+<div
+  class="modal fade"
+  id="generarStockModal"
+  tabindex="-1"
+  aria-labelledby="generarStockModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="generarStockModalLabel">Seleccionar Local</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <select class="form-select" [(ngModel)]="localSeleccionado" required>
+          <option *ngFor="let local of locales" [value]="local.id">{{ local.nombre }}</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="generarStockLocal()"
+          data-bs-dismiss="modal"
+        >
+          Generar Excel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

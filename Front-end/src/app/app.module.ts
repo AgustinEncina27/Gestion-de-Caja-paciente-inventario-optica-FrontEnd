@@ -7,6 +7,7 @@ import { ProductoService } from './services/producto.service';
 import { PacienteService } from './services/paciente.service';
 import { MovimientoService } from './services/movimiento.service';
 import { LocalService } from './services/local.service';
+import { ExcelService } from './services/excel.service';
 import { MetodoPagoService } from './services/metodoPago.service';
 import { CategoriaService } from './services/categoria.service';
 import { MarcaService } from './services/marca.service';
@@ -40,6 +41,10 @@ import { PaginaGestionarCajaComponent } from './components/pagina-gestionar-caja
 import { PaginaLimpiezaComponent } from './components/pagina-limpieza/pagina-limpieza.component';
 import { PaginaPoliticaEnvioComponent } from './components/pagina-politica-envio/pagina-politica-envio.component';
 import { PaginaPoliticaGarantiaComponent } from './components/pagina-politica-garantia/pagina-politica-garantia.component';
+import { PaginaEstadoMovimientoComponent } from './components/pagina-estado-movimiento/pagina-estado-movimiento.component';
+import { MaterialProductoService } from './services/materialProducto.service';
+import { PaginaGestionarMaterialProductoComponent } from './components/pagina-gestionar-material-producto/pagina-gestionar-material-producto.component';
+import { PaginaGestionarProveedoresComponent } from './components/pagina-gestionar-proveedores/pagina-gestionar-proveedores.component';
 
 
 
@@ -62,7 +67,9 @@ import { PaginaPoliticaGarantiaComponent } from './components/pagina-politica-ga
     WhatsappComponent,
     PaginaVisitanosComponent,
     PaginaGestionarMarcasComponent,
+    PaginaGestionarMaterialProductoComponent,
     PaginaGestionarMetodosPagosComponent,
+    PaginaGestionarProveedoresComponent,
     PaginaGestionarLocalesComponent,
     PaginaGestionarPacientesComponent,
     PaginaLimpiezaComponent,
@@ -70,6 +77,7 @@ import { PaginaPoliticaGarantiaComponent } from './components/pagina-politica-ga
     PaginaPoliticaGarantiaComponent,
     PaginaGestionarCajaComponent,
     PaginaCrearEditarMovimientoComponent,
+    PaginaEstadoMovimientoComponent,
     ListarMovimientoComponent
   ],
   imports: [
@@ -82,10 +90,13 @@ import { PaginaPoliticaGarantiaComponent } from './components/pagina-politica-ga
     ProductoService,
     CategoriaService,
     MarcaService,
+    MaterialProductoService,
     PacienteService,
     MovimientoService,
     LocalService,
     MetodoPagoService,
+    ExcelService,
+    ProductoService,
     {provide:HTTP_INTERCEPTORS,useClass:TokenInterceptor,multi:true},
     {provide:HTTP_INTERCEPTORS,useClass:AuthToken,multi:true}
   ],

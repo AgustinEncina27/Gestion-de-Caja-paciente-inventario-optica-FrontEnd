@@ -7,6 +7,7 @@ import { Local } from 'src/app/models/local';
 import { Paciente } from 'src/app/models/paciente';
 import { PacienteService } from 'src/app/services/paciente.service';
 import { LocalService } from 'src/app/services/local.service';
+import { Graduacion } from 'src/app/models/graduacion';
 
 @Component({
   selector: 'app-pagina-crear-paciente',
@@ -20,6 +21,15 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
   local:Local=new Local();
   genero:string='';
   URL_BACKEND: string=URL_BACKEND;
+  nuevaGraduacion: Graduacion = {
+    ojo: 'DERECHO',
+    esferico: 0,
+    cilindrico: 0,
+    eje: 0,
+    adicion: 0,
+    cerca: 0,
+    fechaGraduacion: new Date().toISOString().slice(0, 10) // Formato YYYY-MM-DD
+  };
   
 
   constructor(private pacienteService: PacienteService,
@@ -34,21 +44,25 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     this.cargarLocales()  
   }
 
-  cargarPaciente(){
-    this.activatedRoute.paramMap.subscribe(params=>{
-      this.titulo='Crear Paciente'
-      this.paciente= new Paciente();
+  cargarPaciente() {
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.titulo = 'Crear Paciente';
+      this.paciente = new Paciente();
+  
       let id: number = +params.get('id')!;
-      if(id){
-        this.titulo='Editar Paciente';
-        this.pacienteService.getPaciente(id).subscribe(paciente=>{
-          this.paciente=paciente;
-          this.local=this.paciente.local
-          this.genero= this.paciente.genero
-        })
-      }
-    })
+      if (id) {
+        this.titulo = 'Editar Paciente';
+        this.pacienteService.getPaciente(id).subscribe(paciente => {
+          this.paciente = paciente;
+          this.local = this.paciente.local;
+          this.genero = this.paciente.genero;          
+        });
+      } 
+    });
   }
+
+  
+  
 
   cargarLocales(){
     this.localService.getLocales().subscribe(
@@ -67,8 +81,8 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
         this.paciente=response
         this.paciente.local=this.local
         this.paciente.genero=this.genero;
-        Swal.fire("Paciente creado","El paciente ha sido guardado con éxito!","success");
-        this.router.navigate(['/adminitrarPaciente']);
+        Swal.fire("PACIENTE CREADO","El paciente ha sido guardado con éxito!","success");
+        this.router.navigate(['/crearMovimiento/'+this.paciente.id]);
       }
     )
   }
@@ -82,7 +96,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
         this.paciente=response
         this.paciente.local=this.local
         this.paciente.genero=this.genero;
-        Swal.fire("Paciente Editado","Se ha editado con éxito!","success");
+        Swal.fire("PACIENTE EDITADO","Se ha editado con éxito!","success");
         this.router.navigate(['/adminitrarPaciente']);
       }
     )
@@ -115,6 +129,26 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
       }
     }
     return false
+  }
+
+  calcularGraduacionCerca(esferico:number,adicion:number){
+    this.nuevaGraduacion.cerca= esferico+adicion;
+  }
+
+  //funciones MODAL
+  agregarGraduacion() {
+    this.paciente.graduaciones.push({ ...this.nuevaGraduacion });
+    this.nuevaGraduacion = new Graduacion(); // Reinicia el formulario
+    this.nuevaGraduacion.ojo= 'IZQUIERDO';
+    this.nuevaGraduacion.fechaGraduacion= new Date().toISOString().slice(0, 10);
+  }
+
+  eliminarGraduacion(index: number) {
+    this.paciente.graduaciones.splice(index, 1);
+  }
+
+  guardarGraduaciones() {
+    Swal.fire("GRADUACIÓN AGREGADA","Se ha Agregado con éxito!","success");
   }
 
 }

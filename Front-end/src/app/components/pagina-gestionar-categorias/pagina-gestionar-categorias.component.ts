@@ -45,7 +45,7 @@ export class PaginaGestionarCategoriasComponent {
   crearCategoria(){
     this.categoriaService.crearCategoria(this.categoria).subscribe( 
       response=>{
-        Swal.fire('Categoria Creada/Editada', 'La categoria fue cargada con éxito!','success')
+        Swal.fire('CATEGORÍA CREADA/EDITADA', 'La categoría fue cargada con éxito!','success')
         this.router.navigate(['/inicio']);
       })
   }
@@ -53,7 +53,7 @@ export class PaginaGestionarCategoriasComponent {
   editarCategoria(){
     this.categoriaService.actualizarCategoria(this.categoria).subscribe( 
       response=>{
-        Swal.fire('Categoria Editada', 'La categoria fue editada con éxito!','success')
+        Swal.fire('CATEGORÍA EDITADA', 'La categoría fue editada con éxito!','success')
         this.router.navigate(['/inicio']);
       })
   }
@@ -71,7 +71,7 @@ export class PaginaGestionarCategoriasComponent {
       if (result.isConfirmed) {
         this.categoriaService.eliminarCategoria(this.categoria.id).subscribe( 
           response=>{
-            Swal.fire('Categoria Eliminada', 'La categoria fue eliminada con éxito!','success')
+            Swal.fire('CATEGORÍA ELIMINADA', 'La categoría fue eliminada con éxito!','success')
             this.router.navigate(['/inicio']);
           })
       }

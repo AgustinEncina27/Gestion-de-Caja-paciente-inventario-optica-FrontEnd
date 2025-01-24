@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Categoria } from 'src/app/models/categoria';
 import { AuthService } from 'src/app/services/auth.service';
 import { CategoriaService } from 'src/app/services/categoria.service';
-import swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-header',
@@ -16,8 +16,11 @@ export class HeaderComponent implements OnInit {
   categoriaIDGafasDeSol:number=0;
   categoriaIDRecetas:number=0;
   categoriaIDAccesorios:number=0;
+  tiposCristales: string[] = [];
 
-  constructor(public authService: AuthService,private router: Router,private categoriaService: CategoriaService){}
+  constructor(public authService: AuthService,
+    private router: Router,
+    private categoriaService: CategoriaService){}
 
   ngOnInit(): void {
    this.cargarCategoria();
@@ -40,8 +43,10 @@ export class HeaderComponent implements OnInit {
       });
   }
 
+  
+
   longOut():void{
-    swal.fire('LogOut',`Hola ${this.authService.user.username},has cerrado sesión con éxito!`,'success')
+    Swal.fire('SE HA CERRADO SESIÓN',`Hola ${this.authService.user.username},has cerrado sesión con éxito!`,'success')
     this.authService.logOut();
     this.router.navigate(['/login']);
   }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import Swal from 'sweetalert2';
-import { URL_BACKEND } from 'src/app/config/config';
+import { URL_FRONTEND } from 'src/app/config/config';
 import { Local } from 'src/app/models/local';
 import { LocalService } from 'src/app/services/local.service';
 import { Movimiento } from 'src/app/models/movimiento';
@@ -19,7 +19,7 @@ export class ListarMovimientoComponent {
   movimiento:Movimiento= new Movimiento();
   paginador: any;
   pages: number[] = []; // Array para el paginador
-  URL_BACKEND: string=URL_BACKEND;
+  URL_FRONTEND: string=URL_FRONTEND;
   totales: { [key: string]: number } = {};
   mostrarTotales: boolean = false;
   locales: Local[] = [];  // Lista de locales obtenida desde el servicio
@@ -69,31 +69,14 @@ export class ListarMovimientoComponent {
         this.movimientoService.deleteMovimiento(movimientoAEliminar.id).subscribe(
           response=>{
             Swal.fire(
-              'Movimiento eliminado','El producto ha sido eliminada con éxito!','success'
+              'MOVIMIENTO ELIMINADO','El movimiento ha sido eliminado con éxito!','success'
             )
-            this.cargarMovimientos();
+            this.aplicarFiltros();
           }
         )
         
       }
     })
-  }
-
-  cargarMovimientos(page: number = 0): void {
-    this.movimientoService.getMovimientos(page).subscribe({
-      next: response => {
-        this.movimientos = response.content as Movimiento[];
-        this.paginador = response;
-        this.generarPaginador(response.totalPages); // Actualiza el paginador
-      },
-      error: error => {
-        Swal.fire('Error', 'Hubo un problema al cargar los movimientos.', 'error');
-        console.error(error);
-      },
-      complete: () => {
-        console.log('Carga de movimientos completada.');
-      }
-    });
   }
   
   paginaAnterior() {
@@ -109,7 +92,7 @@ export class ListarMovimientoComponent {
   }
   
   cambiarPagina(page: number) {
-    this.cargarMovimientos(page);
+    this.aplicarFiltros(page);
   }
   
   
@@ -123,7 +106,7 @@ export class ListarMovimientoComponent {
     this.nroFicha='';
     this.fechaSeleccionada='';
     this.metodoPagoSeleccionado='';
-    this.cargarMovimientos(); // Vuelve a cargar todos los pacientes sin filtros
+    this.aplicarFiltros(); // Vuelve a cargar todos los pacientes sin filtros
   }
 
   aplicarFiltros(page: number = 0): void {
@@ -134,7 +117,7 @@ export class ListarMovimientoComponent {
       fecha: this.fechaSeleccionada,
       metodoPago: this.metodoPagoSeleccionado
     };
-  
+
     this.movimientoService.getMovimientosFiltrados(filtros, page).subscribe({
       next: (response) => {
         this.movimientos = response.content as Movimiento[];
@@ -148,13 +131,13 @@ export class ListarMovimientoComponent {
           },
           error: (error) => {
             console.error('Error al calcular los totales:', error);
-            Swal.fire('Error', 'No se pudieron calcular los totales.', 'error');
+            Swal.fire('ERROR', 'No se pudieron calcular los totales.', 'error');
           }
         });
       },
       error: (error) => {
         console.error('Error al aplicar filtros:', error);
-        Swal.fire('Error', 'No se pudieron cargar los movimientos.', 'error');
+        Swal.fire('ERROR', 'No se pudieron cargar los movimientos.', 'error');
       }
     });
   }
@@ -163,4 +146,25 @@ export class ListarMovimientoComponent {
     return Object.keys(obj);
   }
   
+  generarPdf(idMovimiento: number): void {
+    this.movimientoService.generarReporteMovimiento(idMovimiento).subscribe({
+      next: (pdfBlob) => {
+        const blob = new Blob([pdfBlob], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+  
+        // Crear un enlace temporal para descargar el archivo
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte_movimiento_${idMovimiento}.pdf`;
+        a.click();
+  
+        // Liberar memoria
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Error al generar el PDF:', error);
+        Swal.fire('ERROR', 'No se pudo generar el PDF.', 'error');
+      },
+    });
+  }
 }

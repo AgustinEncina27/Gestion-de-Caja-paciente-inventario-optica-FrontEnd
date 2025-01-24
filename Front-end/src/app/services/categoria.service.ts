@@ -31,7 +31,7 @@ export class CategoriaService{
       catchError(e=>{
         if (e.status == 400) {
           let error = e.error.errors.join(" ")
-          swal.fire("Error al crear la categoria",error,'error');
+          swal.fire("ERROR AL CREAR LA CATEGORÍA",error,'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
@@ -49,7 +49,7 @@ export class CategoriaService{
 
         if (e.status == 400) {
           let error = e.error.errors.join(" ")
-          swal.fire("Error al actualizar la categoria",error,'error');
+          swal.fire("ERROR AL ACTUALIZAR LA CATEGORÍA",error,'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
@@ -65,7 +65,7 @@ export class CategoriaService{
       catchError(e=>{
         if (e.status == 400) {
           let error = e.error.errors.join(" ")
-          swal.fire("Error al eliminar la categoria",error,'error');
+          swal.fire("ERROR AL ELIMINAR LA CATEGORÍA",error,'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);

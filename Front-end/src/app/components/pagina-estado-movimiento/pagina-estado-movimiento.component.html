@@ -1,0 +1,29 @@
+<div class="estado-movimiento-container">
+  
+  <h3 class="estado-titulo">Estado de tu pedido</h3>
+
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress" [style.width]="getProgressWidth()" [ngClass]="getProgressClass()"></div>
+    </div>
+    <div class="progress-labels">
+      <div class="progress-label" *ngFor="let estado of estados">
+        <img 
+          [src]="estado.image" 
+          [alt]="estado.label" 
+          class="estado-image" 
+          [ngClass]="{ 'active-image': movimiento.estadoMovimiento === estado.key }"
+        />
+        <span [ngClass]="{ 'active': movimiento.estadoMovimiento === estado.key }">{{ estado.label }}</span>
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+  <br>
+  <p class="tiempo-estimado-texto">
+    Recuerda que el pedido tiene un tiempo estimado de entrega de entre 10 y 15 días hábiles.
+  </p>
+</div>
+
+  

@@ -1,0 +1,167 @@
+.estado-movimiento-container {
+  text-align: center; /* Centra el contenido */
+  margin: 0 auto;
+  max-width: 1000px; /* Ampliación del ancho */
+}
+
+.estado-titulo {
+  font-size: 32px; /* Aumenta el tamaño del título */
+  font-weight: bold;
+  margin-bottom: 30px; /* Mayor separación del contenido inferior */
+}
+
+.progress-container {
+  width: 100%;
+  max-width: 800px; /* Aumenta el ancho máximo */
+  margin: 0 auto;
+  text-align: center;
+}
+
+.progress-bar {
+  background-color: #e0e0e0;
+  border-radius: 30px; /* Bordes más pronunciados */
+  height: 30px; /* Incrementa la altura de la barra */
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.progress-step1 {
+  background-color: #ffc107; /* Amarillo */
+}
+
+.progress-step2 {
+  background-color: #17a2b8; /* Azul */
+}
+
+.progress-step3 {
+  background-color: #28a745; /* Verde */
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px; /* Mayor separación de la barra */
+  align-items: center;
+}
+
+.progress-label {
+  text-align: center;
+  flex: 1;
+}
+
+.progress-label span {
+  display: block;
+  font-size: 16px; /* Aumenta el tamaño del texto de las etiquetas */
+  font-weight: bold;
+  color: #6c757d;
+  margin-top: 10px; /* Mayor espacio debajo del texto */
+  transition: transform 0.3s ease, font-size 0.3s ease;
+}
+
+.progress-label span.active {
+  color: #000;
+  font-size: 20px; /* Tamaño más grande para el estado activo */
+  transform: scale(1.3); /* Más destacado */
+}
+
+.estado-image {
+  width: 70px; /* Aumenta el tamaño de las imágenes */
+  height: 70px;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: grayscale(100%);
+}
+
+.estado-image.active-image {
+  opacity: 1;
+  filter: none;
+  transform: scale(1.6); /* Destaca la imagen activa */
+}
+
+.tiempo-estimado-texto {
+  font-size: 28px; /* Mayor tamaño del texto de estimación */
+  color: #333; 
+  margin-top: 20px; /* Separación superior del contenido anterior */
+  font-weight: bold;
+}
+
+/* Ajustes para pantallas pequeñas (celulares) */
+@media (max-width: 768px) {
+  .estado-movimiento-container {
+    padding: 10px;
+    max-width: 100%; /* Asegúrate de que ocupe todo el ancho */
+  }
+
+  .estado-titulo {
+    font-size: 24px; /* Reduce el tamaño del título */
+  }
+
+  .progress-container {
+    max-width: 100%; /* Ocupa todo el ancho del contenedor */
+    margin: 0 auto;
+  }
+
+  .progress-bar {
+    height: 20px; /* Reduce la altura de la barra */
+  }
+
+  .progress-labels {
+    display: flex;
+    justify-content: space-between; /* Mantén las etiquetas en línea horizontal */
+    align-items: center;
+    gap: 5px; /* Añade espacio entre los elementos */
+    flex-wrap: nowrap; /* No permitas que se coloquen uno debajo del otro */
+    overflow-x: auto; /* Permite el desplazamiento horizontal si es necesario */
+  }
+
+  .progress-label {
+    flex: 1; /* Ajusta el ancho de cada etiqueta para que se distribuyan uniformemente */
+    text-align: center;
+  }
+
+  .progress-label span {
+    font-size: 12px; /* Reduce el tamaño del texto */
+  }
+
+  .estado-image {
+    width: 40px; /* Reduce el tamaño de las imágenes */
+    height: 40px;
+  }
+
+  .estado-image.active-image {
+    transform: scale(1.2); /* Reduce el resaltado en pantallas pequeñas */
+  }
+
+  .tiempo-estimado-texto {
+    font-size: 16px; /* Reduce el tamaño del texto del tiempo estimado */
+    margin-top: 10px; /* Reduce la separación superior */
+  }
+}
+
+/* Ajustes para pantallas extra pequeñas */
+@media (max-width: 690px) {
+  .progress-labels {
+    flex-direction: column; /* Cambia la disposición de las etiquetas */
+    align-items: center; /* Centra las etiquetas */
+    margin-top: 20px;
+  }
+
+  .progress-labels {
+    margin-top: 10px; /* Reduce aún más el espacio superior */
+  }
+
+  .progress-label span {
+    font-size: 12px; /* Reduce aún más el texto */
+  }
+
+  .estado-image {
+    width: 40px; /* Tamaño más pequeño para pantallas muy pequeñas */
+    height: 40px;
+  }
+}
+

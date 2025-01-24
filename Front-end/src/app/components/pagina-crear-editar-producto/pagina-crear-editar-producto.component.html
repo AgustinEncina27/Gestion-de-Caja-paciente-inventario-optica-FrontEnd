@@ -6,6 +6,22 @@
 
         <!-- Primera fila -->
         <div class="row mb-3">
+          <!-- Modelo -->
+          <div class="col-md-6">
+            <label for="InputModelo" class="form-label fw-bold">Modelo</label>
+            <input type="text" class="form-control" id="InputModelo" [(ngModel)]="producto.modelo" name="modelo" required>
+          </div>
+
+          
+          <!-- Descripción -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold" for="InputDescipcion">Descripción</label>
+            <textarea type="text" class="form-control" id="InputDescipcion" [(ngModel)]="producto.descripcion" name="descripcion"></textarea>
+          </div>
+        </div>
+
+        <!-- Segunda fila -->
+        <div class="row mb-3">
           <!-- Marca -->
           <div class="col-md-6">
             <p class="form-label fw-bold">Marca</p>
@@ -20,6 +36,40 @@
             </div>
           </div>
 
+          <!-- Material -->
+          <div class="col-md-6">
+            <p class="form-label fw-bold">Material</p>
+            <div class="border overflow-auto p-2 rounded bg-white" style="height: 200px;">
+              <div class="form-check mx-1" *ngFor="let materialProducto of materialesProducto">
+                <input class="form-check-input" type="radio" name="materialProducto" [id]="+materialProducto.id+'materialProducto'" 
+                       (change)="selecionMaterial(materialProducto)" [checked]="materialProductoSeleccionado(materialProducto)">
+                <label class="form-check-label" [for]="+materialProducto.id+'materialProducto'">
+                  {{materialProducto.nombre}}
+                </label>
+              </div>
+            </div>
+          </div>        
+        </div>
+
+        
+
+        <!-- Tercera fila -->
+        <div class="row mb-3">
+          <!-- Costo -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold" for="InputCosto">Costo</label>
+            <input type="number" class="form-control" id="InputCosto" [(ngModel)]="producto.costo" name="costo" 
+                   (change)="calcularPrecio(producto.costo)" >
+          </div>
+          <!-- Precio -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold" for="InputPrecio">Precio</label>
+            <input type="number" class="form-control" id="InputPrecio" [(ngModel)]="producto.precio" name="precio" required>
+          </div>
+        </div>
+
+        <!-- Cuarta fila -->
+        <div class="row mb-3">
           <!-- Locales y Stock -->
           <div class="col-md-6 mt-3">
             <p class="form-label fw-bold">Locales y Stock</p>
@@ -45,43 +95,27 @@
                 [disabled]="!isLocalSelected(local)">
             </div>
           </div>
-        </div>
-
-        <!-- Segunda fila -->
-        <div class="row mb-3">
-          <!-- Modelo -->
+         <!-- Proveedores -->
           <div class="col-md-6">
-            <label for="InputModelo" class="form-label">Modelo</label>
-            <input type="text" class="form-control" id="InputModelo" [(ngModel)]="producto.modelo" name="modelo" required>
-          </div>
-          <!-- Material -->
-          <div class="col-md-6">
-            <label class="form-label" for="InputMaterial">Material</label>
-            <input type="text" class="form-control" id="InputMaterial" [(ngModel)]="producto.material" name="material" required>
-          </div>
-        </div>
-
-        <!-- Tercera fila -->
-        <div class="row mb-3">
-          <!-- Costo -->
-          <div class="col-md-6">
-            <label class="form-label" for="InputCosto">Costo</label>
-            <input type="number" class="form-control" id="InputCosto" [(ngModel)]="producto.costo" name="costo" 
-                   (change)="calcularPrecio(producto.costo)" required>
-          </div>
-          <!-- Precio -->
-          <div class="col-md-6">
-            <label class="form-label" for="InputPrecio">Precio</label>
-            <input type="number" class="form-control" id="InputPrecio" [(ngModel)]="producto.precio" name="precio" required>
-          </div>
-        </div>
-
-        <!-- Cuarta fila -->
-        <div class="row mb-3">
-          <!-- Descripción -->
-          <div class="col-md-6">
-            <label class="form-label" for="InputDescipcion">Descripción</label>
-            <textarea type="text" class="form-control" id="InputDescipcion" [(ngModel)]="producto.descripcion" name="descripcion"></textarea>
+            <p><label class="form-label fw-bold" for="InputProveedor">Proveedores</label></p>
+            <div 
+              class="border overflow-auto rounded bg-white" 
+              style="max-height: 200px;">
+              <div class="form-check m-1" *ngFor="let proveedor of proveedores">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  [id]="+proveedor.id+'proveedor'"   
+                  [checked]="isProveedorSelectedInCheckBox(proveedor)" 
+                  (change)="toggleProveedorSelection(proveedor)" 
+                  name="proveedor{{proveedor.id}}">
+                <label 
+                  class="form-check-label" 
+                  [for]="+proveedor.id+'proveedor'">
+                  {{proveedor.nombre}}
+                </label>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -89,7 +123,7 @@
         <div class="row mb-3">
           <!-- Género -->
           <div class="col-md-6">
-            <label for="InputModelo" class="form-label">Género</label>
+            <label for="InputModelo" class="form-label fw-bold">Género</label>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="genero" id="hombreGenero" 
                      (change)="selecionGenero('Hombre')" [checked]="generoSeleccionado('Hombre')">
@@ -109,7 +143,7 @@
 
           <!-- Categoría -->
           <div class="col-md-6">
-            <p><label class="form-label" for="InputCategoria">Categoría</label></p>
+            <p><label class="form-label fw-bold" for="InputCategoria">Categoría</label></p>
             <div class="form-check m-1" *ngFor="let categoria of categorias">
               <input class="form-check-input" type="checkbox" [id]="+categoria.id+'categoria'"   
                      [checked]="isCategorySelectedInCheckBox(categoria)" 
@@ -130,8 +164,10 @@
             [disabled]="!productoForm.form.valid  
             || !(localSeleccionados.size>0) 
             || marca.id===undefined 
+            || materialProducto.id===undefined 
             || !genero 
-            || !(selectedCategoriesCheckbox.length>0)"
+            || !(selectedCategoriesCheckbox.length>0)
+            || !(selectedProveedoresCheckbox.length>0)"
             >
             Crear Producto
           </button>
@@ -145,8 +181,10 @@
             [disabled]="!productoForm.form.valid  
             || !(localSeleccionados.size>0) 
             || marca.id===undefined 
+            || materialProducto.id===undefined 
             || !genero 
-            || !(selectedCategoriesCheckbox.length>0)"
+            || !(selectedCategoriesCheckbox.length>0)
+            || !(selectedProveedoresCheckbox.length>0)"
             >
             Editar Producto
           </button>

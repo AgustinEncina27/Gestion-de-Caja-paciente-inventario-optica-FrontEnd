@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/services/auth.service';
-import swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -19,14 +19,14 @@ export class LoginComponent {
   
   ngOnInit(){
     if(this.authService.isAuthenticated()){
-      swal.fire('Login', `Hola ${this.authService.user.username}, Ya estas autenticado`,'info');
+      Swal.fire('LOGIN', `Hola ${this.authService.user.username}, Ya estas autenticado`,'info');
       this.router.navigate(['/inicio']);
     }
   }
 
   login(){
     if(this.user.username==null||this.user.password==null){
-      swal.fire('Error Login','El usuario y la contraseña estan vacios!','error');
+      Swal.fire('EERROR LOGIN','El usuario y la contraseña estan vacios!','error');
       return;
     }
 
@@ -37,10 +37,10 @@ export class LoginComponent {
 
         let user= this.authService.user;
         this.router.navigate(['/inicio']);
-        swal.fire('Login',`Hola ${user.username},has iniciado sesión correctamente`,'success');
+        Swal.fire('LOGIN',`Hola ${user.username},has iniciado sesión correctamente`,'success');
       },error=>{
         if(error.status==400){
-          swal.fire('Error Login','el usuario y contraseña son incorrectos','error');
+          Swal.fire('ERROR LOGIN','el usuario y contraseña son incorrectos','error');
         }
       }
     )

@@ -86,3 +86,29 @@
   cursor: pointer;
 }
 
+.metodo-cobro-col {
+  width: 20%; /* O el porcentaje o tamaño deseado */
+  min-width: 200px; /* Tamaño mínimo para que no colapse */
+  max-width: 300px; /* Tamaño máximo para que no crezca demasiado */
+  text-align: left; /* Opcional: Alinear el contenido */
+}
+
+.metodo-cobro-col ul {
+  margin: 0; /* Elimina márgenes internos */
+  padding: 0; /* Elimina el padding si lo necesitas */
+}
+
+.metodo-cobro-col {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fecha-col {
+  min-width: 100px; /* Tamaño mínimo para la columna */
+  max-width: 150px; /* Tamaño máximo para evitar que sea demasiado ancha */
+  white-space: nowrap; /* Evita que el texto salte a la siguiente línea */
+  text-align: center; /* Centra el texto, opcional */
+  overflow: hidden; /* Asegura que no desborde */
+  text-overflow: ellipsis; /* Agrega puntos suspensivos si es necesario */
+}

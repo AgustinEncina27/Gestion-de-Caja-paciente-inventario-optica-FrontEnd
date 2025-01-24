@@ -1,0 +1,55 @@
+<div class="d-flex justify-content-center my-5 cont">
+    <div class="card bg-light text-dark shadow-sm" style="width: 80%; border: 1px solid #ddd;">
+      <!-- Encabezado -->
+      <div class="card-header text-white fw-bold" style="background-color: #f57c42;">
+        {{titulo}}
+      </div>
+      <div class="card-body">
+        <!-- Lista de Materiales -->
+        <div class="mb-3 mx-3 group mt-3">
+          <p id="listaMaterialesProducto" class="form-label fw-bold">Lista de materiales</p>
+          <div class="scrollable-container">
+            <div class="form-check" *ngFor="let materialProducto of materialesProducto">
+              <input class="form-check-input" type="radio" name="flexRadioDefault" [id]="materialProducto.id"
+                     (change)="toggleMaterialProductoSelection(materialProducto)">
+              <label class="form-check-label" [for]="materialProducto.id">
+                {{materialProducto.nombre}}
+              </label>
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline-secondary mt-3" (click)="limpiarSeleccion();">
+            Limpiar selección
+          </button>
+        </div>  
+  
+        <!-- Formulario -->
+        <form #materialProductoForm="ngForm">
+          <!-- Nombre del Material -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label for="InputMaterialProducto" class="form-label fw-bold">Nombre del Material</label>
+              <input type="text" class="form-control" id="InputMaterialProducto" [(ngModel)]="materialProducto.nombre" 
+                     name="materialProducto" required>
+            </div>
+          </div>
+  
+          <!-- Botones -->
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success me-2" (click)="crearMaterialProducto()" 
+                    [disabled]="!materialProductoForm.form.valid || materialProducto.id!=null">
+              Crear Material
+            </button>
+            <button type="submit" class="btn btn-primary me-2" (click)="editarMaterialProducto()" 
+                    [disabled]="materialProducto.id==null">
+              Editar Material
+            </button>
+            <button type="submit" class="btn btn-danger" (click)="eliminarMaterialProducto()" 
+                    [disabled]="materialProducto.id==null">
+              Eliminar Material
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

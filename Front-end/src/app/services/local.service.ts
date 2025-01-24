@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map, tap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 import { Local } from '../models/local';
 
 import { URL_BACKEND } from '../config/config';
@@ -24,11 +24,11 @@ export class LocalService{
       catchError(e=>{
         if (e.status == 400) {
           let error = e.error.errors.join(" ")
-          swal.fire("Error al crear el local",error,'error');
+          Swal.fire("ERROR AL CREAR EL LOCAL",error,'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+          Swal.fire(e.error.mensaje,e.error.error,'error');
         }
         return throwError(() => e);
       })
@@ -42,11 +42,11 @@ export class LocalService{
 
         if (e.status == 400) {
           let error = e.error.errors.join(" ")
-          swal.fire("Error al actualizar el local",error,'error');
+          Swal.fire("ERROR AL ACTUALIZAR EL LOCAL",error,'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+          Swal.fire(e.error.mensaje,e.error.error,'error');
         }
         return throwError(() => e);
       })
@@ -55,14 +55,25 @@ export class LocalService{
 
   eliminarLocal(id:number): Observable<any>{
     return this.http.delete<any>(`${this.urlEndPointLocal}/${id}`).pipe(
-      catchError(e=>{
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          swal.fire("Error al eliminar el local",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje,e.error.error,'error');
+      catchError(e => {
+        let error = "";
+    
+        switch (e.status) {
+          case 400:
+            error = e.error.errors.join(" ");
+            Swal.fire("ERROR AL ELIMINAR EL LOCAL", error, 'error');
+            break;
+    
+          case 500:
+            Swal.fire("ERROR AL ELIMINAR EL LOCAL", "Existen Movimientos en la Caja o productos que poseen este local. Por favor elimine esos movimientos o productos para continuar", 'error');
+            break;
+    
+          default:
+            if (e.error.mensaje) {
+              console.error(e.error.mensaje);
+              Swal.fire(e.error.mensaje, e.error.error, 'error');
+            }
+            break;
         }
         return throwError(() => e);
       })

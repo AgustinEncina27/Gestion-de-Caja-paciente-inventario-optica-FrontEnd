@@ -14,10 +14,13 @@ import { PaginaGestionarLocalesComponent } from './components/pagina-gestionar-l
 import { PaginaPoliticaEnvioComponent } from './components/pagina-politica-envio/pagina-politica-envio.component';
 import { PaginaPoliticaGarantiaComponent } from './components/pagina-politica-garantia/pagina-politica-garantia.component';
 import { PaginaLimpiezaComponent } from './components/pagina-limpieza/pagina-limpieza.component';
+import { PaginaEstadoMovimientoComponent } from './components/pagina-estado-movimiento/pagina-estado-movimiento.component';
 import { PaginaGestionarPacientesComponent } from './components/pagina-gestionar-pacientes/pagina-gestionar-pacientes.component';
 import { PaginaGestionarCajaComponent } from './components/pagina-gestionar-caja/pagina-gestionar-caja.component';
 import { PaginaGestionarMetodosPagosComponent } from './components/pagina-gestionar-metodoPago/pagina-gestionar-metodoPago.component';
 import { PaginaCrearEditarMovimientoComponent } from './components/pagina-crear-editar-movimiento/pagina-crear-editar-movimiento.component';
+import { PaginaGestionarMaterialProductoComponent } from './components/pagina-gestionar-material-producto/pagina-gestionar-material-producto.component';
+import { PaginaGestionarProveedoresComponent } from './components/pagina-gestionar-proveedores/pagina-gestionar-proveedores.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'/inicio', pathMatch:'full'},
@@ -35,11 +38,16 @@ const routes: Routes = [
   {path:'crearPaciente',component: PaginaCrearEditarPacienteComponent},
   {path:'editarProducto/:id',component: PaginaCrearEditarProductoComponent},
   {path:'editarPaciente/:id',component: PaginaCrearEditarPacienteComponent},
+  {path:'editarMovimiento/:id',component: PaginaCrearEditarMovimientoComponent},
+  {path:'crearMovimiento/:pacienteId',component: PaginaCrearEditarMovimientoComponent},
   {path:'adminitrarCategoria',component: PaginaGestionarCategoriasComponent},
+  {path:'adminitrarProveedor',component: PaginaGestionarProveedoresComponent},
   {path:'adminitrarMarca',component: PaginaGestionarMarcasComponent},
+  {path:'adminitrarMaterial',component: PaginaGestionarMaterialProductoComponent},
   {path:'adminitrarMetodoPago',component: PaginaGestionarMetodosPagosComponent},
   {path:'adminitrarLocal',component: PaginaGestionarLocalesComponent},
   {path:'adminitrarPaciente',component: PaginaGestionarPacientesComponent},
+  {path:'estadoCompra/:id',component: PaginaEstadoMovimientoComponent},
   {path:'adminitrarCaja',component: PaginaGestionarCajaComponent},
   {path:'visitanos',component: PaginaVisitanosComponent},
   {path:'login',component: LoginComponent},

@@ -3,7 +3,7 @@ import { Movimiento } from '../models/movimiento';
 import { Observable, catchError, map, tap, throwError } from 'rxjs';
 import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/http';
 
-import swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 import { URL_BACKEND } from '../config/config';
 
 @Injectable()
@@ -17,11 +17,11 @@ export class MovimientoService {
       catchError((e) => {
         if (e.status === 400) {
           const error = e.error.errors.join(' ');
-          swal.fire('Error al obtener el movimiento', error, 'error');
+          Swal.fire('ERROR AL OBTENER EL MOVIMIENTO', error, 'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje, e.error.error, 'error');
+          Swal.fire(e.error.mensaje, e.error.error, 'error');
         }
         return throwError(() => e);
       })
@@ -40,11 +40,11 @@ export class MovimientoService {
       catchError((e) => {
         if (e.status === 400) {
           const error = e.error.errors.join(' ');
-          swal.fire('Error al crear el movimiento', error, 'error');
+          Swal.fire('ERROR AL CREAR EL MOVIMIENTO', error, 'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje, e.error.error, 'error');
+          Swal.fire(e.error.mensaje, e.error.error, 'error');
         }
         return throwError(() => e);
       })
@@ -57,11 +57,11 @@ export class MovimientoService {
       catchError((e) => {
         if (e.status === 400) {
           const error = e.error.errors.join(' ');
-          swal.fire('Error al actualizar el movimiento', error, 'error');
+          Swal.fire('ERROR AL ACTUALIZAR EL MOVIMIENTO', error, 'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje, e.error.error, 'error');
+          Swal.fire(e.error.mensaje, e.error.error, 'error');
         }
         return throwError(() => e);
       })
@@ -73,23 +73,16 @@ export class MovimientoService {
       catchError((e) => {
         if (e.status === 400) {
           const error = e.error.errors.join(' ');
-          swal.fire('Error al eliminar el movimiento', error, 'error');
+          Swal.fire('ERROR AL ELIMINAR EL MOVIMIENTO', error, 'error');
         }
         if (e.error.mensaje) {
           console.error(e.error.mensaje);
-          swal.fire(e.error.mensaje, e.error.error, 'error');
+          Swal.fire(e.error.mensaje, e.error.error, 'error');
         }
         return throwError(() => e);
       })
     );
   }
-
-  getMovimientosPorTipo(tipo: string, page: number): Observable<any> {
-    return this.http.get(`${this.urlEndPointMovimiento}/buscar/tipo?tipo=${tipo}&page=${page}`).pipe(
-      tap((response: any) => (response.content as Movimiento[]))
-    );
-  }
-
 
   getMovimientosEntreFechas(fechaInicio: string, fechaFin: string, page: number): Observable<any> {
     return this.http.get(`${this.urlEndPointMovimiento}/buscar/entre-fechas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&page=${page}`).pipe(
@@ -99,17 +92,6 @@ export class MovimientoService {
 
   getTotales(idLocal: number): Observable<{ [key: string]: number }> {
     return this.http.get<{ [key: string]: number }>(`${this.urlEndPointMovimiento}/totales?idLocal=${idLocal}`);
-  }
-
-  getMovimientosPorLocalPaginated(idLocal: number, page: number): Observable<any> {
-    return this.http.get(`${this.urlEndPointMovimiento}/local/${idLocal}/page/${page}`).pipe(
-      tap((response: any) => (response.content as Movimiento[])),
-      catchError((e) => {
-        console.error('Error al obtener movimientos por local y paginados', e);
-        swal.fire('Error', 'No se pudieron obtener los movimientos paginados por local.', 'error');
-        return throwError(() => e);
-      })
-    );
   }
 
   getMovimientosFiltrados(filtros: any, page: number): Observable<any> {
@@ -122,5 +104,10 @@ export class MovimientoService {
     if (filtros.metodoPago) params = params.set('metodoPago', filtros.metodoPago);
 
     return this.http.get<any>(`${this.urlEndPointMovimiento}/filtrar`, { params });
-}
+ }
+
+  generarReporteMovimiento(idMovimiento: number): Observable<Blob> {
+    const url = `${this.urlEndPointMovimiento}/reporte/${idMovimiento}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }

@@ -1,17 +1,21 @@
 import { Paciente } from "./paciente";
 import { DetalleMovimiento } from "./detalleMovimiento";
-import { MetodoPago } from "./metodoPago";
 import { Local } from "./local";
+import { CajaMovimiento } from "./cajaMovimiento"; // Nueva clase para pagos
+import { DetalleAdicional } from "./detalleAdicional";
 
 export class Movimiento {
   id!: number;
-  local!: Local;
   tipoMovimiento!: string; // ENTRADA o SALIDA
-  fecha!: Date;
+  fecha!: string;
   total!: number;
+  descuento!: number;
   totalImpuesto!: number;
   descripcion?: string; // Opcional
-  paciente!: Paciente; // Relación con Paciente
-  detalles!: DetalleMovimiento[]; // Lista de detalles del movimiento
-  metodoPago!: MetodoPago; // Forma de pago utilizada en el movimiento
+  paciente: Paciente | null = null; // Relación con Paciente
+  detallesAdicionales: DetalleAdicional[] | null = null; // Lista de detalles del movimiento
+  detalles: DetalleMovimiento[] | null = null; // Lista de detalles del movimiento
+  cajaMovimientos!: CajaMovimiento[]; // Lista de pagos asociados al movimiento
+  local!: Local;
+  estadoMovimiento: string | null = null; // Puede ser una cadena o nulo
 }
