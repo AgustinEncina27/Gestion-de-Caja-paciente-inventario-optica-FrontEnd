@@ -227,7 +227,7 @@ export class ListarProductoComponent {
       return;
     }
   
-    this.productoService.getProductosPorModelo(this.modeloSeleccionado).subscribe({
+    this.productoService.getProductosPorModeloNoEstricto(this.modeloSeleccionado).subscribe({
       next: (productos) => {
         if (productos.length > 0) {
           this.productos = productos; // Actualiza los productos mostrados
