@@ -112,3 +112,22 @@
   overflow: hidden; /* Asegura que no desborde */
   text-overflow: ellipsis; /* Agrega puntos suspensivos si es necesario */
 }
+
+.ficha-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px; /* Espaciado entre ficha y lista */
+}
+
+.ficha {
+  font-weight: bold;
+  white-space: nowrap; /* Evita que se divida en varias líneas */
+}
+
+.detalles {
+  list-style-type: disc;
+  padding-left: 15px;
+  margin: 0;
+}
+
