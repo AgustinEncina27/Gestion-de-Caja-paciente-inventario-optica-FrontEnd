@@ -132,7 +132,11 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
   }
 
   calcularGraduacionCerca(esferico:number,adicion:number){
-    this.nuevaGraduacion.cerca= esferico+adicion;
+    if(adicion !=0 ){
+      this.nuevaGraduacion.cerca= esferico+adicion;
+    }else{
+      this.nuevaGraduacion.cerca=0;
+    }
   }
 
   //funciones MODAL
