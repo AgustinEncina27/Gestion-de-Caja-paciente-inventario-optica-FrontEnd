@@ -123,6 +123,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
         this.fichaPaciente = this.movimiento.paciente.ficha || 0; // Si `ficha` es undefined, asigna 0
         this.pacienteEncontrado = this.movimiento.paciente; // Mostrar el paciente encontrado
       }
+      this.calcularDeuda();
 
     });
   }
@@ -430,7 +431,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       this.deuda = this.movimiento.total;
       return;
     }
-  
+    
     const totalPagado = this.movimiento.cajaMovimientos.reduce((acc, mov) => acc + mov.monto, 0);
     if((this.movimiento.total - totalPagado)<0){
       this.deuda=0;

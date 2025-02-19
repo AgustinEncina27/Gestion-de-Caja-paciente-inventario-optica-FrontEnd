@@ -253,9 +253,9 @@
     </div>
 
     <!-- Total -->
-    <div class="mb-3" *ngIf="movimiento.tipoMovimiento === 'SALIDA' || movimiento.tipoMovimiento === 'ENTRADA'">
+    <div class="mb-3" *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
       <label for="total" class="form-label">Deuda</label>
-      <input type="number" class="form-control" [(ngModel)]="deuda" name="deuda" />
+      <input type="number" class="form-control" [(ngModel)]="deuda" name="deuda" disabled/>
     </div>
 
     <!-- Descuento -->
