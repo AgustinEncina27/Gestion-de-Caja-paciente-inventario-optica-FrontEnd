@@ -8,6 +8,7 @@ import { Movimiento } from 'src/app/models/movimiento';
 import { MovimientoService } from 'src/app/services/movimiento.service';
 import { MetodoPagoService } from 'src/app/services/metodoPago.service';
 import { MetodoPago } from 'src/app/models/metodoPago';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-listar-movimiento',
@@ -33,12 +34,15 @@ export class ListarMovimientoComponent {
  constructor(private movimientoService: MovimientoService,
   private localService: LocalService,
   public authService: AuthService,
+  private activatedRoute: ActivatedRoute,
+  private router: Router,
   private metodoPagoService: MetodoPagoService,
   ){
   }
 
   ngOnInit(): void{
     this.cargarLocales();
+    this.cargarFiltroConFicha();
     this.cargarMetodosPago();
     this.aplicarFiltros();
   }
@@ -46,6 +50,19 @@ export class ListarMovimientoComponent {
   cargarLocales(){
     this.localService.getLocales().subscribe(data => {
       this.locales = data; // Almacena los locales en el array
+    });
+  }
+
+  cargarFiltroConFicha() {
+    this.activatedRoute.paramMap.subscribe((params) => {
+      const pacienteId = params.get('pacienteId'); // No conviertas a número aún
+      const rutaActual = this.router.url; // Obtiene la ruta actual
+    
+      if (rutaActual.includes("adminitrarCajaPaciente")) {
+        if (pacienteId) {
+          this.nroFicha = pacienteId.toString();
+        } 
+      }
     });
   }
 
@@ -166,5 +183,14 @@ export class ListarMovimientoComponent {
         Swal.fire('ERROR', 'No se pudo generar el PDF.', 'error');
       },
     });
+  }
+
+  esPagoTotal(movimiento: any): boolean {
+    if (!movimiento.cajaMovimientos || movimiento.cajaMovimientos.length === 0) {
+      return false;
+    }
+  
+    const totalPagado = movimiento.cajaMovimientos.reduce((sum: number, caja: any) => sum + caja.monto, 0);
+    return totalPagado >= movimiento.total;
   }
 }

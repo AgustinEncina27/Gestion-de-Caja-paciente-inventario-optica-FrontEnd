@@ -59,20 +59,24 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <!-- Botón para abrir el modal -->
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#graduacionesModal">
+            <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#graduacionesModal">
               Gestionar Graduaciones
             </button>
+        
+            <!-- Botón para ir a los movimientos de caja del paciente -->
+            <button type="button" class="btn btn-primary" [routerLink]="['/adminitrarCajaPaciente', paciente.id]" *ngIf="paciente?.id != null">
+              Ver compras
+            </button>
           </div>
+        
           <!-- Botón para registrar un movimiento -->
           <div class="col-md-6" *ngIf="paciente?.id != null">
-            <button 
-              type="button" 
-              class="btn btn-secondary" 
-              [routerLink]="['/crearMovimiento', paciente.id]">
+            <button type="button" class="btn btn-success" [routerLink]="['/crearMovimiento', paciente.id]">
               Registrar un movimiento
             </button>
           </div>
         </div>
+        
 
         <!-- Quinta fila -->
         <div class="row mb-4">
@@ -110,7 +114,7 @@
 
         <!-- Botones -->
         <div class="text-center mt-4">
-          <button type="submit" class="btn btn-primary me-2" (click)="crearPaciente()" 
+          <button type="submit" class="btn btn-success me-2" (click)="crearPaciente()" 
                   *ngIf="paciente.id==null" 
                   [disabled]="!pacienteForm.form.valid || local.id===undefined || !genero">
             Crear Paciente

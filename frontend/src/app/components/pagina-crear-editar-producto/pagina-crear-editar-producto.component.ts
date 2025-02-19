@@ -40,6 +40,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   genero:string='';
   localStocks: { [localId: number]: number } = {}; // Mapa para guardar el stock por local
   localSeleccionados: Set<number> = new Set(); // Conjunto de IDs de locales seleccionados
+  isLoading = false; // Variable para la pantalla de carga
 
   constructor(
     private productoService: ProductoService,
@@ -137,11 +138,16 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
     this.producto.material = this.materialProducto;
     this.producto.creadoEn = new Date();
     this.producto.ultimaActualizacion = new Date();
-  
+    
+    this.isLoading = true; // Activar pantalla de carga
+
     this.productoService.createProducto(this.producto).subscribe(
       response => {
+        
+        this.isLoading = false; // Desactivar pantalla de carga
         Swal.fire('PRODUCTO CREADO', 'El producto ha sido guardado con éxito!', 'success');
         this.router.navigate(['/inicio']);
+        
       }
     );
   }
@@ -155,8 +161,12 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
     this.producto.material = this.materialProducto;
     this.producto.ultimaActualizacion = new Date();
     
+    this.isLoading = true; // Activar pantalla de carga
+
     this.productoService.updateProducto(this.producto).subscribe(
       response => {
+
+        this.isLoading = false; // Desactivar pantalla de carga
         Swal.fire('PRODUCTO EDITADO', 'Se ha editado con éxito!', 'success');
         this.router.navigate(['/inicio']);
       }

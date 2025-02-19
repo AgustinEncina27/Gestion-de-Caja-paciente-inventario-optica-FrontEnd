@@ -44,6 +44,10 @@ export class ProductoService {
     return this.http.get<Producto[]>(`${this.urlEndPointProducto}/modelo/${modelo}`)
   }
 
+  getProductosPorMarcaNoEstricto(marca: string): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${this.urlEndPointProducto}/marca/${marca}`)
+  }
+
   getProductosByGeneroAndMarcaAndCategoria(genero:string,marcaid:number,categoriaid:number,page:number): Observable<any>{
     return this.http.get(`${this.urlEndPointProducto}/page/${genero}/${marcaid}/${categoriaid}/${page}`).pipe(
       tap((response:any)=> (response.content as Producto[])),

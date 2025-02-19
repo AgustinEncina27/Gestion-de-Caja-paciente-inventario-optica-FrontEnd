@@ -8,9 +8,21 @@
         type="text" 
         id="modeloInput" 
         class="form-control" 
-        placeholder="Ingresa el código del modelo..." 
+        placeholder="Ingresa el modelo..." 
         [(ngModel)]="modeloSeleccionado">
       <button class="btn btn-primary" (click)="buscarProductoPorModelo()">Buscar</button>
+    </div>
+  </div>
+
+  <div *ngIf="authService.hasRole('ROLE_ADMIN')">
+    <div class="input-group">
+      <input 
+        type="text" 
+        id="marcaInput" 
+        class="form-control" 
+        placeholder="Ingresa la marca..." 
+        [(ngModel)]="marcaSeleccionado">
+      <button class="btn btn-primary" (click)="buscarProductoPorMarca()">Buscar</button>
     </div>
   </div>
   <div class="dropdown" *ngIf="!authService.hasRole('ROLE_ADMIN')">
@@ -158,7 +170,7 @@
     </table>
   </div>
 </div>
-<paginator-nav *ngIf="paginador && modeloSeleccionado===''" [paginador]="paginador" [url]="url" [categoriaId]="categoriaId" [marcaId]="marcaId" [genero]="genero"></paginator-nav>
+<paginator-nav *ngIf="paginador && modeloSeleccionado==='' && marcaSeleccionado===''" [paginador]="paginador" [url]="url" [categoriaId]="categoriaId" [marcaId]="marcaId" [genero]="genero"></paginator-nav>
 
 <!-- Modal para seleccionar local -->
 <div

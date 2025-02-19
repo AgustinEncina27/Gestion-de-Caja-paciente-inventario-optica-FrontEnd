@@ -36,6 +36,9 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   productoSeleccionado: Producto | null = null;
   marcaSeleccionada: Marca | null = null;
   metodoSalida: MetodoPago= new MetodoPago();
+  isLoading = false; // Variable para la pantalla de carga
+  deuda: number = 0; 
+
 
   constructor(
     private movimientoService: MovimientoService,
@@ -231,45 +234,71 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   }
 
   guardarMovimiento(): void {
-    if(this.advertenciaMonto()){
+    if (this.advertenciaMonto() && this.movimiento.tipoMovimiento === 'ENTRADA') {
       return;
     }
-    
+
     this.movimiento.detalles = this.detalles;
 
-    if(this.movimiento.tipoMovimiento==='SALIDA'){
-     this.esMovimientoSalida()
+    if (this.movimiento.tipoMovimiento === 'SALIDA') {
+      this.esMovimientoSalida(this.movimiento.id);
     }
+
+    this.isLoading = true; // Activar pantalla de carga
 
     if (this.movimiento.id) {
       this.movimientoService.updateMovimiento(this.movimiento).subscribe({
         next: () => {
+          
+          this.isLoading = false; // Desactivar pantalla de carga
           Swal.fire('MOVIMIENTO ACTUALIZADO', 'El movimiento ha sido actualizado con éxito', 'success');
           this.router.navigate(['/adminitrarCaja']);
+          
         },
-        error: () => Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error')
+        error: () => {
+          this.isLoading = false; // Desactivar pantalla de carga en caso de error
+          Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
+        }
       });
     } else {
       this.movimientoService.createMovimiento(this.movimiento).subscribe({
         next: () => {
+          
+          this.isLoading = false;
           Swal.fire('MOVIMIENTO CREADO', 'El movimiento ha sido creado con éxito', 'success');
           this.router.navigate(['/adminitrarCaja']);
+          
         },
-        error: () => Swal.fire('ERROR', 'No se pudo crear el movimiento', 'error')
+        error: () => {
+          this.isLoading = false;
+          Swal.fire('ERROR', 'No se pudo crear el movimiento', 'error');
+        }
       });
     }
   }
 
   //Rellena los demas campos si el movimiento es saldia
-  esMovimientoSalida(){
-    this.movimiento.estadoMovimiento=null;
-    const nuevoPago: CajaMovimiento = new CajaMovimiento();
-    nuevoPago.monto=this.movimiento.total;
-    nuevoPago.montoImpuesto=this.movimiento.total;
-    nuevoPago.metodoPago=this.metodoSalida;
+  esMovimientoSalida(idMovimiento : number){
     
-    this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
-    this.movimiento.cajaMovimientos.push(nuevoPago);
+    //si es editar
+    if(idMovimiento){
+      this.movimiento.estadoMovimiento=null;
+      this.movimiento.cajaMovimientos[0].metodoPago=this.metodoSalida;
+      this.movimiento.cajaMovimientos[0].monto=this.movimiento.total;
+      this.movimiento.cajaMovimientos[0].montoImpuesto=this.movimiento.total;
+      this.movimiento.cajaMovimientos[0].fecha=this.movimiento.fecha;
+    }else{
+      //si es crear
+      this.movimiento.estadoMovimiento=null;
+      const nuevoPago: CajaMovimiento = new CajaMovimiento();
+      nuevoPago.monto=this.movimiento.total;
+      nuevoPago.montoImpuesto=this.movimiento.total;
+      nuevoPago.metodoPago=this.metodoSalida;
+      nuevoPago.fecha=this.obtenerFechaHoy();
+
+      this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
+      this.movimiento.cajaMovimientos.push(nuevoPago);
+    }  
   }
 
   verificarCantidad(detalle: DetalleMovimiento): void {
@@ -377,6 +406,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     }, 0);
 
     this.movimiento.totalImpuesto=sumaMontosImpuesto;
+    this.calcularDeuda();
 
     if(this.advertenciaMonto()){
       return;
@@ -384,20 +414,37 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   }
 
   agregarPago(): void {
+    
     const nuevoPago: CajaMovimiento = new CajaMovimiento();
     nuevoPago.monto=0;
     nuevoPago.montoImpuesto=0;
     nuevoPago.metodoPago=this.metodosPago[0];
-    
+    nuevoPago.fecha=this.obtenerFechaHoy();
+
     this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
     this.movimiento.cajaMovimientos.push(nuevoPago);
+  }
+
+  calcularDeuda(): void {
+    if (!this.movimiento || !this.movimiento.cajaMovimientos) {
+      this.deuda = this.movimiento.total;
+      return;
+    }
+  
+    const totalPagado = this.movimiento.cajaMovimientos.reduce((acc, mov) => acc + mov.monto, 0);
+    if((this.movimiento.total - totalPagado)<0){
+      this.deuda=0;
+    }else{
+      this.deuda = this.movimiento.total - totalPagado;
+    }
   }
 
   eliminarPago(index: number): void {
     if (this.movimiento.cajaMovimientos) {
       this.movimiento.cajaMovimientos.splice(index, 1);
     }
-    this.calcularMontoImpuestoYAdviertenciaTotal()
+    this.calcularMontoImpuestoYAdviertenciaTotal();
+    this.calcularDeuda();
   }
 
   //seccion para manejar los detalles adicionales
@@ -420,7 +467,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     }
 
     this.advertenciaMonto();
-    
+    this.calcularDeuda();
   }
 
   advertenciaMonto(){
@@ -448,20 +495,21 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   }
 
   calcularTotalAdicional(): void {
-  const detallesAdicionales = this.movimiento.detallesAdicionales || [];
-  const detalles = this.detalles || [];
+    const detallesAdicionales = this.movimiento.detallesAdicionales || [];
+    const detalles = this.detalles || [];
 
-  const totalAdicional = detallesAdicionales.reduce(
-    (sum, detalle) => sum + detalle.subtotal,
-    0
-  );
+    const totalAdicional = detallesAdicionales.reduce(
+      (sum, detalle) => sum + detalle.subtotal,
+      0
+    );
 
-  const totalDetalles = detalles.reduce(
-    (sum, detalle) => sum + detalle.subtotal,
-    0
-  );
+    const totalDetalles = detalles.reduce(
+      (sum, detalle) => sum + detalle.subtotal,
+      0
+    );
 
-  this.movimiento.total = totalDetalles + totalAdicional;
+    this.movimiento.total = totalDetalles + totalAdicional;
+    this.calcularDeuda();
   }
 
   aplicarDescuento(descuento:number){
@@ -470,4 +518,9 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       this.movimiento.total=this.movimiento.total-(this.movimiento.total*(descuento/100))
     }
   }
+
+  volverAInicio() {
+    this.router.navigate(['/adminitrarCaja']); // Cambia '/inicio' por la ruta deseada
+  }
+
 }

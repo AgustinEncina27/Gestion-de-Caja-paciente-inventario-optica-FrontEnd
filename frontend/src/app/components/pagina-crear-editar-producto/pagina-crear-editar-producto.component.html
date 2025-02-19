@@ -153,12 +153,18 @@
           </div>
         </div>
 
+        <!-- Spinner de carga -->
+        <div *ngIf="isLoading" class="overlay">
+          <div class="spinner"></div>
+          <p>Guardando...</p>
+        </div>
+
         <!-- Botones -->
         <div class="text-center mt-4">
           <!-- Botón Crear Producto -->
           <button 
             type="submit" 
-            class="btn btn-primary me-2" 
+            class="btn btn-success me-2" 
             (click)="crearProducto()" 
             *ngIf="producto.id == null" 
             [disabled]="!productoForm.form.valid  

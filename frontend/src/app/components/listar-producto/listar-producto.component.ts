@@ -30,6 +30,7 @@ export class ListarProductoComponent {
  paginador: any;
  url:string='';
  modeloSeleccionado: string = ''; // Código del modelo ingresado
+ marcaSeleccionado: string = ''; // Código del modelo ingresado
  locales: Local[] = [];
  localSeleccionado: number | null = null;
 
@@ -226,6 +227,7 @@ export class ListarProductoComponent {
       Swal.fire('ERROR', 'Debes ingresar un código de modelo válido', 'warning');
       return;
     }
+    this.marcaSeleccionado='';
   
     this.productoService.getProductosPorModeloNoEstricto(this.modeloSeleccionado).subscribe({
       next: (productos) => {
@@ -244,8 +246,34 @@ export class ListarProductoComponent {
     });
   }
 
+  buscarProductoPorMarca(): void {
+    if (this.marcaSeleccionado.trim() === '') {
+      Swal.fire('ERROR', 'Debes ingresar una marca válida', 'warning');
+      return;
+    }
+    
+    this.modeloSeleccionado='';
+
+    this.productoService.getProductosPorMarcaNoEstricto(this.marcaSeleccionado).subscribe({
+      next: (productos) => {
+        if (productos.length > 0) {
+          this.productos = productos; // Actualiza los productos mostrados
+        } else {
+          Swal.fire('SIN RESULTADOS', 'No se encontraron productos con esa marca', 'info');
+        }
+      },
+      error: (err) => {
+        console.error('Error al buscar producto por marca', err);
+      },
+      complete: () => {
+        console.log('Búsqueda de productos por marca completada');
+      },
+    });
+  }
+
   limpiarFiltros() {
     this.modeloSeleccionado='';
+    this.marcaSeleccionado='';
     this.cargarProductos()
   }
 

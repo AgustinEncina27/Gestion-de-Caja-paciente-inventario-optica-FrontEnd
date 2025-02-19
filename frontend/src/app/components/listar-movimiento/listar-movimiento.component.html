@@ -82,11 +82,10 @@
         <tr>
           <th class="fecha-col">Fecha</th>
           <th>N° Ficha</th>
+          <th>Pagado</th>
           <th>Local</th>
           <th>Movimiento</th>
-          <th class="metodo-cobro-col">Método de Cobro</th>
           <th>Total de la compra</th>
-          <th>Total pagado descontando impuestos</th>
           <th>Estado de la Compra</th>
           <th *ngIf="authService.hasRole('ROLE_ADMIN')">Acciones</th>
         </tr>
@@ -96,17 +95,19 @@
         <tr *ngFor="let movimiento of movimientos">
           <td class="fecha-col">{{movimiento.fecha}}</td>
           <td>{{movimiento.paciente?.ficha}}</td>
+          <td>
+            <div *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
+              <span *ngIf="esPagoTotal(movimiento)" class="text-success ms-2">
+                ✔️
+              </span>
+              <span *ngIf="!esPagoTotal(movimiento)" class="text-danger ms-2">
+                ❌
+              </span>
+            </div>
+          </td>
           <td>{{movimiento.local.nombre}}</td>
           <td>{{movimiento.tipoMovimiento}}</td>
-          <td class="metodo-cobro-col">
-            <ul>
-              <li *ngFor="let cajaMovimiento of movimiento.cajaMovimientos">
-                {{ cajaMovimiento.metodoPago.nombre }} - {{ cajaMovimiento.montoImpuesto | currency }}
-              </li>
-            </ul>
-          </td>
           <td>{{movimiento.total}}</td>
-          <td>{{movimiento.totalImpuesto}}</td>
           <td>{{ movimiento.tipoMovimiento === 'ENTRADA' ? URL_FRONTEND+'/estadoCompra/' + movimiento.id : '' }}</td>
           <td *ngIf="authService.hasRole('ROLE_ADMIN')" class="text-center">
             <div class="d-flex justify-content-center">
