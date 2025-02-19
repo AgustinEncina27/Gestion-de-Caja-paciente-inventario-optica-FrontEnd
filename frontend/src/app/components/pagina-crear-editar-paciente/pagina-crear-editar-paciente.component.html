@@ -64,7 +64,7 @@
             </button>
         
             <!-- Botón para ir a los movimientos de caja del paciente -->
-            <button type="button" class="btn btn-primary" [routerLink]="['/adminitrarCajaPaciente', paciente.id]" *ngIf="paciente?.id != null">
+            <button type="button" class="btn btn-primary" [routerLink]="['/adminitrarCajaPaciente', paciente.ficha]" *ngIf="paciente?.id != null">
               Ver compras
             </button>
           </div>

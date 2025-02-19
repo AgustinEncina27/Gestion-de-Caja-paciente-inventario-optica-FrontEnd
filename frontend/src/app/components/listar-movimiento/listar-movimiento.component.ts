@@ -55,12 +55,12 @@ export class ListarMovimientoComponent {
 
   cargarFiltroConFicha() {
     this.activatedRoute.paramMap.subscribe((params) => {
-      const pacienteId = params.get('pacienteId'); // No conviertas a número aún
+      const pacienteFicha = params.get('pacienteFicha'); // No conviertas a número aún
       const rutaActual = this.router.url; // Obtiene la ruta actual
     
       if (rutaActual.includes("adminitrarCajaPaciente")) {
-        if (pacienteId) {
-          this.nroFicha = pacienteId.toString();
+        if (pacienteFicha) {
+          this.nroFicha = pacienteFicha.toString();
         } 
       }
     });

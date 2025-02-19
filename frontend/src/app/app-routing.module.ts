@@ -49,7 +49,7 @@ const routes: Routes = [
   {path:'adminitrarPaciente',component: PaginaGestionarPacientesComponent},
   {path:'estadoCompra/:id',component: PaginaEstadoMovimientoComponent},
   {path:'adminitrarCaja',component: PaginaGestionarCajaComponent},
-  {path:'adminitrarCajaPaciente/:pacienteId',component: PaginaGestionarCajaComponent},
+  {path:'adminitrarCajaPaciente/:pacienteFicha',component: PaginaGestionarCajaComponent},
   {path:'visitanos',component: PaginaVisitanosComponent},
   {path:'login',component: LoginComponent},
   { path: '**', redirectTo: '/inicio' }
