@@ -51,7 +51,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.movimiento.fecha = this.obtenerFechaHoy();
+    this.movimiento.fecha = this.obtenerFechaHoyConHora();
     this.cargarLocales();
     this.cargarMetodosPago();
     this.cargarMovimientoOPaciente();
@@ -63,6 +63,17 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     const month = String(hoy.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
     const day = String(hoy.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  obtenerFechaHoyConHora(): string {
+    const hoy = new Date();
+    const year = hoy.getFullYear();
+    const month = String(hoy.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
+    const day = String(hoy.getDate()).padStart(2, '0');
+    const hours = String(hoy.getHours()).padStart(2, '0');
+    const minutes = String(hoy.getMinutes()).padStart(2, '0');
+  
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
   cargarLocales(): void {
@@ -352,7 +363,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     let paciente =this.pacienteEncontrado
 
     this.movimiento.tipoMovimiento=tipoMovmiento ;
-    this.movimiento.fecha = this.obtenerFechaHoy();
+    this.movimiento.fecha = this.obtenerFechaHoyConHora();
     this.movimiento.total=0;
     this.movimiento.totalImpuesto=0;
     this.movimiento.descripcion='';

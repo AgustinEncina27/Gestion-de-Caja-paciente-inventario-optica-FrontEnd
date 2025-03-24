@@ -51,6 +51,6 @@
 </div>
 
 <!-- Lista de productos-->
-<app-listar-producto></app-listar-producto>
+<app-listar-producto *ngIf="authService.hasRole('ROLE_ADMIN')"></app-listar-producto>
 
 

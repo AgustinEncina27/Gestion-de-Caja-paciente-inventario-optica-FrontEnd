@@ -45,6 +45,7 @@ import { PaginaEstadoMovimientoComponent } from './components/pagina-estado-movi
 import { MaterialProductoService } from './services/materialProducto.service';
 import { PaginaGestionarMaterialProductoComponent } from './components/pagina-gestionar-material-producto/pagina-gestionar-material-producto.component';
 import { PaginaGestionarProveedoresComponent } from './components/pagina-gestionar-proveedores/pagina-gestionar-proveedores.component';
+import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagina-estadistica.component';
 
 
 
@@ -78,6 +79,7 @@ import { PaginaGestionarProveedoresComponent } from './components/pagina-gestion
     PaginaGestionarCajaComponent,
     PaginaCrearEditarMovimientoComponent,
     PaginaEstadoMovimientoComponent,
+    PaginaEstaditicaComponent,
     ListarMovimientoComponent
   ],
   imports: [

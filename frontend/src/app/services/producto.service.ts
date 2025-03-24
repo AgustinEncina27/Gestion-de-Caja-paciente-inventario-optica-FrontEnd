@@ -5,6 +5,8 @@ import { HttpClient} from '@angular/common/http';
 
 import Swal from 'sweetalert2';
 import { URL_BACKEND } from '../config/config';
+import { StockTotalSucursal } from '../dto/StockTotalSucursal';
+import { StockPorMaterial } from '../dto/StockPorMaterial';
 
 @Injectable()
 export class ProductoService {
@@ -63,6 +65,16 @@ export class ProductoService {
         return throwError(() => e);
       })
     )
+  }
+
+  obtenerStockTotalPorSucursal(): Observable<StockTotalSucursal[]> {
+    return this.http.get<StockTotalSucursal[]>(`${this.urlEndPointProducto}/stock-total-sucursal`);
+  }
+
+  obtenerStockPorMaterialYSucursal(localId: number): Observable<StockPorMaterial[]> {
+    return this.http.get<StockPorMaterial[]>(`${this.urlEndPointProducto}/stock-material`, {
+      params: { localId: localId.toString() }
+    });
   }
 
   createProducto(note:Producto): Observable<any>{

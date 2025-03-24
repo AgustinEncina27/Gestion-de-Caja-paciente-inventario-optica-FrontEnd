@@ -1,0 +1,111 @@
+<div class="nuestroCatalogo d-flex flex-wrap justify-content-around">
+  <p style="font-size: 50px; color: black;" class="fw-bold my-4">Estadísticas</p>
+</div>
+
+<!-- Filtros -->
+<div class="d-flex flex-wrap justify-content-evenly mb-4 filtros p-2">
+  <!-- Filtro por Local -->
+  <div class="input-group m-1" style="width: 300px;">
+    <select class="form-select" [(ngModel)]="localSeleccionado" >
+      <option value="0">Todos los locales</option>
+      <option *ngFor="let local of locales" [value]="local.id">{{ local.nombre }}</option>
+    </select>
+  </div>
+
+  <!-- Filtro por Fecha Inicio -->
+  <div class="form-floating m-1" style="width: 300px;">
+    <input type="date" class="form-control" id="fechaInicio" [(ngModel)]="fechaSeleccionadaInicio" placeholder="Fecha de Inicio">
+    <label for="fechaInicio">Fecha de Inicio</label>
+  </div>
+
+  <!-- Filtro por Fecha Final -->
+  <div class="form-floating m-1" style="width: 300px;">
+    <input type="date" class="form-control" id="fechaFin" [(ngModel)]="fechaSeleccionadaFin" placeholder="Fecha Fin">
+    <label for="fechaFin">Fecha Fin</label>
+  </div>
+
+  <!-- Botón Aplicar Filtros -->
+  <button class="btn btn-primary m-1" (click)="aplicarFiltros()">Aplicar Filtros</button>
+
+  <!-- Botón Limpiar Filtro -->
+  <button class="btn btn-secondary m-1" (click)="limpiarFiltros()">Limpiar Filtros</button>
+</div>
+
+<!-- Totales Dinámicos -->
+<div class="container text-center mb-4" *ngIf="authService.hasRole('ROLE_ADMIN')">
+  <div class="row justify-content-center">
+    <!-- Iterar sobre los totales -->
+    <div class="col-md-4 col-sm-6 col-12 mb-3" *ngFor="let key of getKeys(totales)">
+      <div class="card shadow-lg p-3">
+        <p class="fw-bold fs-4" style="color: #FB8747;">Total {{ key }}</p> <!-- Naranja personalizado -->
+        <div class="input-group">
+          <input
+            class="form-control text-center fw-bold fs-3"
+            [type]="mostrarTotales ? 'text' : 'password'"
+            [value]="totales[key] | currency"
+            readonly
+            style="height: 60px;"
+          />
+          <button class="btn" type="button" (click)="mostrarTotales = !mostrarTotales" style="background-color: #FB8747; border-color: #FB8747; color: white;">
+            <i [class]="mostrarTotales ? 'bi bi-eye-slash' : 'bi bi-eye'" style="color: white;"></i> <!-- Ícono en blanco -->
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container text-center mb-4" *ngIf="authService.hasRole('ROLE_ADMIN')">
+  <!-- Título principal -->
+  <h2 class="fw-bold mb-4" style="color: #FB8747;">Datos de cada Sucursal</h2>
+
+  <div class="table-responsive">
+    <table class="table table-bordered text-center">
+      <thead style="background-color: #FB8747; color: white;">
+        <tr>
+          <th>Sucursal</th>
+          <th>Cantidad Total de Productos</th>
+          <th>Cantidad de Pacientes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let sucursal of sucursalDatos">
+          <td class="fw-bold">{{ sucursal.localNombre }}</td>
+          <td class="fw-bold text-success">{{ sucursal.stockTotal }}</td>
+          <td class="fw-bold text-primary">{{ sucursal.cantidadPacientes }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="container text-center mb-4" *ngIf="authService.hasRole('ROLE_ADMIN') && stockPorMaterial.length > 0">
+  <!-- Título principal -->
+  <h2 class="fw-bold mb-4" style="color: #FB8747;">Stock por Material - Sucursal</h2>
+
+  <div class="table-responsive">
+    <table class="table table-bordered text-center">
+      <thead style="background-color: #FB8747; color: white;">
+        <tr>
+          <th>Material</th>
+          <th>Stock Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stock of stockPorMaterial">
+          <td class="fw-bold">{{ stock.materialNombre }}</td>
+          <td class="fw-bold text-success">{{ stock.stockTotal }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
+
+
+

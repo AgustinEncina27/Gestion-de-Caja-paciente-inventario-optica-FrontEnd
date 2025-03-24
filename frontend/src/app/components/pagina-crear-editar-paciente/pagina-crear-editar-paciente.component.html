@@ -215,6 +215,12 @@
         </div>
       </div>
 
+      <!-- Spinner de carga -->
+      <div *ngIf="isLoading" class="overlay">
+        <div class="spinner"></div>
+        <p>Guardando...</p>
+      </div>
+
       <!-- Footer del modal -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

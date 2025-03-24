@@ -21,6 +21,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
   local:Local=new Local();
   genero:string='';
   URL_BACKEND: string=URL_BACKEND;
+  isLoading = false; // Variable para la pantalla de carga
   nuevaGraduacion: Graduacion = {
     ojo: 'DERECHO',
     esferico: 0,
@@ -76,8 +77,14 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     this.paciente.genero=this.genero;
     this.paciente.creadoEn= new Date()
     this.paciente.ultimaActualizacion= new Date()
+
+    this.isLoading = true; // Activar pantalla de carga
+
     this.pacienteService.createPaciente(this.paciente).subscribe(
       response=>{
+
+        this.isLoading = false; // Desactivar pantalla de carga
+
         this.paciente=response
         this.paciente.local=this.local
         this.paciente.genero=this.genero;
@@ -91,8 +98,14 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     this.paciente.local=this.local
     this.paciente.genero=this.genero;
     this.paciente.ultimaActualizacion= new Date();
+
+    this.isLoading = true; // Activar pantalla de carga
+
     this.pacienteService.updatePaciente(this.paciente).subscribe(
       response=>{
+
+        this.isLoading = false; // Desactivar pantalla de carga
+
         this.paciente=response
         this.paciente.local=this.local
         this.paciente.genero=this.genero;

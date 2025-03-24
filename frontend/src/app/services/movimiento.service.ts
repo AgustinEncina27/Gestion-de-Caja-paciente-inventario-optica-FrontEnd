@@ -34,6 +34,56 @@ export class MovimientoService {
       )
   }
 
+  getMovimientosEntreFechas(fechaInicio: string, fechaFin: string, page: number): Observable<any> {
+    return this.http.get(`${this.urlEndPointMovimiento}/buscar/entre-fechas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&page=${page}`).pipe(
+      tap((response: any) => (response.content as Movimiento[]))
+    );
+  }
+
+  getTotales(idLocal: number): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${this.urlEndPointMovimiento}/totales?idLocal=${idLocal}`);
+  }
+
+  getMovimientosFiltrados(filtros: any, page: number): Observable<any> {
+    let params = new HttpParams().set('page', page.toString());
+
+    if (filtros.local) params = params.set('idLocal', filtros.local.toString());
+    if (filtros.tipoMovimiento) params = params.set('tipoMovimiento', filtros.tipoMovimiento);
+    if (filtros.nroFicha) params = params.set('nroFicha', filtros.nroFicha.toString());
+    if (filtros.fecha) params = params.set('fecha', filtros.fecha);
+    if (filtros.metodoPago) params = params.set('metodoPago', filtros.metodoPago);
+
+    return this.http.get<any>(`${this.urlEndPointMovimiento}/filtrar`, { params });
+ }
+
+  generarReporteMovimientoCliente(idMovimiento: number): Observable<Blob> {
+    const url = `${this.urlEndPointMovimiento}/reporteCliente/${idMovimiento}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+  generarReporteMovimientoOptica(idMovimiento: number): Observable<Blob> {
+    const url = `${this.urlEndPointMovimiento}/reporteOptica/${idMovimiento}`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
+  obtenerCantidadLentes(local: number): Observable<{ total: number }> {
+    return this.http.get<{ total: number }>(`${this.urlEndPointMovimiento}/cantidad-lentes`, { 
+      params: { local: local.toString() } 
+    });
+  }
+
+  obtenerCantidadPacientes(local: number): Observable<{ total: number }> {
+    return this.http.get<{ total: number }>(`${this.urlEndPointMovimiento}/cantidad-pacientes`, { 
+      params: { local: local.toString() } 
+    });
+  }
+
+  obtenerTotalGanado(filtros: any): Observable<{ [key: string]: number }>  {
+    return this.http.post<{ [key: string]: number }>(
+      `${this.urlEndPointMovimiento}/total-ganado`, filtros
+    );
+  }
+
   createMovimiento(movimiento: Movimiento): Observable<any> {
     return this.http.post<any>(this.urlEndPointMovimiento, movimiento).pipe(
       map((response: any) => response.movimiento as Movimiento),
@@ -84,30 +134,5 @@ export class MovimientoService {
     );
   }
 
-  getMovimientosEntreFechas(fechaInicio: string, fechaFin: string, page: number): Observable<any> {
-    return this.http.get(`${this.urlEndPointMovimiento}/buscar/entre-fechas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&page=${page}`).pipe(
-      tap((response: any) => (response.content as Movimiento[]))
-    );
-  }
-
-  getTotales(idLocal: number): Observable<{ [key: string]: number }> {
-    return this.http.get<{ [key: string]: number }>(`${this.urlEndPointMovimiento}/totales?idLocal=${idLocal}`);
-  }
-
-  getMovimientosFiltrados(filtros: any, page: number): Observable<any> {
-    let params = new HttpParams().set('page', page.toString());
-
-    if (filtros.local) params = params.set('idLocal', filtros.local.toString());
-    if (filtros.tipoMovimiento) params = params.set('tipoMovimiento', filtros.tipoMovimiento);
-    if (filtros.nroFicha) params = params.set('nroFicha', filtros.nroFicha.toString());
-    if (filtros.fecha) params = params.set('fecha', filtros.fecha);
-    if (filtros.metodoPago) params = params.set('metodoPago', filtros.metodoPago);
-
-    return this.http.get<any>(`${this.urlEndPointMovimiento}/filtrar`, { params });
- }
-
-  generarReporteMovimiento(idMovimiento: number): Observable<Blob> {
-    const url = `${this.urlEndPointMovimiento}/reporte/${idMovimiento}`;
-    return this.http.get(url, { responseType: 'blob' });
-  }
+  
 }

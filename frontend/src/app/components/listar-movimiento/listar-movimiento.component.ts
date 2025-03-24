@@ -99,23 +99,39 @@ export class ListarMovimientoComponent {
   paginaAnterior() {
     const paginaActual = this.paginador.number;
     if (paginaActual > 0) {
+      this.cambiarPagina(paginaActual - 1);
     }
   }
   
   paginaSiguiente() {
     const paginaActual = this.paginador.number;
     if (paginaActual < this.paginador.totalPages - 1) {
+      this.cambiarPagina(paginaActual + 1);
     }
   }
   
   cambiarPagina(page: number) {
-    this.aplicarFiltros(page);
+    if (page >= 0 && page < this.paginador.totalPages) {
+      this.aplicarFiltros(page);
+    }
   }
   
   
   generarPaginador(totalPages: number) {
-    this.pages = Array.from({ length: totalPages }, (_, i) => i); // Crea el array de páginas
+    const maxPagesToShow = 5; // Número máximo de páginas visibles
+    const currentPage = this.paginador.number; // Página actual
+  
+    let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
+  
+    // Ajuste si la página inicial está muy cerca del inicio
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(0, endPage - maxPagesToShow + 1);
+    }
+  
+    this.pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   }
+  
 
   limpiarFiltros() {
     this.localSeleccionado=0;
@@ -163,8 +179,8 @@ export class ListarMovimientoComponent {
     return Object.keys(obj);
   }
   
-  generarPdf(idMovimiento: number): void {
-    this.movimientoService.generarReporteMovimiento(idMovimiento).subscribe({
+  generarPdfCliente(idMovimiento: number): void {
+    this.movimientoService.generarReporteMovimientoCliente(idMovimiento).subscribe({
       next: (pdfBlob) => {
         const blob = new Blob([pdfBlob], { type: 'application/pdf' });
         const url = window.URL.createObjectURL(blob);
@@ -172,7 +188,29 @@ export class ListarMovimientoComponent {
         // Crear un enlace temporal para descargar el archivo
         const a = document.createElement('a');
         a.href = url;
-        a.download = `reporte_movimiento_${idMovimiento}.pdf`;
+        a.download = `reporte_movimiento_cliente_${idMovimiento}.pdf`;
+        a.click();
+  
+        // Liberar memoria
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Error al generar el PDF:', error);
+        Swal.fire('ERROR', 'No se pudo generar el PDF.', 'error');
+      },
+    });
+  }
+
+  generarPdfOptica(idMovimiento: number): void {
+    this.movimientoService.generarReporteMovimientoOptica(idMovimiento).subscribe({
+      next: (pdfBlob) => {
+        const blob = new Blob([pdfBlob], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+  
+        // Crear un enlace temporal para descargar el archivo
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte_movimiento_optica_${idMovimiento}.pdf`;
         a.click();
   
         // Liberar memoria

@@ -85,7 +85,7 @@
           <th>Pagado</th>
           <th>Local</th>
           <th>Movimiento</th>
-          <th>Total de la compra</th>
+          <th>Total de pagado</th>
           <th>Estado de la Compra</th>
           <th *ngIf="authService.hasRole('ROLE_ADMIN')">Acciones</th>
         </tr>
@@ -93,7 +93,7 @@
       <tbody>
         <!-- Filas de movimientos -->
         <tr *ngFor="let movimiento of movimientos">
-          <td class="fecha-col">{{movimiento.fecha}}</td>
+          <td class="fecha-col">{{ movimiento.fecha | date:'yyyy-MM-dd' }}</td>
           <td>{{movimiento.paciente?.ficha}}</td>
           <td>
             <div *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
@@ -107,14 +107,26 @@
           </td>
           <td>{{movimiento.local.nombre}}</td>
           <td>{{movimiento.tipoMovimiento}}</td>
-          <td>{{movimiento.total}}</td>
+          <td class="metodo-cobro-col">
+            <ul>
+              <li *ngFor="let cajaMovimiento of movimiento.cajaMovimientos">
+                {{ cajaMovimiento.metodoPago.nombre }} - {{ cajaMovimiento.montoImpuesto | currency }}
+              </li>
+            </ul>
+          </td>
           <td>{{ movimiento.tipoMovimiento === 'ENTRADA' ? URL_FRONTEND+'/estadoCompra/' + movimiento.id : '' }}</td>
           <td *ngIf="authService.hasRole('ROLE_ADMIN')" class="text-center">
             <div class="d-flex justify-content-center">
               <button class="btn btn-primary btn-sm me-2" [routerLink]="'/editarMovimiento/' + movimiento.id">Editar</button>
               <button class="btn btn-danger btn-sm me-2" (click)="eliminarMovimiento(movimiento)">Eliminar</button>
-              <button class="btn btn-outline-secondary btn-sm" (click)="generarPdf(movimiento.id)" title="Generar PDF">
+              <!-- PDF botón 1 -->
+              <button class="btn btn-outline-secondary btn-sm me-2" (click)="generarPdfCliente(movimiento.id)" title="PDF cliente">
                 <i class="bi bi-file-earmark-pdf"></i>
+              </button>
+
+              <!-- PDF botón 2 -->
+              <button class="btn btn-outline-warning btn-sm" (click)="generarPdfOptica(movimiento.id)" title="PDF optica">
+                <i class="bi bi-filetype-pdf"></i>
               </button>
             </div>
           </td>

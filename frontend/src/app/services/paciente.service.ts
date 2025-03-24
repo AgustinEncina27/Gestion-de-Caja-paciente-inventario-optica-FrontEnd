@@ -5,6 +5,7 @@ import { HttpClient, HttpEvent, HttpRequest } from '@angular/common/http';
 
 import Swal from 'sweetalert2';
 import { URL_BACKEND } from '../config/config';
+import { PacientesPorSucursal } from '../dto/PacientesPorSucursal';
 
 @Injectable()
 export class PacienteService {
@@ -48,6 +49,10 @@ export class PacienteService {
 
   getPacientePorFicha(ficha: number): Observable<Paciente> {
     return this.http.get<Paciente>(`${this.urlEndPointPaciente}/buscar-por-ficha/${ficha}`);
+  }
+
+  obtenerCantidadPacientesPorSucursal(): Observable<PacientesPorSucursal[]> {
+    return this.http.get<PacientesPorSucursal[]>(`${this.urlEndPointPaciente}/cantidad-por-sucursal`);
   }
 
   createPaciente(paciente:Paciente): Observable<any>{
