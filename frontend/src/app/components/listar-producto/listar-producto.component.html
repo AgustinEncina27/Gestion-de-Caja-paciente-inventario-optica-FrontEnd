@@ -2,7 +2,7 @@
   <p style="font-size: 50px; color: black;" class="fw-bold my-4">NUESTRO CATÁLOGO</p>
 </div>
 <div class="d-flex justify-content-evenly mb-4 filtros p-2">
-  <div *ngIf="authService.hasRole('ROLE_ADMIN')">
+  <div *ngIf="authService.hasRoles()">
     <div class="input-group">
       <input 
         type="text" 
@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <div *ngIf="authService.hasRole('ROLE_ADMIN')">
+  <div *ngIf="authService.hasRoles()">
     <div class="input-group">
       <input 
         type="text" 
@@ -25,7 +25,7 @@
       <button class="btn btn-primary" (click)="buscarProductoPorMarca()">Buscar</button>
     </div>
   </div>
-  <div class="dropdown" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+  <div class="dropdown" *ngIf="!authService.hasRoles()">
     <button class="btn  btn-light dropdown-toggle " type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
       Categorias
     </button>
@@ -40,7 +40,7 @@
       </li>
     </ul>
   </div>
-  <div class="dropdown" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+  <div class="dropdown" *ngIf="!authService.hasRoles()">
     <button class="btn  btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
       Genero
     </button>
@@ -87,7 +87,7 @@
       </li>
     </ul>
   </div>
-  <div class="dropdown" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+  <div class="dropdown" *ngIf="!authService.hasRoles()">
     <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
       Marcas
     </button>
@@ -104,16 +104,16 @@
   </div>
 
   <!-- Botón Registrar Paciente -->
-  <button class="btn btn-success m-1"  *ngIf="authService.hasRole('ROLE_ADMIN')" [routerLink]="['/crearProducto']">Crear producto</button>
+  <button class="btn btn-success m-1"  *ngIf="authService.hasRoles()" [routerLink]="['/crearProducto']">Crear producto</button>
 
-  <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRole('ROLE_ADMIN')">
+  <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRoles()">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generarStockModal">
       Generar Stock del Local
     </button>
   </div>
 
   <!-- Botón Limpiar Filtro -->
-  <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRole('ROLE_ADMIN')">
+  <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRoles()">
     <button class="btn btn-secondary " (click)="limpiarFiltros()">Limpiar Filtros</button>
   </div>
  
@@ -133,11 +133,11 @@
           <th>Categoria</th>
           <th>Material</th>
           <th>Genero</th>
-          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Costo</th>
+          <th *ngIf="authService.hasRoles()">Costo</th>
           <th>Precio</th>
           <th>Stock</th>
           <th>Descripción</th>
-          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Acciones</th>
+          <th *ngIf="authService.hasRoles()">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -152,7 +152,7 @@
           </td>
           <td>{{producto.material.nombre}}</td>
           <td>{{producto.genero}}</td>
-          <td *ngIf="authService.hasRole('ROLE_ADMIN')">${{producto.costo}}</td>
+          <td *ngIf="authService.hasRoles()">${{producto.costo}}</td>
           <td>${{producto.precio}}</td>
           <!-- Iterar sobre productoLocales -->
           <td>
@@ -161,7 +161,7 @@
             </div>
           </td>          
           <td>{{producto.descripcion}}</td>
-          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+          <td *ngIf="authService.hasRoles()">
             <button class="btn btn-primary btn-sm me-2" [routerLink]="'/editarProducto/' + producto.id">Editar</button>
             <button class="btn btn-danger btn-sm" (click)="eliminarProducto(producto)">Eliminar</button>
           </td>

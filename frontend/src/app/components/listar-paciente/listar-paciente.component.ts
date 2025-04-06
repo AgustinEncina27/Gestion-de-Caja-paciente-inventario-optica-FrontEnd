@@ -154,7 +154,18 @@ export class ListarPacienteComponent {
   
   
   generarPaginador(totalPages: number) {
-    this.pages = Array.from({ length: totalPages }, (_, i) => i); // Crea el array de páginas
+    const maxVisible = 5;
+    const currentPage = this.paginador.number;
+  
+    let start = Math.max(currentPage - Math.floor(maxVisible / 2), 0);
+    let end = start + maxVisible;
+  
+    if (end > totalPages) {
+      end = totalPages;
+      start = Math.max(end - maxVisible, 0);
+    }
+  
+    this.pages = Array.from({ length: end - start }, (_, i) => start + i);
   }
 
   limpiarFiltros() {

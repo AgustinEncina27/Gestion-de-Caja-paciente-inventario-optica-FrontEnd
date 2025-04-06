@@ -1,6 +1,6 @@
  
 <!-- Carrusel-->
-<div id="carouselExampleDark" class="carousel carousel-dark slide " data-bs-ride="carousel" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+<div id="carouselExampleDark" class="carousel carousel-dark slide " data-bs-ride="carousel" *ngIf="!authService.hasRoles()">
       <div class="carousel-indicators">
         <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
         <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -34,7 +34,7 @@
 </div>
 
 <!-- Información del local border border-3 rounded-->
-<div class="d-flex justify-content-around my-5 p-5" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+<div class="d-flex justify-content-around my-5 p-5" *ngIf="!authService.hasRoles()">
   <div class="flex-grow-1 text-center m-2 ">
     <img src="/assets/sunglasses.svg" class="card-img-top mb-5 mt-3" alt="portada" width="150" height="150">
     <p class="fw-bold fs-5">VENTA EXCLUSIVA DE</p>
@@ -51,6 +51,6 @@
 </div>
 
 <!-- Lista de productos-->
-<app-listar-producto *ngIf="authService.hasRole('ROLE_ADMIN')"></app-listar-producto>
+<app-listar-producto *ngIf="authService.hasRoles()"></app-listar-producto>
 
 

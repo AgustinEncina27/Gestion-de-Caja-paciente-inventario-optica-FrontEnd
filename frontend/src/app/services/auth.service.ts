@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../models/user';
 import { URL_BACKEND } from '../config/config';
+import { Local } from '../models/local';
 
 
 @Injectable({
@@ -62,6 +63,7 @@ export class AuthService {
     this._user= new User();
     this._user.username= payload.user_name;
     this._user.roles= payload.authorities;
+    this._user.localId = payload.local_id;
     sessionStorage.setItem('user',JSON.stringify(this._user));
   }
 
@@ -99,6 +101,17 @@ export class AuthService {
       return true;
     }
     return false;
+  }
+
+  hasRoles():boolean{
+    if(this.user.roles.length === 0){
+      return false;
+    }
+    return true;
+  }
+
+  getLocalId():number | undefined{
+    return this.user.localId;
   }
 
   isTokenExpirado():boolean {

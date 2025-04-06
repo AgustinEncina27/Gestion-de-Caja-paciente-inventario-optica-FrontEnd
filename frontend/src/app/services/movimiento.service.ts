@@ -78,8 +78,8 @@ export class MovimientoService {
     });
   }
 
-  obtenerTotalGanado(filtros: any): Observable<{ [key: string]: number }>  {
-    return this.http.post<{ [key: string]: number }>(
+  obtenerTotalGanado(filtros: any): Observable<{ [metodo: string]: { entrada: number; salida: number } }> {
+    return this.http.post<{ [metodo: string]: { entrada: number; salida: number } }>(
       `${this.urlEndPointMovimiento}/total-ganado`, filtros
     );
   }

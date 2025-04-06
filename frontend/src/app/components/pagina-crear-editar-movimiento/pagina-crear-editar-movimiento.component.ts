@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import { Marca } from 'src/app/models/marca';
 import { CajaMovimiento } from 'src/app/models/cajaMovimiento';
 import { DetalleAdicional } from 'src/app/models/detalleAdicional';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-pagina-crear-editar-movimiento',
@@ -42,6 +43,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
 
   constructor(
     private movimientoService: MovimientoService,
+    public authService: AuthService,
     private pacienteService: PacienteService,
     private productoService: ProductoService,
     private localService: LocalService,
@@ -55,6 +57,21 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     this.cargarLocales();
     this.cargarMetodosPago();
     this.cargarMovimientoOPaciente();
+  }
+
+  validarUsuario(): void {
+    if (!this.authService.hasRole('ROLE_ADMIN')) {
+      const localId = this.authService.getLocalId(); // 👈 asegurate que sea un método
+  
+      // Buscar el local correspondiente
+      const localEncontrado = this.locales.find(local => local.id === localId);
+
+      if (localEncontrado) {
+        this.movimiento.local = localEncontrado;
+      } else {
+        console.warn('No se encontró el local correspondiente al usuario');
+      }
+    }
   }
 
   obtenerFechaHoy(): string {
@@ -77,7 +94,12 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   }
 
   cargarLocales(): void {
-    this.localService.getLocales().subscribe((data) => (this.locales = data));
+    this.localService.getLocales().subscribe((data) => {
+      this.locales = data;
+  
+      // Validar usuario una vez que locales ya están cargados
+      this.validarUsuario();
+    });
   }
 
   cargarMetodosPago(): void {

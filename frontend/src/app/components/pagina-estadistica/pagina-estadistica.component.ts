@@ -21,7 +21,7 @@ import { StockPorMaterial } from 'src/app/dto/StockPorMaterial';
   styleUrls: ['./pagina-estadistica.component.css']
 })
 export class PaginaEstaditicaComponent {
-  totales: { [key: string]: number } = {};
+  totales: { [metodo: string]: { entrada: number; salida: number } } = {};
   mostrarTotales: boolean = false;
   locales: Local[] = [];  // Lista de locales obtenida desde el servicio
   localSeleccionado: number = 0; // Almacena el ID del local seleccionado
@@ -108,6 +108,12 @@ export class PaginaEstaditicaComponent {
 
   getKeys(obj: any): string[] {
     return Object.keys(obj);
+  }
+
+  getNeto(metodo: string): number {
+    const data = this.totales[metodo];
+    if (!data) return 0;
+    return (data.entrada || 0) - (data.salida || 0);
   }
   
   limpiarFiltros() {

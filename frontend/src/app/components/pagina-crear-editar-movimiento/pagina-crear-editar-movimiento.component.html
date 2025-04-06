@@ -11,12 +11,12 @@
           <option value="SALIDA">Salida</option>
         </select>
       </div>
-    
+      
       <!-- Local -->
       <div class="me-3 flex-fill">
         <label for="local" class="form-label">Local</label>
-        <select class="form-select" [(ngModel)]="movimiento.local" name="local" (change)="limpiarAlCambiarLocal(movimiento.local)" required>
-          <option *ngFor="let local of locales" [ngValue]="local">{{ local.nombre }}</option>
+        <select class="form-select" [(ngModel)]="movimiento.local" name="local" (change)="limpiarAlCambiarLocal(movimiento.local)" [disabled]="authService.hasRole('ROLE_VENDEDOR')"  required>
+          <option *ngFor="let local of locales" [ngValue]="local" >{{ local.nombre }}</option>
         </select>
       </div>
     

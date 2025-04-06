@@ -26,7 +26,7 @@
   </button>
   <div class="collapse navbar-collapse m-1" id="navbarSupportedContent">
     <ul class="navbar-nav me-auto mb-2 mb-lg-0 centrar-horizontalmente d-flex align-items-stretch">
-      <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">
+      <li class="nav-item" *ngIf="authService.hasRoles()">
         <a class="nav-link " aria-current="page" [routerLink]="['/inicio']">INVENTARIO</a>
       </li>
       <!-- 
@@ -40,30 +40,30 @@
         <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDAccesorios+'/0']">ACCESORIOS</a>
       </li>
       -->
-      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+      <li class="nav-item" *ngIf="!authService.hasRoles()">
         <a class="nav-link" [routerLink]="['/cristaleria']">CRISTALERÍA</a>
       </li>
-      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+      <li class="nav-item" *ngIf="!authService.hasRoles()">
         <a class="nav-link" [routerLink]="['/sobreNosotros']">SOBRE NOSOTROS</a>
       </li>
-      <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">
+      <li class="nav-item" *ngIf="authService.hasRoles()">
         <a class="nav-link" [routerLink]="['/crearProducto']">CREAR PRODUCTO</a>
       </li>
-      <li class="nav-item dropdown" *ngIf="authService.hasRole('ROLE_ADMIN')">
+      <li class="nav-item dropdown" *ngIf="authService.hasRoles()">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           ADMINISTRAR
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
-          <li><a class="dropdown-item" [routerLink]="['/adminitrarCategoria']">Categorías</a></li>
-          <li><a class="dropdown-item" [routerLink]="['/adminitrarMarca']">Marcas</a></li>
-          <li><a class="dropdown-item" [routerLink]="['/adminitrarMaterial']">Materiales</a></li>
-          <li><a class="dropdown-item" [routerLink]="['/adminitrarMetodoPago']">Método de Pago</a></li>
-          <li><a class="dropdown-item" [routerLink]="['/adminitrarLocal']">Locales</a></li>
+          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarCategoria']">Categorías</a></li>
+          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarMarca']">Marcas</a></li>
+          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarMaterial']">Materiales</a></li>
+          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarMetodoPago']">Método de Pago</a></li>
+          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarLocal']">Locales</a></li>
           <li><a class="dropdown-item" [routerLink]="['/adminitrarPaciente']">Pacientes</a></li>
-          <li><a class="dropdown-item" [routerLink]="['/adminitrarProveedor']">Proveedores</a></li>
+          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarProveedor']">Proveedores</a></li>
         </ul>
       </li>
-      <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">
+      <li class="nav-item" *ngIf="authService.hasRoles()">
         <a class="nav-link" [routerLink]="['/adminitrarCaja']">CAJA</a>
       </li>
       <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">
@@ -71,7 +71,6 @@
       </li>
     </ul>
   </div>
-  
   <a type="button" id="botonImagen" class="btn btn-success btn-lg  rounded m-1 " 
   href="https://wa.me/+5493772432787" target="_blank" *ngIf="!authService.hasRole('ROLE_ADMIN')">
   <img src="/assets/iconos/whatsapp.svg"  alt="Bootstrap">Whatsapp</a> 
