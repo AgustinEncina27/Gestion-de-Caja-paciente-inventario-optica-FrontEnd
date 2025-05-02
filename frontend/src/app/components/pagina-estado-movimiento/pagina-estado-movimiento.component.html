@@ -12,9 +12,9 @@
           [src]="estado.image" 
           [alt]="estado.label" 
           class="estado-image" 
-          [ngClass]="{ 'active-image': movimiento.estadoMovimiento === estado.key }"
+          [ngClass]="{ 'active-image': movimiento?.estadoMovimiento === estado.key }"
         />
-        <span [ngClass]="{ 'active': movimiento.estadoMovimiento === estado.key }">{{ estado.label }}</span>
+        <span [ngClass]="{ 'active': movimiento?.estadoMovimiento === estado.key }">{{ estado.label }}</span>
       </div>
     </div>
   </div>

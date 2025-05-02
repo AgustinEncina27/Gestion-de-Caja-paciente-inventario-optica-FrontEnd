@@ -12,8 +12,14 @@ export class ExcelService {
     constructor(private http: HttpClient) {}
 
     generarExcelStock(localId: number): Observable<Blob> {
-    return this.http.get(`${this.urlEndPointExcel}/stock/${localId}`, {
-        responseType: 'blob',
-    });
+      return this.http.get(`${this.urlEndPointExcel}/stock/${localId}`, {
+          responseType: 'blob',
+      });
+    }
+
+    descargarExcelVentas(filtros: any): Observable<Blob> {
+      return this.http.post(`${this.urlEndPointExcel}/ventas`, filtros, {
+        responseType: 'blob' // importante
+      });
     }
 }

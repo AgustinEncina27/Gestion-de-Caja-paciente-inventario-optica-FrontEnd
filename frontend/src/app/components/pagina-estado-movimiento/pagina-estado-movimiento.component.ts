@@ -9,7 +9,7 @@ import { Movimiento } from 'src/app/models/movimiento';
   styleUrls: ['./pagina-estado-movimiento.component.css']
 })
 export class PaginaEstadoMovimientoComponent implements OnInit {
-  movimiento!: Movimiento;
+  movimiento : Movimiento | undefined;
   isLoading = true;
 
   estados = [

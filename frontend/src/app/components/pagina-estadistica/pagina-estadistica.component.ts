@@ -1,19 +1,16 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import Swal from 'sweetalert2';
-import { URL_FRONTEND } from 'src/app/config/config';
 import { Local } from 'src/app/models/local';
 import { LocalService } from 'src/app/services/local.service';
-import { Movimiento } from 'src/app/models/movimiento';
 import { MovimientoService } from 'src/app/services/movimiento.service';
-import { MetodoPagoService } from 'src/app/services/metodoPago.service';
 import { MetodoPago } from 'src/app/models/metodoPago';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ProductoService } from 'src/app/services/producto.service';
 import { StockTotalSucursal } from 'src/app/dto/StockTotalSucursal';
 import { PacienteService } from 'src/app/services/paciente.service';
 import { PacientesPorSucursal } from 'src/app/dto/PacientesPorSucursal';
 import { StockPorMaterial } from 'src/app/dto/StockPorMaterial';
+import { ExcelService } from 'src/app/services/excel.service';
 
 @Component({
   selector: 'app-pagina-estadistica',
@@ -32,13 +29,15 @@ export class PaginaEstaditicaComponent {
   pacientesPorSucursal: PacientesPorSucursal[] = [];
   sucursalDatos: { localNombre: string; stockTotal: number; cantidadPacientes: number }[] = [];
   stockPorMaterial: StockPorMaterial[] = [];
-
+  cantidadTotalVendida: number = -1;
+  isLoading = false; // Variable para la pantalla de carga
 
  constructor(private movimientoService: MovimientoService,
   private localService: LocalService,
   public authService: AuthService,
   private productoService: ProductoService,
   private pacienteService: PacienteService,
+  private excelService: ExcelService,
   ){
   }
 
@@ -98,6 +97,15 @@ export class PaginaEstaditicaComponent {
       }
     });
 
+    
+    this.movimientoService.obtenerCantidadTotalVendida({
+      local: this.localSeleccionado,
+      fechaInicio: this.fechaSeleccionadaInicio,
+      fechaFin: this.fechaSeleccionadaFin,
+    }).subscribe(response => {
+      this.cantidadTotalVendida = response.total; // debe venir así desde backend
+    });
+    
     if(this.localSeleccionado != null){
       this.productoService.obtenerStockPorMaterialYSucursal(this.localSeleccionado).subscribe(response => {
         this.stockPorMaterial = response;
@@ -122,5 +130,46 @@ export class PaginaEstaditicaComponent {
     this.fechaSeleccionadaFin='';
     this.totales= {};
     this.stockPorMaterial=[];
+    this.cantidadTotalVendida=-1;
+  }
+
+  descargarExcelProductosVendidos(): void {
+    if(this.fechaSeleccionadaInicio==='' || this.fechaSeleccionadaFin ===''){
+      Swal.fire('ADVERTENCIA', 'Ingresar fecha de inicio y fin por favor', 'warning');
+      return 
+    }
+
+    const filtros = {
+      local: this.localSeleccionado,
+      fechaInicio: this.fechaSeleccionadaInicio,
+      fechaFin: this.fechaSeleccionadaFin,
+    };
+
+    let nombreSucursal = 'todos los locales';
+
+    if (this.localSeleccionado != 0) {
+      const local = this.locales.find(l => l.id == this.localSeleccionado);
+      nombreSucursal = local ? local.nombre.toLowerCase().replace(/\s+/g, '_') : 'sucursal';
+    }
+
+    this.isLoading = true; // Activar pantalla de carga
+    
+    this.excelService.descargarExcelVentas(filtros).subscribe({
+      next: (response) => {
+
+        this.isLoading = false; // Desactivar pantalla de carga
+    
+        const file = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(file);
+        link.download = `ventas_${nombreSucursal}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        link.click();
+      },
+      error: (err) => {
+        this.isLoading = false; // Asegurate de desactivarlo acá también
+        console.error('Error al generar el Excel:', err);
+        Swal.fire('ERROR', 'No se pudo generar el Excel', 'error');
+      },
+    });
   }
 }

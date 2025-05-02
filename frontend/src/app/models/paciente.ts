@@ -6,6 +6,7 @@ export class Paciente {
     nombreCompleto!: string;
     ficha!: number;
     direccion!: string;
+    obraSocial!: string;
     celular!: string;
     genero!: string;
     local!: Local;

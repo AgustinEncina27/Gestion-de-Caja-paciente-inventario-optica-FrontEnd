@@ -134,5 +134,8 @@ export class MovimientoService {
     );
   }
 
+  obtenerCantidadTotalVendida(filtros: { local: number, fechaInicio: string, fechaFin: string }): Observable<{ total: number }> {
+    return this.http.post<{ total: number }>(`${this.urlEndPointMovimiento}/total-vendido`, filtros);
+  }
   
 }

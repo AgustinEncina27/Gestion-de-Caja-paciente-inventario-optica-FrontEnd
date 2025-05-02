@@ -283,13 +283,17 @@ export class ListarProductoComponent {
       return;
     }
 
+    const local = this.locales.find(l => l.id == this.localSeleccionado);
+    const nombreSucursal = local ? local.nombre.toLowerCase().replace(/\s+/g, '_') : 'sucursal';
+    const fechaActual = new Date().toISOString().slice(0, 10); 
+
     this.excelService.generarExcelStock(this.localSeleccionado).subscribe({
       next: (response) => {
         const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `Stock_Local_${this.localSeleccionado}.xlsx`;
+        link.download = `stock_${nombreSucursal}_${fechaActual}.xlsx`;
         link.click();
         Swal.fire('ÉXITO', 'Excel generado correctamente', 'success');
       },
