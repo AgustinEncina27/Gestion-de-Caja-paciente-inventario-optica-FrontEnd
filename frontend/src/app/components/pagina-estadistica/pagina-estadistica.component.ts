@@ -162,7 +162,7 @@ export class PaginaEstaditicaComponent {
         const file = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(file);
-        link.download = `ventas_${nombreSucursal}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        link.download = `ventas_${nombreSucursal}_${this.fechaSeleccionadaInicio}_hasta_${this.fechaSeleccionadaFin}.xlsx`;
         link.click();
       },
       error: (err) => {
@@ -184,21 +184,23 @@ export class PaginaEstaditicaComponent {
       fechaInicio: this.fechaSeleccionadaInicio,
       fechaFin: this.fechaSeleccionadaFin,
     };
+
+    let nombreSucursal = 'todos los locales';
+
+    if (this.localSeleccionado != 0) {
+      const local = this.locales.find(l => l.id == this.localSeleccionado);
+      nombreSucursal = local ? local.nombre.toLowerCase().replace(/\s+/g, '_') : 'sucursal';
+    }
   
     this.isLoading = true;
   
     this.excelService.descargarExcelResumenMarcas(filtros).subscribe({
       next: (response) => {
-        const fechaHoy = new Date();
-        const dia = String(fechaHoy.getDate()).padStart(2, '0');
-        const mes = String(fechaHoy.getMonth() + 1).padStart(2, '0');
-        const anio = fechaHoy.getFullYear();
-        const fechaFormateada = `${dia}-${mes}-${anio}`;
   
         const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
-        link.download = `resumen_marcas_vendidas_${fechaFormateada}.xlsx`;
+        link.download = `marcas_vendidas_${nombreSucursal}_${this.fechaSeleccionadaInicio}_hasta_${this.fechaSeleccionadaFin}.xlsx`;
         link.click();
   
         this.isLoading = false;
