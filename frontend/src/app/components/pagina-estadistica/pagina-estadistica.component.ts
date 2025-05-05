@@ -172,4 +172,43 @@ export class PaginaEstaditicaComponent {
       },
     });
   }
+
+  descargarExcelMarcasVendidas(): void {
+    if (this.fechaSeleccionadaInicio === '' || this.fechaSeleccionadaFin === '') {
+      Swal.fire('ADVERTENCIA', 'Ingresar fecha de inicio y fin por favor', 'warning');
+      return;
+    }
+  
+    const filtros = {
+      local: this.localSeleccionado,
+      fechaInicio: this.fechaSeleccionadaInicio,
+      fechaFin: this.fechaSeleccionadaFin,
+    };
+  
+    this.isLoading = true;
+  
+    this.excelService.descargarExcelResumenMarcas(filtros).subscribe({
+      next: (response) => {
+        const fechaHoy = new Date();
+        const dia = String(fechaHoy.getDate()).padStart(2, '0');
+        const mes = String(fechaHoy.getMonth() + 1).padStart(2, '0');
+        const anio = fechaHoy.getFullYear();
+        const fechaFormateada = `${dia}-${mes}-${anio}`;
+  
+        const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `resumen_marcas_vendidas_${fechaFormateada}.xlsx`;
+        link.click();
+  
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Error al generar el Excel:', err);
+        Swal.fire('ERROR', 'No se pudo generar el Excel', 'error');
+      },
+    });
+  }
+  
 }

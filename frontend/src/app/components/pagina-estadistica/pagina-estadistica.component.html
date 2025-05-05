@@ -88,22 +88,35 @@
 
 <!-- DATOS DE LA VENTA -->
 <div class="container mb-5" *ngIf="authService.hasRole('ROLE_ADMIN') && cantidadTotalVendida >= 0">
-  <div class="text-center border-0">
-    <h2 class="fw-bold mb-3 text-uppercase" style="color: #FB8747;">Datos de Ventas</h2>
+  <h2 class="fw-bold mb-4 text-uppercase text-center" style="color: #FB8747;">Datos de Ventas</h2>
 
-    <div class="mb-3">
-      <span class="fs-5 fw-semibold">Total de productos vendidos:</span>
-      <span class="fs-4 fw-bold text-success ms-2">{{ cantidadTotalVendida }}</span>
+  <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+    
+    <!-- Total vendidos -->
+    <div class="text-center p-3">
+      <span class="fs-6 fw-semibold">Total de productos vendidos:</span><br />
+      <span class="fs-4 fw-bold text-success">{{ cantidadTotalVendida }}</span>
     </div>
 
-    <div>
+    <!-- Excel productos vendidos -->
+    <div class="text-center">
       <button class="btn btn-success px-4 py-2 fs-6 fw-semibold rounded-pill shadow-sm" (click)="descargarExcelProductosVendidos()">
         <i class="bi bi-file-earmark-excel me-2"></i>
-        Descargar Excel de productos vendidos
+        Productos vendidos
       </button>
     </div>
+
+    <!-- Excel marcas más vendidas -->
+    <div class="text-center">
+      <button class="btn btn-outline-info px-4 py-2 fs-6 fw-semibold rounded-pill shadow-sm" (click)="descargarExcelMarcasVendidas()">
+        <i class="bi bi-bar-chart-line me-2"></i>
+        Marcas más vendidas
+      </button>
+    </div>
+
   </div>
 </div>
+
 
 
 <!-- Spinner de carga -->

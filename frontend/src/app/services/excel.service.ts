@@ -22,4 +22,11 @@ export class ExcelService {
         responseType: 'blob' // importante
       });
     }
+
+    descargarExcelResumenMarcas(filtros: any): Observable<Blob> {
+      return this.http.post('http://localhost:8080/api/excel/ventas/marcas', filtros, {
+        responseType: 'blob'
+      });
+    }
+    
 }
