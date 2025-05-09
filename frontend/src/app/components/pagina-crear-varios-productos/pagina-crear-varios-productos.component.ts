@@ -16,11 +16,11 @@ import { ProveedorService } from 'src/app/services/proveedor.service';
 import { Proveedor } from 'src/app/models/proveedor';
 
 @Component({
-  selector: 'app-pagina-crear-producto',
-  templateUrl: './pagina-crear-editar-producto.component.html',
-  styleUrls: ['./pagina-crear-editar-producto.component.css']
+  selector: 'app-pagina-varios-productos',
+  templateUrl: './pagina-crear-varios-productos.component.html',
+  styleUrls: ['./pagina-crear-varios-productos.component.css']
 })
-export class PaginaCrearEditarProductoComponent implements OnInit {
+export class PaginaCrearVariosProductosComponent implements OnInit {
   categorias:Categoria[]=[];
   selectedCategoriesCheckbox: Categoria[] = [];
   newNameCategoryInput: string = '';
@@ -41,10 +41,11 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   localStocks: { [localId: number]: number } = {}; // Mapa para guardar el stock por local
   localSeleccionados: Set<number> = new Set(); // Conjunto de IDs de locales seleccionados
   isLoading = false; // Variable para la pantalla de carga
+  modelos: string[] = ['']; // empieza con un campo
+  modelosInvalidos: Set<string> = new Set(); // modelos repetidos
 
   constructor(
     private productoService: ProductoService,
-    private activatedRoute: ActivatedRoute,
     private categoriaService: CategoriaService,
     private proveedorService: ProveedorService,
     private marcaService: MarcaService,
@@ -54,7 +55,6 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cargarProducto();
     this.cargarCategorias();
     this.cargarProveedores();
     this.cargarMarcas();
@@ -92,95 +92,72 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
     });
   }
 
-  cargarProducto() {
-    this.activatedRoute.paramMap.subscribe(params => {
-      this.titulo = 'Crear Producto';
-      this.producto = new Producto();
-      let id: number = +params.get('id')!;
-      if (id) {
-        this.titulo = 'Editar Producto';
-        this.productoService.getProducto(id).subscribe(producto => {
-          this.producto = producto;
-         
-          //Carga la marca en la pagina
-          this.marca = producto.marca;
-
-          //Carga el material en la pagina
-          this.materialProducto = producto.material;
-          
-          // Cargar los locales seleccionados y sus stocks
-          this.localSeleccionados = new Set(
-            producto.productoLocales.map(pl => pl.local.id)
-          );
-          producto.productoLocales.forEach(pl => {
-            this.localStocks[pl.local.id] = pl.stock;
-          });
-          
-          //Carga la categoria en la pagina
-          this.selectedCategoriesCheckbox = producto.categorias;
-
-          //Carga la categoria en la pagina
-          this.selectedProveedoresCheckbox = producto.proveedores;
-
-          //Carga el genero en la pagina
-          this.genero = producto.genero;
-        });
+  validarModelosAntesDeCrear(): void {
+    if (!this.marca?.id) {
+      Swal.fire('Advertencia', 'Seleccioná una marca antes de validar los modelos.', 'warning');
+      return;
+    }
+  
+    const modelosUnicos = Array.from(new Set(this.modelos.map(m => m.trim().toLowerCase())));
+  
+    this.productoService.validarModelos(modelosUnicos, this.marca.id).subscribe({
+      next: (modelosExistentes: string[]) => {
+        if (modelosExistentes.length > 0) {
+          const lista = modelosExistentes.join(', ');
+          Swal.fire('Error', `Ya existen los siguientes modelos para esta marca: ${lista}`, 'error');
+          this.modelosInvalidos = new Set(modelosExistentes.map(m => m.toLowerCase()));
+        } else {
+          this.modelosInvalidos.clear();
+          this.crearProducto(); // ✅ solo si no hay duplicados
+        }
+      },
+      error: (error) => {
+        console.log(error);
+        Swal.fire('Error', 'Ocurrió un problema al validar los modelos.', 'error');
       }
     });
   }
 
   crearProducto() {
-    this.agregarLocalesYStocksAlProducto(); // Agregar locales y stocks al producto
-    this.producto.categorias = this.selectedCategoriesCheckbox;
-    this.producto.proveedores = this.selectedProveedoresCheckbox;
-    this.producto.genero = this.genero;
-    this.producto.marca = this.marca;
-    this.producto.material = this.materialProducto;
-    this.producto.creadoEn = new Date();
-    this.producto.ultimaActualizacion = new Date();
-    
-    this.isLoading = true; // Activar pantalla de carga
-
-    this.productoService.createProducto(this.producto).subscribe({
-      next: (response) => {
-        
-        this.isLoading = false; // Desactivar pantalla de carga
-        Swal.fire('PRODUCTO CREADO', 'El producto ha sido guardado con éxito!', 'success');
+    this.agregarLocalesYStocksAlProducto(); 
+    const productos: Producto[] = this.modelos
+      .filter(m => m.trim() !== '')
+      .map(modelo => {
+        const nuevoProducto = new Producto();
+        nuevoProducto.modelo = modelo;
+        nuevoProducto.descripcion = this.producto.descripcion;
+        nuevoProducto.costo = this.producto.costo;
+        nuevoProducto.precio = this.producto.precio;
+        nuevoProducto.categorias = [...this.selectedCategoriesCheckbox];
+        nuevoProducto.proveedores = [...this.selectedProveedoresCheckbox];
+        nuevoProducto.genero = this.genero;
+        nuevoProducto.marca = this.marca;
+        nuevoProducto.material = this.materialProducto;
+        nuevoProducto.productoLocales = this.producto.productoLocales;
+        nuevoProducto.creadoEn = new Date();
+        nuevoProducto.ultimaActualizacion = new Date();
+        return nuevoProducto;
+      });
+  
+    this.isLoading = true;
+  
+    this.productoService.createVariosProductos(productos).subscribe({
+      next: () => {
+        this.isLoading = false;
+        Swal.fire('PRODUCTOS CREADOS', 'Los productos han sido guardados con éxito!', 'success');
         this.router.navigate(['/inicio']);
-        
       },
       error: () => {
-        this.isLoading = false; // Desactivar pantalla de carga en caso de error
-        Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
+        this.isLoading = false;
+        Swal.fire('ERROR', 'No se pudo guardar el producto', 'error');
       }
     });
   }
   
-  editarProducto() {
-    this.agregarLocalesYStocksAlProducto(); // Agregar locales y stocks al producto
-    this.producto.categorias = this.selectedCategoriesCheckbox;
-    this.producto.proveedores = this.selectedProveedoresCheckbox;
-    this.producto.genero = this.genero;
-    this.producto.marca = this.marca;
-    this.producto.material = this.materialProducto;
-    this.producto.ultimaActualizacion = new Date();
-    
-    this.isLoading = true; // Activar pantalla de carga
 
-    this.productoService.updateProducto(this.producto).subscribe({
-        next: (response) => {
-
-        this.isLoading = false; // Desactivar pantalla de carga
-        Swal.fire('PRODUCTO EDITADO', 'Se ha editado con éxito!', 'success');
-        this.router.navigate(['/inicio']);
-      },
-      error: () => {
-        this.isLoading = false; // Desactivar pantalla de carga en caso de error
-        Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
-      }
-    });
-  }
-
+ 
+  
+  
   selecionMarca(marca:Marca){
     this.marca=marca;
   }
@@ -276,6 +253,18 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
 
   calcularPrecio(costo:number){
     this.producto.precio= ((costo * 0.20)+costo)*3;
+  }
+
+  agregarModelo() {
+    this.modelos.push('');
+  }
+  
+  eliminarModelo(index: number) {
+    this.modelos.splice(index, 1);
+  }
+
+  trackByIndex(index: number): number {
+    return index;
   }
 
 }

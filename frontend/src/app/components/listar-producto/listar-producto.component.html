@@ -1,8 +1,8 @@
 <div class=" nuestroCatalogo d-flex flex-wrap justify-content-around  ">
   <p style="font-size: 50px; color: black;" class="fw-bold my-4">NUESTRO CATÁLOGO</p>
 </div>
-<div class="d-flex justify-content-evenly mb-4 filtros p-2">
-  <div *ngIf="authService.hasRoles()">
+<div  class="d-flex justify-content-evenly mb-4 filtros p-2">
+  <div class="d-flex justify-content-between align-items-center" *ngIf="authService.hasRoles()">
     <div class="input-group">
       <input 
         type="text" 
@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <div *ngIf="authService.hasRoles()">
+  <div class="d-flex justify-content-between align-items-center" *ngIf="authService.hasRoles()">
     <div class="input-group">
       <input 
         type="text" 
@@ -25,86 +25,9 @@
       <button class="btn btn-primary" (click)="buscarProductoPorMarca()">Buscar</button>
     </div>
   </div>
-  <div class="dropdown" *ngIf="!authService.hasRoles()">
-    <button class="btn  btn-light dropdown-toggle " type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
-      Categorias
-    </button>
-    <ul class="dropdown-menu" >
-      <li *ngFor="let categoria of categorias">
-        <div class="form-check ms-1">
-          <input class="form-check-input" type="radio" name="flexRadioDefault1" [id]="+categoria.id+'categoria'" (click)="cargarProductoPorCategoria(categoria.id)" [checked]="categoria.id==0 ? categoriaEstaTildado(-1) : categoriaEstaTildado(categoria.id)">
-          <label class="form-check-label" [for]="+categoria.id+'categoria'">
-            {{categoria.nombre}}
-          </label>
-        </div>
-      </li>
-    </ul>
-  </div>
-  <div class="dropdown" *ngIf="!authService.hasRoles()">
-    <button class="btn  btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
-      Genero
-    </button>
-    <ul class="dropdown-menu" >
-      <li>
-        <div class="form-check ms-1">
-          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="todosGenero" (click)="cargarProductoPorGenero('-1')" [checked]="generoEstaTildado('-1')">
-          <label class="form-check-label" for="todosGenero">
-            Todos
-          </label>
-        </div>
-      </li>
-      <li>
-        <div class="form-check ms-1">
-          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="hombreGenero" (click)="cargarProductoPorGenero('Hombre')" [checked]="generoEstaTildado('Hombre')">
-          <label class="form-check-label" for="hombreGenero">
-            Hombre
-          </label>
-        </div>
-      </li>
-      <li>
-        <div class="form-check ms-1">
-          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="mujerGenero" (click)="cargarProductoPorGenero('Mujer')" [checked]="generoEstaTildado('Mujer')">
-          <label class="form-check-label" for="mujerGenero">
-            Mujer
-          </label>
-        </div>
-      </li>
-      <li>
-        <div class="form-check ms-1">
-          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="ninosGenero" (click)="cargarProductoPorGenero('Niños')" [checked]="generoEstaTildado('Niños')">
-          <label class="form-check-label" for="ninosGenero">
-            Niños
-          </label>
-        </div>
-      </li>
-      <li>
-        <div class="form-check ms-1">
-          <input class="form-check-input" type="radio" name="flexRadioDefault2" id="unisexGenero" (click)="cargarProductoPorGenero('Unisex')" [checked]="generoEstaTildado('Unisex')">
-          <label class="form-check-label" for="unisexGenero">
-            Unisex
-          </label>
-        </div>
-      </li>
-    </ul>
-  </div>
-  <div class="dropdown" *ngIf="!authService.hasRoles()">
-    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px;">
-      Marcas
-    </button>
-    <ul class="dropdown-menu" >
-      <li *ngFor="let marca of marcas">
-        <div class="form-check ms-1">
-          <input class="form-check-input" type="radio" name="flexRadioDefault3" [id]="+marca.id+'marca'" (click)="cargarProductoPorMarca(marca.id)" [checked]="marca.id==0 ? marcaEstaTildado(-1) : marcaEstaTildado(marca.id)">
-          <label class="form-check-label" [for]="+marca.id+'marca'" >
-            {{marca.nombre}}
-          </label>
-        </div>
-      </li>
-    </ul>
-  </div>
-
+  
   <!-- Botón Registrar Paciente -->
-  <button class="btn btn-success m-1"  *ngIf="authService.hasRoles()" [routerLink]="['/crearProducto']">Crear producto</button>
+  <button class="btn btn-success m-1"  *ngIf="authService.hasRoles()" [routerLink]="['/crearVariosProductos']">Crear producto</button>
 
   <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRoles()">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generarStockModal">
@@ -116,7 +39,6 @@
   <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRoles()">
     <button class="btn btn-secondary " (click)="limpiarFiltros()">Limpiar Filtros</button>
   </div>
- 
 </div>
 
 <div class="alert alert-warning mx-5" role="alert" *ngIf="productos.length==0">

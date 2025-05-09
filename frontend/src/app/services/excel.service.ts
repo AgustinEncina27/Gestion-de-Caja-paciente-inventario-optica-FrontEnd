@@ -24,7 +24,7 @@ export class ExcelService {
     }
 
     descargarExcelResumenMarcas(filtros: any): Observable<Blob> {
-      return this.http.post('http://localhost:8080/api/excel/ventas/marcas', filtros, {
+      return this.http.post(`${this.urlEndPointExcel}/ventas/marcas`, filtros, {
         responseType: 'blob'
       });
     }

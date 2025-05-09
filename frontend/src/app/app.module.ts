@@ -46,6 +46,8 @@ import { MaterialProductoService } from './services/materialProducto.service';
 import { PaginaGestionarMaterialProductoComponent } from './components/pagina-gestionar-material-producto/pagina-gestionar-material-producto.component';
 import { PaginaGestionarProveedoresComponent } from './components/pagina-gestionar-proveedores/pagina-gestionar-proveedores.component';
 import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagina-estadistica.component';
+import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-varios-productos/pagina-crear-varios-productos.component';
+
 
 
 
@@ -63,6 +65,7 @@ import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagin
     PaginaCristaleriaComponent,
     PaginaFiltrarProductoComponent,
     PaginaCrearEditarProductoComponent,
+    PaginaCrearVariosProductosComponent,
     PaginaCrearEditarPacienteComponent,
     PaginaGestionarCategoriasComponent,
     WhatsappComponent,
@@ -80,7 +83,7 @@ import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagin
     PaginaCrearEditarMovimientoComponent,
     PaginaEstadoMovimientoComponent,
     PaginaEstaditicaComponent,
-    ListarMovimientoComponent
+    ListarMovimientoComponent,
   ],
   imports: [
     BrowserModule,

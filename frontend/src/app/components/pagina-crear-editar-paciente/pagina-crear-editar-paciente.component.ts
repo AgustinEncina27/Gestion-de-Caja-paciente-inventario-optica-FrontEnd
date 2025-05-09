@@ -80,8 +80,8 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
 
     this.isLoading = true; // Activar pantalla de carga
 
-    this.pacienteService.createPaciente(this.paciente).subscribe(
-      response=>{
+    this.pacienteService.createPaciente(this.paciente).subscribe({
+      next: (response) => {
 
         this.isLoading = false; // Desactivar pantalla de carga
 
@@ -90,7 +90,11 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
         this.paciente.genero=this.genero;
         Swal.fire("PACIENTE CREADO","El paciente ha sido guardado con éxito!","success");
         this.router.navigate(['/crearMovimiento/'+this.paciente.id]);
-      }
+      },
+        error: () => {
+          this.isLoading = false; // Desactivar pantalla de carga en caso de error
+          Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
+      }}
     )
   }
 
@@ -101,8 +105,8 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
 
     this.isLoading = true; // Activar pantalla de carga
 
-    this.pacienteService.updatePaciente(this.paciente).subscribe(
-      response=>{
+    this.pacienteService.updatePaciente(this.paciente).subscribe({
+      next: (response) => {
 
         this.isLoading = false; // Desactivar pantalla de carga
 
@@ -111,7 +115,11 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
         this.paciente.genero=this.genero;
         Swal.fire("PACIENTE EDITADO","Se ha editado con éxito!","success");
         this.router.navigate(['/adminitrarPaciente']);
-      }
+      },
+      error: () => {
+        this.isLoading = false; // Desactivar pantalla de carga en caso de error
+        Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
+    }}
     )
   }
 

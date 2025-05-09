@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Producto } from '../models/producto';
 import { Observable,Subject,catchError,map,tap,throwError} from 'rxjs';
-import { HttpClient} from '@angular/common/http';
+import { HttpClient, HttpParams} from '@angular/common/http';
 
 import Swal from 'sweetalert2';
 import { URL_BACKEND } from '../config/config';
@@ -93,6 +93,20 @@ export class ProductoService {
     )
   }
 
+  createVariosProductos(productos: Producto[]) {
+    return this.http.post<any>(`${this.urlEndPointProducto}/crearVarios`, productos).pipe(
+      catchError(e => {
+        if (e.status === 400 && e.error.mensaje) {
+          Swal.fire('ERROR', e.error.mensaje, 'error');
+          console.error('Errores:', e.error.errores);
+        } else {
+          Swal.fire('ERROR', 'Ocurrió un error al guardar los productos', 'error');
+        }
+        return throwError(() => e);
+      })
+    );
+  }
+
   updateProducto(producto:Producto): Observable<any>{
     return this.http.put<any>(`${this.urlEndPointProducto}/${producto.id}`,producto).pipe(
       map((response: any)=>response.producto as Producto),
@@ -143,5 +157,13 @@ export class ProductoService {
   triggerDataUpdated() {
     this.dataUpdated.next();
   }
+
+  validarModelos(modelos: string[], marcaId: number): Observable<string[]> {
+    const url = `${this.urlEndPointProducto}/validar-modelos`; 
+    const params = new HttpParams().set('marcaId', marcaId.toString());
+  
+    return this.http.post<string[]>(url, modelos, { params });
+  }
+  
   
 }

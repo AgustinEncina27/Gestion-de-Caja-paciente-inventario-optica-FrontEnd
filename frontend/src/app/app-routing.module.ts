@@ -22,6 +22,7 @@ import { PaginaCrearEditarMovimientoComponent } from './components/pagina-crear-
 import { PaginaGestionarMaterialProductoComponent } from './components/pagina-gestionar-material-producto/pagina-gestionar-material-producto.component';
 import { PaginaGestionarProveedoresComponent } from './components/pagina-gestionar-proveedores/pagina-gestionar-proveedores.component';
 import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagina-estadistica.component';
+import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-varios-productos/pagina-crear-varios-productos.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'/inicio', pathMatch:'full'},
@@ -34,7 +35,7 @@ const routes: Routes = [
   {path:'politicaEnvio',component: PaginaPoliticaEnvioComponent},
   {path:'politicaGarantia',component: PaginaPoliticaGarantiaComponent},
   {path:'crearProducto',component: PaginaCrearEditarProductoComponent},
-  {path:'crearProducto',component: PaginaCrearEditarProductoComponent},
+  {path:'crearVariosProductos',component: PaginaCrearVariosProductosComponent},
   {path:'crearMovimiento',component: PaginaCrearEditarMovimientoComponent},
   {path:'crearPaciente',component: PaginaCrearEditarPacienteComponent},
   {path:'editarProducto/:id',component: PaginaCrearEditarProductoComponent},
