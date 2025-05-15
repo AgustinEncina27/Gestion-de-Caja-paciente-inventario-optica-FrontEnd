@@ -289,9 +289,9 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
           this.router.navigate(['/adminitrarCaja']);
           
         },
-        error: () => {
+        error: (e) => {
           this.isLoading = false; // Desactivar pantalla de carga en caso de error
-          Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
+          Swal.fire('ERROR', e.error.mensaje, 'error');
         }
       });
     } else {
@@ -303,9 +303,9 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
           this.router.navigate(['/adminitrarCaja']);
           
         },
-        error: () => {
+        error: (e) => {
           this.isLoading = false;
-          Swal.fire('ERROR', 'No se pudo crear el movimiento', 'error');
+          Swal.fire('ERROR', e.error.mensaje, 'error');
         }
       });
     }

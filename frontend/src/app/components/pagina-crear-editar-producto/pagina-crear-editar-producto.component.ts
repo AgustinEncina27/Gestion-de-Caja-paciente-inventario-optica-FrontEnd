@@ -149,9 +149,9 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
         this.router.navigate(['/inicio']);
         
       },
-      error: () => {
+      error: (e) => {
         this.isLoading = false; // Desactivar pantalla de carga en caso de error
-        Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
+        Swal.fire('ERROR', e.error.mensaje, 'error');
       }
     });
   }
@@ -174,9 +174,9 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
         Swal.fire('PRODUCTO EDITADO', 'Se ha editado con éxito!', 'success');
         this.router.navigate(['/inicio']);
       },
-      error: () => {
+      error: (e) => {
         this.isLoading = false; // Desactivar pantalla de carga en caso de error
-        Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
+        Swal.fire('ERROR', e.error.mensaje, 'error');
       }
     });
   }
