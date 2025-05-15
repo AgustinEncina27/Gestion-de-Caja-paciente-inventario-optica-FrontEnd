@@ -147,9 +147,9 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
         Swal.fire('PRODUCTOS CREADOS', 'Los productos han sido guardados con éxito!', 'success');
         this.router.navigate(['/inicio']);
       },
-      error: () => {
+      error: (e) => {
         this.isLoading = false;
-        Swal.fire('ERROR', 'No se pudo guardar el producto', 'error');
+        Swal.fire('ERROR', e.error.mensaje, 'error');
       }
     });
   }

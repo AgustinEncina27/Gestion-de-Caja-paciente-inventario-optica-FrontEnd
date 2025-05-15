@@ -91,9 +91,9 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
         Swal.fire("PACIENTE CREADO","El paciente ha sido guardado con éxito!","success");
         this.router.navigate(['/crearMovimiento/'+this.paciente.id]);
       },
-        error: () => {
+        error: (e) => {
           this.isLoading = false; // Desactivar pantalla de carga en caso de error
-          Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
+          Swal.fire('ERROR', e.error.mensaje, 'error');
       }}
     )
   }
@@ -116,9 +116,9 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
         Swal.fire("PACIENTE EDITADO","Se ha editado con éxito!","success");
         this.router.navigate(['/adminitrarPaciente']);
       },
-      error: () => {
+      error: (e) => {
         this.isLoading = false; // Desactivar pantalla de carga en caso de error
-        Swal.fire('ERROR', 'No se pudo actualizar el movimiento', 'error');
+        Swal.fire('ERROR', e.error.mensaje, 'error');
     }}
     )
   }
