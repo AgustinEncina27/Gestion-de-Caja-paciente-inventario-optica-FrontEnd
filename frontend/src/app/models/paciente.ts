@@ -7,6 +7,7 @@ export class Paciente {
     ficha!: number;
     direccion!: string;
     obraSocial!: string;
+    cristal!: string;
     celular!: string;
     genero!: string;
     local!: Local;

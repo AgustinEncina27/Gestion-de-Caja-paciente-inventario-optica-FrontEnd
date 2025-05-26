@@ -271,37 +271,70 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     if (this.advertenciaMonto() && this.movimiento.tipoMovimiento === 'ENTRADA') {
       return;
     }
-
+  
     this.movimiento.detalles = this.detalles;
 
     if (this.movimiento.tipoMovimiento === 'SALIDA') {
       this.esMovimientoSalida(this.movimiento.id);
     }
+  
+    // 👉 Verificamos si hay un detalle adicional con "cristal"
+    const cristalDescripcion = this.extraerCristalDesdeDetalle();
+  
+    if (cristalDescripcion && this.movimiento.paciente) {
+      this.pacienteService.actualizarCampoCristal(this.movimiento.paciente.id, cristalDescripcion)
+        .subscribe({
+          next: () => {
+            // Seguimos guardando el movimiento después de actualizar el campo cristal
+            this.guardarMovimientoFinal();
+          },
+          error: (e) => {
+            this.isLoading = false;
+            Swal.fire('ERROR', e.error.mensaje, 'error');
+          }
+        });
+    } else {
+      this.guardarMovimientoFinal(); // sigue sin enviar nada si no hay "cristal"
+    }
+  }
 
-    this.isLoading = true; // Activar pantalla de carga
+  extraerCristalDesdeDetalle(): string | null {
+    if (!this.movimiento.detallesAdicionales) return null;
+  
+    for (const detalle of this.movimiento.detallesAdicionales) {
+      const descripcion = detalle.descripcion.toLowerCase();
+      const keyword = "cristal";
+      if (descripcion.includes(keyword)) {
+        const index = descripcion.indexOf(keyword);
+        const extraido = detalle.descripcion.substring(index + keyword.length).trim();
+        return extraido || null;
+      }
+    }
+  
+    return null;
+  }
 
+  guardarMovimientoFinal(): void {
+    this.isLoading = true;
+  
     if (this.movimiento.id) {
       this.movimientoService.updateMovimiento(this.movimiento).subscribe({
         next: () => {
-          
-          this.isLoading = false; // Desactivar pantalla de carga
+          this.isLoading = false;
           Swal.fire('MOVIMIENTO ACTUALIZADO', 'El movimiento ha sido actualizado con éxito', 'success');
           this.router.navigate(['/adminitrarCaja']);
-          
         },
         error: (e) => {
-          this.isLoading = false; // Desactivar pantalla de carga en caso de error
+          this.isLoading = false;
           Swal.fire('ERROR', e.error.mensaje, 'error');
         }
       });
     } else {
       this.movimientoService.createMovimiento(this.movimiento).subscribe({
         next: () => {
-          
           this.isLoading = false;
           Swal.fire('MOVIMIENTO CREADO', 'El movimiento ha sido creado con éxito', 'success');
           this.router.navigate(['/adminitrarCaja']);
-          
         },
         error: (e) => {
           this.isLoading = false;

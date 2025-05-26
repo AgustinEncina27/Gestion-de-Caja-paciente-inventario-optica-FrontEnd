@@ -63,7 +63,14 @@
             <input type="text" class="form-control" id="InputObraSocial" 
                    [(ngModel)]="paciente.obraSocial" name="obraSocial" >
           </div>
+          <!-- Cristal -->
+          <div class="col-md-6" *ngIf="paciente?.id != null">
+            <label for="InputCristal" class="form-label fw-bold">Cristal</label>
+            <input type="text" class="form-control" id="InputCristal" 
+                   [(ngModel)]="paciente.cristal" name="cristal" >
+          </div>
         </div>
+        
 
         <!-- Quinta fila -->
         <div class="row mb-4">

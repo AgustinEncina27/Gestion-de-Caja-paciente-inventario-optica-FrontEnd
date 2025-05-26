@@ -9,6 +9,7 @@ import { PacientesPorSucursal } from '../dto/PacientesPorSucursal';
 
 @Injectable()
 export class PacienteService {
+  
   private urlEndPointPaciente:string =URL_BACKEND+'/api/pacientes';
   
   constructor(private http: HttpClient) { }
@@ -114,5 +115,10 @@ export class PacienteService {
       })
     )
   }  
+
+  actualizarCampoCristal(id: number, cristal: string): Observable<any> {
+    return this.http.post(`${this.urlEndPointPaciente}/${id}/actualizar-cristal`, { cristal });
+  }
+  
   
 }
