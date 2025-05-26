@@ -30,7 +30,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   titulo: string = 'Crear Movimiento';
   pacienteEncontrado: Paciente | null = null;
   productoEncontrado: Producto | null = null;
-  fichaPaciente: number = 0; // Número de ficha para buscar al paciente
+  fichaPaciente: number | null = null; // Número de ficha para buscar al paciente
   codigoProducto: string = ''; // Código o criterio para buscar el producto
   marcasDisponibles: Marca[] = []; // Marcas disponibles para el modelo del producto
   stockLocal: number | null = null; 
@@ -450,8 +450,8 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   agregarPago(): void {
     
     const nuevoPago: CajaMovimiento = new CajaMovimiento();
-    nuevoPago.monto=0;
-    nuevoPago.montoImpuesto=0;
+    nuevoPago.monto=null;
+    nuevoPago.montoImpuesto=null;
     nuevoPago.metodoPago=this.metodosPago[0];
     nuevoPago.fecha=this.obtenerFechaHoy();
 
@@ -465,7 +465,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       return;
     }
     
-    const totalPagado = this.movimiento.cajaMovimientos.reduce((acc, mov) => acc + mov.monto, 0);
+    const totalPagado = this.movimiento.cajaMovimientos.reduce((acc, mov) => acc + (mov.monto??0), 0);
     if((this.movimiento.total - totalPagado)<0){
       this.deuda=0;
     }else{
@@ -486,7 +486,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   agregarDetalleAdicional(): void {
     const nuevoDetalleAdicional: DetalleAdicional = new DetalleAdicional();
     nuevoDetalleAdicional.descripcion='';
-    nuevoDetalleAdicional.subtotal=0
+    nuevoDetalleAdicional.subtotal=null;
 
     this.movimiento.detallesAdicionales = this.movimiento.detallesAdicionales || [];
     this.movimiento.detallesAdicionales.push(nuevoDetalleAdicional);
@@ -533,7 +533,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     const detalles = this.detalles || [];
 
     const totalAdicional = detallesAdicionales.reduce(
-      (sum, detalle) => sum + detalle.subtotal,
+      (sum, detalle) => sum + (detalle.subtotal ?? 0),
       0
     );
 

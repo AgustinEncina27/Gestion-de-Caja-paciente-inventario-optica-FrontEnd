@@ -215,7 +215,7 @@
                 type="number"
                 class="form-control"
                 [(ngModel)]="cajaMovimiento.monto"
-                (change)="calcularTotalYAdviertenciaTotal(cajaMovimiento.monto,i)"
+                (change)="calcularTotalYAdviertenciaTotal(cajaMovimiento.monto ?? 0,i)"
                 name="monto{{ i }}"
                 required
               />
