@@ -5,5 +5,4 @@ export class Graduacion {
     eje: number = 0;
     adicion: number = 0;
     cerca: number = 0;
-    fechaGraduacion: string= '';
   }

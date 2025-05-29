@@ -8,6 +8,9 @@ import { Paciente } from 'src/app/models/paciente';
 import { PacienteService } from 'src/app/services/paciente.service';
 import { LocalService } from 'src/app/services/local.service';
 import { Graduacion } from 'src/app/models/graduacion';
+import { FichaGraduacion } from 'src/app/models/fichaGraducacion';
+
+
 
 @Component({
   selector: 'app-pagina-crear-paciente',
@@ -15,34 +18,26 @@ import { Graduacion } from 'src/app/models/graduacion';
   styleUrls: ['./pagina-crear-editar-paciente.component.css']
 })
 export class PaginaCrearEditarPacienteComponent implements OnInit {
-  paciente: Paciente= new Paciente();
-  titulo:String ='Crear Paciente';
-  locales:Local[]=[];
-  local:Local=new Local();
-  genero:string='';
-  URL_BACKEND: string=URL_BACKEND;
-  isLoading = false; // Variable para la pantalla de carga
-  nuevaGraduacion: Graduacion = {
-    ojo: 'DERECHO',
-    esferico: 0,
-    cilindrico: 0,
-    eje: 0,
-    adicion: 0,
-    cerca: 0,
-    fechaGraduacion: new Date().toISOString().slice(0, 10) // Formato YYYY-MM-DD
-  };
-  
 
-  constructor(private pacienteService: PacienteService,
+  paciente: Paciente = new Paciente();
+  titulo: string = 'Crear Paciente';
+  locales: Local[] = [];
+  local: Local = new Local();
+  genero: string = '';
+  URL_BACKEND: string = URL_BACKEND;
+  isLoading = false;
+  mostrarFicha: boolean = false;
+
+  constructor(
+    private pacienteService: PacienteService,
      private activatedRoute: ActivatedRoute,
-      private localService:LocalService,
-     private router:Router){}
-     progreso: number=0;
-
+    private localService: LocalService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.cargarPaciente()
-    this.cargarLocales()  
+    this.cargarPaciente();
+    this.cargarLocales();
   }
 
   cargarPaciente() {
@@ -62,118 +57,122 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     });
   }
 
-  
-  
-
-  cargarLocales(){
-    this.localService.getLocales().subscribe(
-      locales=>{this.locales=locales
-      }
-    )
+  cargarLocales() {
+    this.localService.getLocales().subscribe(locales => {
+      this.locales = locales;
+    });
   }
 
-  crearPaciente(){
-    this.paciente.local=this.local
-    this.paciente.genero=this.genero;
-    this.paciente.creadoEn= new Date()
-    this.paciente.ultimaActualizacion= new Date()
-
-    this.isLoading = true; // Activar pantalla de carga
+  crearPaciente() {
+    this.paciente.local = this.local;
+    this.paciente.genero = this.genero;
+    this.paciente.creadoEn = new Date();
+    this.paciente.ultimaActualizacion = new Date();
+    this.isLoading = true;
 
     this.pacienteService.createPaciente(this.paciente).subscribe({
       next: (response) => {
-
-        this.isLoading = false; // Desactivar pantalla de carga
-
-        this.paciente=response
-        this.paciente.local=this.local
-        this.paciente.genero=this.genero;
-        Swal.fire("PACIENTE CREADO","El paciente ha sido guardado con éxito!","success");
+        this.isLoading = false;
+        this.paciente = response;
+        this.paciente.local = this.local;
+        this.paciente.genero = this.genero;
+        Swal.fire("PACIENTE CREADO", "El paciente ha sido guardado con éxito!", "success");
         this.router.navigate(['/adminitrarPaciente']);
       },
         error: (e) => {
-          this.isLoading = false; // Desactivar pantalla de carga en caso de error
+        this.isLoading = false;
           Swal.fire('ERROR', e.error.mensaje, 'error');
-      }}
-    )
+      }
+    });
   }
 
-  editarPaciente(){
-    this.paciente.local=this.local
-    this.paciente.genero=this.genero;
-    this.paciente.ultimaActualizacion= new Date();
+  editarPaciente() {
+    this.paciente.local = this.local;
+    this.paciente.genero = this.genero;
+    this.paciente.ultimaActualizacion = new Date();
 
-    this.isLoading = true; // Activar pantalla de carga
+    this.isLoading = true;
 
     this.pacienteService.updatePaciente(this.paciente).subscribe({
       next: (response) => {
-
-        this.isLoading = false; // Desactivar pantalla de carga
-
-        this.paciente=response
-        this.paciente.local=this.local
-        this.paciente.genero=this.genero;
-        Swal.fire("PACIENTE EDITADO","Se ha editado con éxito!","success");
+        this.isLoading = false;
+        this.paciente = response;
+        this.paciente.local = this.local;
+        this.paciente.genero = this.genero;
+        Swal.fire("PACIENTE EDITADO", "Se ha editado con éxito!", "success");
         this.router.navigate(['/adminitrarPaciente']);
       },
       error: (e) => {
-        this.isLoading = false; // Desactivar pantalla de carga en caso de error
+        this.isLoading = false;
         Swal.fire('ERROR', e.error.mensaje, 'error');
-    }}
-    )
-  }
-
-  selecionLocal(local:Local){
-    this.local=local;
-  }
-
-  selecionGenero(genero:string){
-    this.genero=genero;
-  }
-
-
-  localSeleccionado(local:Local): boolean {
-    
-    if(local.id==this.local.id && this.local!==undefined){
-      return true
-    }
-    return false
-  }
-
-  generoSeleccionado(genero:string):boolean{
-    if(this.genero==null ){
-      return false
-    }
-    if(this.paciente.genero!==undefined){
-      if(this.paciente.genero.includes(genero) && this.paciente.genero!==undefined){
-        return true
       }
+    });
+  }
+
+  selecionLocal(local: Local) {
+    this.local = local;
+  }
+
+  selecionGenero(genero: string) {
+    this.genero = genero;
+  }
+
+  localSeleccionado(local: Local): boolean {
+    return this.local?.id === local.id;
+  }
+
+  generoSeleccionado(genero: string): boolean {
+    return this.genero === genero;
+  }
+
+  // 🔽 FICHAS DE GRADUACIÓN 🔽
+  agregarFicha() {
+    const nuevaFicha = new FichaGraduacion();
+    nuevaFicha.fecha = new Date().toISOString().slice(0, 10);
+    nuevaFicha.graduaciones = [
+      { ojo: 'DERECHO', esferico: 0, cilindrico: 0, eje: 0, adicion: 0, cerca: 0 },
+      { ojo: 'IZQUIERDO', esferico: 0, cilindrico: 0, eje: 0, adicion: 0, cerca: 0 }
+    ];
+
+    nuevaFicha.cristales = [];
+    this.paciente.historialFichas.push(nuevaFicha);
     }
-    return false
+
+  eliminarGraduacion(ficha: FichaGraduacion, index: number) {
+    ficha.graduaciones.splice(index, 1);
   }
 
-  calcularGraduacionCerca(esferico:number,adicion:number){
-    if(adicion !=0 ){
-      this.nuevaGraduacion.cerca= esferico+adicion;
-    }else{
-      this.nuevaGraduacion.cerca=0;
-    }
+  calcularCerca(graduacion: Graduacion) {
+    graduacion.cerca = (graduacion.esferico || 0) + (graduacion.adicion || 0);
   }
 
-  //funciones MODAL
-  agregarGraduacion() {
-    this.paciente.graduaciones.push({ ...this.nuevaGraduacion });
-    this.nuevaGraduacion = new Graduacion(); // Reinicia el formulario
-    this.nuevaGraduacion.ojo= 'IZQUIERDO';
-    this.nuevaGraduacion.fechaGraduacion= new Date().toISOString().slice(0, 10);
+  confirmarEliminarUltimaFicha(): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Se eliminará la última ficha de graduación del historial.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#aaa',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.eliminarUltimaFicha();
+        Swal.fire('Eliminado', 'La última ficha fue eliminada.', 'success');
+      }
+    });
   }
 
-  eliminarGraduacion(index: number) {
-    this.paciente.graduaciones.splice(index, 1);
+  eliminarUltimaFicha(): void {
+    this.paciente.historialFichas.pop();
   }
 
-  guardarGraduaciones() {
-    Swal.fire("GRADUACIÓN AGREGADA","Se ha Agregado con éxito!","success");
+  agregarCristal(ficha: FichaGraduacion) {
+    ficha.cristales?.push({
+      nombre: '',
+      fecha: new Date().toISOString().split('T')[0]
+    });
   }
 
 }

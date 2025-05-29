@@ -278,17 +278,39 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       this.esMovimientoSalida(this.movimiento.id);
     }
 
-    this.isLoading = true; // Activar pantalla de carga
+    this.isLoading = true;
+  
+    const afterSave = () => {
+      // Solo si es ENTRADA y tiene paciente y detalles adicionales
+      if (
+        this.movimiento.tipoMovimiento === 'ENTRADA' &&
+        this.movimiento.paciente?.id &&
+        this.movimiento.detallesAdicionales
+      ) {
+        const cristales = this.movimiento.detallesAdicionales
+          .filter(d => d.descripcion.toLowerCase().includes('cristal'))
+          .map(d => {
+            const texto = d.descripcion.toLowerCase();
+            const index = texto.indexOf('cristal');
+            return d.descripcion.substring(index + 7).trim(); // nombre después de "cristal "
+          });
+  
+        cristales.forEach(nombreCristal => {
+          this.pacienteService.guardarCristal(this.movimiento.paciente!.id,nombreCristal).subscribe({
+            next: () => console.log(`Cristal guardado: ${nombreCristal}`),
+            error: err => console.error('Error al guardar cristal:', err)
+          });
+        });
+      }
+  
+      this.isLoading = false;
+      Swal.fire('MOVIMIENTO GUARDADO', 'El movimiento ha sido guardado con éxito', 'success');
+      this.router.navigate(['/adminitrarCaja']);
+    };
 
     if (this.movimiento.id) {
       this.movimientoService.updateMovimiento(this.movimiento).subscribe({
-        next: () => {
-          
-          this.isLoading = false; // Desactivar pantalla de carga
-          Swal.fire('MOVIMIENTO ACTUALIZADO', 'El movimiento ha sido actualizado con éxito', 'success');
-          this.router.navigate(['/adminitrarCaja']);
-          
-        },
+        next: afterSave,
         error: (e) => {
           this.isLoading = false; // Desactivar pantalla de carga en caso de error
           Swal.fire('ERROR', e.error.mensaje, 'error');
@@ -296,13 +318,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       });
     } else {
       this.movimientoService.createMovimiento(this.movimiento).subscribe({
-        next: () => {
-          
-          this.isLoading = false;
-          Swal.fire('MOVIMIENTO CREADO', 'El movimiento ha sido creado con éxito', 'success');
-          this.router.navigate(['/adminitrarCaja']);
-          
-        },
+        next: afterSave,
         error: (e) => {
           this.isLoading = false;
           Swal.fire('ERROR', e.error.mensaje, 'error');
@@ -546,11 +562,31 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     this.calcularDeuda();
   }
 
-  aplicarDescuento(descuento:number){
-    if(this.movimiento.total !=0 || this.movimiento.total != null || this.movimiento.total === undefined){
-      this.calcularTotalAdicional()
-      this.movimiento.total=this.movimiento.total-(this.movimiento.total*(descuento/100))
+  aplicarDescuento(descuento: number) {
+    // Validar que el descuento esté entre 0 y 100
+    if (descuento < 0 || descuento > 100) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Descuento inválido',
+        text: 'El descuento debe estar entre 0% y 100%',
+      });
+
+      this.movimiento.descuento= 0;
+      return;
     }
+  
+    // Validar que el total sea válido
+    if (this.movimiento.total === null || this.movimiento.total === undefined || this.movimiento.total === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Total inválido',
+        text: 'No se puede aplicar el descuento porque el total es nulo, cero o indefinido.',
+      });
+      return;
+    }
+  
+    this.calcularTotalAdicional();
+    this.movimiento.total = this.movimiento.total - (this.movimiento.total * (descuento / 100));
   }
 
   volverAInicio() {

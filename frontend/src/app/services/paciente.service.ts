@@ -71,6 +71,14 @@ export class PacienteService {
     )
   }
 
+  guardarCristal(pacienteId: number, nombre: string): Observable<any> {
+    const payload = {
+      pacienteId: pacienteId,
+      nombre: nombre
+    };
+    return this.http.post(`${this.urlEndPointPaciente}/cristales`, payload);
+  }
+
   updatePaciente(paciente:Paciente): Observable<any>{
     return this.http.put<any>(`${this.urlEndPointPaciente}/${paciente.id}`,paciente).pipe(
       map((response: any)=>response.paciente as Paciente),
