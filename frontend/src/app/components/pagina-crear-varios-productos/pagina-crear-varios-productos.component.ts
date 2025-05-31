@@ -98,8 +98,31 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
       return;
     }
   
-    const modelosUnicos = Array.from(new Set(this.modelos.map(m => m.trim().toLowerCase())));
+    const modelosLimpios = this.modelos.map(m => m.trim()).filter(m => m !== '');
   
+    // Verificar caracteres inválidos
+    const modelosInvalidosCaracteres = modelosLimpios.filter(m => m.includes('.') || m.includes(';'));
+    if (modelosInvalidosCaracteres.length > 0) {
+      const lista = modelosInvalidosCaracteres.join(', ');
+      Swal.fire('Error', `Los modelos no deben contener punto (.) ni punto y coma (;). Revisá: ${lista}`, 'error');
+      this.modelosInvalidos = new Set(modelosInvalidosCaracteres.map(m => m.toLowerCase()));
+      return;
+    }
+  
+    // Verificar duplicados locales (en el formulario)
+    const modelosRepetidos = modelosLimpios.filter((modelo, index, self) =>
+      self.findIndex(m => m.toLowerCase() === modelo.toLowerCase()) !== index
+    );
+  
+    if (modelosRepetidos.length > 0) {
+      const lista = Array.from(new Set(modelosRepetidos.map(m => m.toLowerCase()))).join(', ');
+      Swal.fire('Error', `Tenés modelos repetidos en el formulario: ${lista}`, 'error');
+      this.modelosInvalidos = new Set(modelosRepetidos.map(m => m.toLowerCase()));
+      return;
+    }
+  
+    // Verificar duplicados contra backend
+    const modelosUnicos = Array.from(new Set(modelosLimpios.map(m => m.toLowerCase())));
     this.productoService.validarModelos(modelosUnicos, this.marca.id).subscribe({
       next: (modelosExistentes: string[]) => {
         if (modelosExistentes.length > 0) {
@@ -108,7 +131,7 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
           this.modelosInvalidos = new Set(modelosExistentes.map(m => m.toLowerCase()));
         } else {
           this.modelosInvalidos.clear();
-          this.crearProducto(); // ✅ solo si no hay duplicados
+          this.crearProducto();
         }
       },
       error: (error) => {
@@ -117,6 +140,7 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
       }
     });
   }
+  
 
   crearProducto() {
     this.agregarLocalesYStocksAlProducto(); 
