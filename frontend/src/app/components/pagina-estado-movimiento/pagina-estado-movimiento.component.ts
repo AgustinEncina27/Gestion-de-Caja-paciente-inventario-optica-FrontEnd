@@ -15,7 +15,8 @@ export class PaginaEstadoMovimientoComponent implements OnInit {
   estados = [
     { key: 'PEDIDO_CRISTALES', label: 'Pidiendo Cristales', image: 'assets/estadoMovimiento/lupa.gif' },
     { key: 'ARMANDO_PEDIDO', label: 'Armando el Pedido', image: 'assets/estadoMovimiento/reparar.gif' },
-    { key: 'ANTEOJO_TERMINADO', label: '¡Listo! Podes pasar a buscarlo', image: 'assets/estadoMovimiento/guiño.gif' }
+    { key: 'ANTEOJO_TERMINADO', label: '¡Listo! Podés pasar a buscarlo', image: 'assets/estadoMovimiento/guiño.gif' },
+    { key: 'ENTREGADO', label: 'Pedido Entregado', image: 'assets/estadoMovimiento/entregado.gif' } 
   ];
 
   constructor(
@@ -46,6 +47,8 @@ export class PaginaEstadoMovimientoComponent implements OnInit {
         return '66%';
       case 'ANTEOJO_TERMINADO':
         return '100%';
+      case 'ENTREGADO':
+        return '100%'; // misma barra que "terminado"
       default:
         return '0%';
     }
@@ -60,6 +63,7 @@ export class PaginaEstadoMovimientoComponent implements OnInit {
       case 'ARMANDO_PEDIDO':
         return 'progress-step2';
       case 'ANTEOJO_TERMINADO':
+      case 'ENTREGADO':
         return 'progress-step3';
       default:
         return '';
@@ -75,9 +79,12 @@ export class PaginaEstadoMovimientoComponent implements OnInit {
       case 'ARMANDO_PEDIDO':
         return 'Estamos terminando de armar tu pedido. Entre hoy y mañana estará listo para que lo retires.';
       case 'ANTEOJO_TERMINADO':
-        return '¡Tu pedido está listo! Puedes pasar a retirarlo cuando gustes.';
+        return '¡Tu pedido está listo! Podés pasar a retirarlo cuando gustes.';
+      case 'ENTREGADO':
+        return 'Gracias por confiar en nosotros. Tu pedido ya fue entregado. ¡Que lo disfrutes!';
       default:
         return 'Estamos procesando tu pedido.';
     }
   }
 }
+

@@ -1,19 +1,18 @@
-import { Graduacion } from "./graduacion";
-import { Local } from "./local";
+import { FichaGraduacion } from "./fichaGraducacion";
 
 export class Paciente {
     id!: number;
     nombreCompleto!: string;
-    ficha!: number;
-    direccion!: string;
-    obraSocial!: string;
+  direccion?: string;
     celular!: string;
+  documento?: string;
+  correo?: string;
+  medico?: string;
+  obraSocial?: string;
     genero!: string;
-    local!: Local;
-    graduaciones: Graduacion[] = []; // Lista de graduaciones
-    documento!:string;
-    correo!:string;
-    medico!:string;
+  local: any;
+  ficha!: number;
     creadoEn!: Date;
-    ultimaActualizacion!:Date;
+  ultimaActualizacion!: Date;
+  historialFichas: FichaGraduacion[] = [];
 }
