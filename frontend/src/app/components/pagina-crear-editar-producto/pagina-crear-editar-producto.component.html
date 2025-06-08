@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center my-5 cont">
   <div class="card bg-light text-dark shadow-sm" style="width: 80%;">
-    <div class="card-header text-white" style="background-color: #f57c42;">{{titulo}}</div>
+    <div class="card-header text-white" style="background-color: #3a5fa5;">{{titulo}}</div>
     <div class="card-body">
       <form #productoForm="ngForm">
 
@@ -12,135 +12,6 @@
             <input type="text" class="form-control" id="InputModelo" [(ngModel)]="producto.modelo" name="modelo" required>
           </div>
 
-          
-          <!-- Descripción -->
-          <div class="col-md-6">
-            <label class="form-label fw-bold" for="InputDescipcion">Descripción</label>
-            <textarea type="text" class="form-control" id="InputDescipcion" [(ngModel)]="producto.descripcion" name="descripcion"></textarea>
-          </div>
-        </div>
-
-        <!-- Segunda fila -->
-        <div class="row mb-3">
-          <!-- Marca -->
-          <div class="col-md-6">
-            <p class="form-label fw-bold">Marca</p>
-            <div class="border overflow-auto p-2 rounded bg-white" style="height: 200px;">
-              <div class="form-check mx-1" *ngFor="let marca of marcas">
-                <input class="form-check-input" type="radio" name="marca" [id]="+marca.id+'marca'" 
-                       (change)="selecionMarca(marca)" [checked]="marcaSeleccionado(marca)">
-                <label class="form-check-label" [for]="+marca.id+'marca'">
-                  {{marca.nombre}}
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Material -->
-          <div class="col-md-6">
-            <p class="form-label fw-bold">Material</p>
-            <div class="border overflow-auto p-2 rounded bg-white" style="height: 200px;">
-              <div class="form-check mx-1" *ngFor="let materialProducto of materialesProducto">
-                <input class="form-check-input" type="radio" name="materialProducto" [id]="+materialProducto.id+'materialProducto'" 
-                       (change)="selecionMaterial(materialProducto)" [checked]="materialProductoSeleccionado(materialProducto)">
-                <label class="form-check-label" [for]="+materialProducto.id+'materialProducto'">
-                  {{materialProducto.nombre}}
-                </label>
-              </div>
-            </div>
-          </div>        
-        </div>
-
-        
-
-        <!-- Tercera fila -->
-        <div class="row mb-3">
-          <!-- Costo -->
-          <div class="col-md-6">
-            <label class="form-label fw-bold" for="InputCosto">Costo</label>
-            <input type="number" class="form-control" id="InputCosto" [(ngModel)]="producto.costo" name="costo" 
-                   (change)="calcularPrecio(producto.costo)" >
-          </div>
-          <!-- Precio -->
-          <div class="col-md-6">
-            <label class="form-label fw-bold" for="InputPrecio">Precio</label>
-            <input type="number" class="form-control" id="InputPrecio" [(ngModel)]="producto.precio" name="precio" required>
-          </div>
-        </div>
-
-        <!-- Cuarta fila -->
-        <div class="row mb-3">
-          <!-- Locales y Stock -->
-          <div class="col-md-6 mt-3">
-            <p class="form-label fw-bold">Locales y Stock</p>
-            <div class="form-check mx-1 d-flex align-items-center mb-2" *ngFor="let local of locales">
-              <!-- Checkbox para seleccionar el local -->
-              <input 
-                class="form-check-input me-2" 
-                type="checkbox" 
-                [id]="'local-' + local.id" 
-                (change)="toggleLocal(local)" 
-                [checked]="isLocalSelected(local)">
-              <label class="form-check-label me-3" [for]="'local-' + local.id">
-                {{ local.nombre }}
-              </label>
-            
-              <!-- Input para ingresar el stock -->
-              <input 
-                type="number" 
-                class="form-control w-25" 
-                [placeholder]="'Stock para ' + local.nombre" 
-                [(ngModel)]="localStocks[local.id]" 
-                name="stock-{{ local.id }}" 
-                [disabled]="!isLocalSelected(local)">
-            </div>
-          </div>
-         <!-- Proveedores -->
-          <div class="col-md-6">
-            <p><label class="form-label fw-bold" for="InputProveedor">Proveedores</label></p>
-            <div 
-              class="border overflow-auto rounded bg-white" 
-              style="max-height: 200px;">
-              <div class="form-check m-1" *ngFor="let proveedor of proveedores">
-                <input 
-                  class="form-check-input" 
-                  type="checkbox" 
-                  [id]="+proveedor.id+'proveedor'"   
-                  [checked]="isProveedorSelectedInCheckBox(proveedor)" 
-                  (change)="toggleProveedorSelection(proveedor)" 
-                  name="proveedor{{proveedor.id}}">
-                <label 
-                  class="form-check-label" 
-                  [for]="+proveedor.id+'proveedor'">
-                  {{proveedor.nombre}}
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quinta fila -->
-        <div class="row mb-3">
-          <!-- Género -->
-          <div class="col-md-6">
-            <label for="InputModelo" class="form-label fw-bold">Género</label>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="genero" id="hombreGenero" 
-                     (change)="selecionGenero('Hombre')" [checked]="generoSeleccionado('Hombre')">
-              <label class="form-check-label" for="hombreGenero">Hombre</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="genero" id="mujerGenero" 
-                     (change)="selecionGenero('Mujer')" [checked]="generoSeleccionado('Mujer')">
-              <label class="form-check-label" for="mujerGenero">Mujer</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="genero" id="unisexGenero" 
-                     (change)="selecionGenero('Unisex')" [checked]="generoSeleccionado('Unisex')">
-              <label class="form-check-label" for="unisexGenero">Unisex</label>
-            </div>
-          </div>
-
           <!-- Categoría -->
           <div class="col-md-6">
             <p><label class="form-label fw-bold" for="InputCategoria">Categoría</label></p>
@@ -149,6 +20,138 @@
                      [checked]="isCategorySelectedInCheckBox(categoria)" 
                      (change)="toggleCategorySelection(categoria)" name="category{{categoria.id}}">
               <label class="form-check-label" [for]="+categoria.id+'categoria'">{{categoria.nombre}}</label>
+            </div>
+          </div> 
+        </div>
+        <div *ngIf="hayCategoriasSeleccionadas()">
+          <!-- Segunda fila -->
+          <div class="row mb-3">
+            <!-- Marca -->
+            <div class="col-md-6">
+              <p class="form-label fw-bold">Marca/Tratamiento</p>
+              <div class="border overflow-auto p-2 rounded bg-white" style="height: 200px;">
+                <div class="form-check mx-1" *ngFor="let marca of marcas">
+                  <input class="form-check-input" type="radio" name="marca" [id]="+marca.id+'marca'" 
+                        (change)="selecionMarca(marca)" [checked]="marcaSeleccionado(marca)">
+                  <label class="form-check-label" [for]="+marca.id+'marca'">
+                    {{marca.nombre}}
+                  </label>
+                </div>
+              </div>
+            </div>
+            <!-- Descripción -->
+            <div class="col-md-6">
+              <label class="form-label fw-bold" for="InputDescipcion">Descripción</label>
+              <textarea type="text" class="form-control" id="InputDescipcion" [(ngModel)]="producto.descripcion" name="descripcion"></textarea>
+            </div>     
+          </div>
+        </div>
+
+        <div *ngIf="hayCategoriasSeleccionadas()">
+          <div *ngIf="!esSoloCristalSeleccionado()">
+            <!-- Quinta fila -->
+            <div class="row mb-3">
+              <!-- Material -->
+              <div class="col-md-6">
+                <p class="form-label fw-bold">Material</p>
+                <div class="border overflow-auto p-2 rounded bg-white" style="height: 200px;">
+                  <div class="form-check mx-1" *ngFor="let materialProducto of materialesProducto">
+                    <input class="form-check-input" type="radio" name="materialProducto" [id]="+materialProducto.id+'materialProducto'" 
+                          (change)="selecionMaterial(materialProducto)" [checked]="materialProductoSeleccionado(materialProducto)">
+                    <label class="form-check-label" [for]="+materialProducto.id+'materialProducto'">
+                      {{materialProducto.nombre}}
+                    </label>
+                  </div>
+                </div>
+              </div> 
+              <!-- Género -->
+              <div class="col-md-6">
+                <label for="InputModelo" class="form-label fw-bold">Género</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="genero" id="hombreGenero" 
+                        (change)="selecionGenero('Hombre')" [checked]="generoSeleccionado('Hombre')">
+                  <label class="form-check-label" for="hombreGenero">Hombre</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="genero" id="mujerGenero" 
+                        (change)="selecionGenero('Mujer')" [checked]="generoSeleccionado('Mujer')">
+                  <label class="form-check-label" for="mujerGenero">Mujer</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="genero" id="unisexGenero" 
+                        (change)="selecionGenero('Unisex')" [checked]="generoSeleccionado('Unisex')">
+                  <label class="form-check-label" for="unisexGenero">Unisex</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="hayCategoriasSeleccionadas()">
+          <!-- Tercera fila -->
+          <div class="row mb-3">
+            <!-- Costo -->
+            <div class="col-md-6">
+              <label class="form-label fw-bold" for="InputCosto">Costo</label>
+              <input type="number" class="form-control" id="InputCosto" [(ngModel)]="producto.costo" name="costo" 
+                    (change)="calcularPrecio(producto.costo)" >
+            </div>
+            <!-- Precio -->
+            <div class="col-md-6">
+              <label class="form-label fw-bold" for="InputPrecio">Precio</label>
+              <input type="number" class="form-control" id="InputPrecio" [(ngModel)]="producto.precio" name="precio" required>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="hayCategoriasSeleccionadas()">
+          <!-- Cuarta fila -->
+          <div class="row mb-3">
+            <!-- Locales y Stock -->
+            <div class="col-md-6 mt-3">
+              <p class="form-label fw-bold">Locales y Stock</p>
+              <div class="form-check mx-1 d-flex align-items-center mb-2" *ngFor="let local of locales">
+                <!-- Checkbox para seleccionar el local -->
+                <input 
+                  class="form-check-input me-2" 
+                  type="checkbox" 
+                  [id]="'local-' + local.id" 
+                  (change)="toggleLocal(local)" 
+                  [checked]="isLocalSelected(local)">
+                <label class="form-check-label me-3" [for]="'local-' + local.id">
+                  {{ local.nombre }}
+                </label>
+              
+                <!-- Input para ingresar el stock -->
+                <input 
+                  type="number" 
+                  class="form-control w-25" 
+                  [placeholder]="'Stock para ' + local.nombre" 
+                  [(ngModel)]="localStocks[local.id]" 
+                  name="stock-{{ local.id }}" 
+                  [disabled]="!isLocalSelected(local)">
+              </div>
+            </div>
+          <!-- Proveedores -->
+            <div class="col-md-6">
+              <p><label class="form-label fw-bold" for="InputProveedor">Proveedores</label></p>
+              <div 
+                class="border overflow-auto rounded bg-white" 
+                style="max-height: 200px;">
+                <div class="form-check m-1" *ngFor="let proveedor of proveedores">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    [id]="+proveedor.id+'proveedor'"   
+                    [checked]="isProveedorSelectedInCheckBox(proveedor)" 
+                    (change)="toggleProveedorSelection(proveedor)" 
+                    name="proveedor{{proveedor.id}}">
+                  <label 
+                    class="form-check-label" 
+                    [for]="+proveedor.id+'proveedor'">
+                    {{proveedor.nombre}}
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -184,14 +187,15 @@
             class="btn btn-success" 
             (click)="editarProducto()" 
             *ngIf="producto.id != null" 
-            [disabled]="!productoForm.form.valid  
-            || !(localSeleccionados.size>0) 
-            || marca.id===undefined 
-            || materialProducto.id===undefined 
-            || !genero 
-            || !(selectedCategoriesCheckbox.length>0)
-            || !(selectedProveedoresCheckbox.length>0)"
-            >
+            [disabled]="
+                !productoForm.form.valid ||
+                !(localSeleccionados.size > 0) ||
+                marca.id === undefined ||
+                !(selectedCategoriesCheckbox.length > 0) ||
+                !(selectedProveedoresCheckbox.length > 0) ||
+                (!hayCategoriasSeleccionadas() && (materialProducto.id === undefined || !genero))
+              "
+              >
             Editar Producto
           </button>
         </div>

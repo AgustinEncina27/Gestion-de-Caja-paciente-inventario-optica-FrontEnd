@@ -1,5 +1,5 @@
 <div class=" nuestroCatalogo d-flex flex-wrap justify-content-around  ">
-  <p style="font-size: 50px; color: black;" class="fw-bold my-4">NUESTRO CATÁLOGO</p>
+  <p style="font-size: 50px;" class="fw-bold my-4">NUESTRO CATÁLOGO</p>
 </div>
 <div  class="d-flex justify-content-evenly mb-4 filtros p-2">
   <div class="d-flex justify-content-between align-items-center" *ngIf="authService.hasRoles()">
@@ -48,7 +48,7 @@
 <div class="container mt-5" *ngIf="productos.length > 0">
   <div class="table-responsive">
     <table class="table table-striped table-bordered table-hover">
-      <thead class="table-dark">
+      <thead class="table">
         <tr>
           <th>Modelo</th>
           <th>Marca</th>
@@ -72,7 +72,7 @@
               <p class="card-text">{{categoria.nombre}}</p>
             </div>
           </td>
-          <td>{{producto.material.nombre}}</td>
+          <td>{{ producto.material?.nombre || '' }}</td>
           <td>{{producto.genero}}</td>
           <td *ngIf="authService.hasRoles()">${{producto.costo}}</td>
           <td>${{producto.precio}}</td>

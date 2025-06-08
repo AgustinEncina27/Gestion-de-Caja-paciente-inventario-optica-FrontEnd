@@ -143,7 +143,8 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
   
 
   crearProducto() {
-    this.agregarLocalesYStocksAlProducto(); 
+    this.agregarLocalesYStocksAlProducto();
+    console.log(this.materialProducto +this.genero) 
     const productos: Producto[] = this.modelos
       .filter(m => m.trim() !== '')
       .map(modelo => {
@@ -156,7 +157,7 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
         nuevoProducto.proveedores = [...this.selectedProveedoresCheckbox];
         nuevoProducto.genero = this.genero;
         nuevoProducto.marca = this.marca;
-        nuevoProducto.material = this.materialProducto;
+        nuevoProducto.material = this.materialProducto?.id ? { id: this.materialProducto.id } as any : null;
         nuevoProducto.productoLocales = this.producto.productoLocales;
         nuevoProducto.creadoEn = new Date();
         nuevoProducto.ultimaActualizacion = new Date();
@@ -204,12 +205,32 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
   }
   
   toggleCategorySelection(categoria: Categoria) {
-    if (this.isCategorySelectedInCheckBox(categoria)) {
-      this.selectedCategoriesCheckbox = this.selectedCategoriesCheckbox.filter(selectedCategory => selectedCategory.id !== categoria.id); 
+    const esCristal = categoria.nombre.toLowerCase() === 'cristal';
+  
+    if (esCristal) {
+      const yaSeleccionado = this.selectedCategoriesCheckbox.some(c => c.id === categoria.id);
+
+      if (yaSeleccionado) {
+        // Si ya estaba seleccionada, la quitamos y dejamos vacío
+        this.selectedCategoriesCheckbox = [];
+      } else {
+        // Si no estaba seleccionada, se selecciona solo "Cristal"
+        this.selectedCategoriesCheckbox = [categoria];
+      }
     } else {
-      this.selectedCategoriesCheckbox.push(categoria);
-    }
+      // Si había "Cristal", lo eliminamos
+      this.selectedCategoriesCheckbox = this.selectedCategoriesCheckbox.filter(c => c.nombre.toLowerCase() !== 'cristal');
+    
+      // Alternar la categoría actual
+      const index = this.selectedCategoriesCheckbox.findIndex(c => c.id === categoria.id);
+      if (index === -1) {
+        this.selectedCategoriesCheckbox.push(categoria);
+      } else {
+        this.selectedCategoriesCheckbox.splice(index, 1);
+      }
+    }    
   }
+  
 
   //Proveedores
   isProveedorSelectedInCheckBox(proveedor: Proveedor): boolean {
@@ -276,7 +297,7 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
   }
 
   calcularPrecio(costo:number){
-    this.producto.precio= ((costo * 0.20)+costo)*3;
+    this.producto.precio= costo*3;
   }
 
   agregarModelo() {
@@ -289,6 +310,15 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
 
   trackByIndex(index: number): number {
     return index;
+  }
+
+  esSoloCristalSeleccionado(): boolean {
+    return this.selectedCategoriesCheckbox.length === 1 &&
+           this.selectedCategoriesCheckbox[0].nombre.toLowerCase() === 'cristal';
+  }
+
+  hayCategoriasSeleccionadas(): boolean {
+    return this.selectedCategoriesCheckbox.length > 0;
   }
 
 }

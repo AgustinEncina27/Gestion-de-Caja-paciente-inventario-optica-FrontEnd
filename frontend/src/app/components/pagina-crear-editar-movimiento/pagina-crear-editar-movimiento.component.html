@@ -1,298 +1,200 @@
 <div class="container mt-4">
-  <h2 class="text-center mb-3">{{ titulo }}</h2>
+  <h2 class="text-center mb-4">{{ titulo }}</h2>
+
   <form #movimientoForm="ngForm" (ngSubmit)="guardarMovimiento()">
+    <!-- Datos principales -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Datos del Movimiento</h5>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label for="tipoMovimiento" class="form-label">Tipo de Movimiento</label>
+            <select class="form-select" [(ngModel)]="movimiento.tipoMovimiento" name="tipoMovimiento" (change)="limpiarAlCambiarTipoDeMovimiento(movimiento.tipoMovimiento)" required>
+              <option value="ENTRADA">Entrada</option>
+              <option value="SALIDA">Salida</option>
+            </select>
+          </div>
 
-    <div class="d-flex flex-wrap mb-3">
-      <!-- Tipo de Movimiento -->
-      <div class="me-3 flex-fill">
-        <label for="tipoMovimiento" class="form-label">Tipo de Movimiento</label>
-        <select class="form-select" [(ngModel)]="movimiento.tipoMovimiento" name="tipoMovimiento" (change)="limpiarAlCambiarTipoDeMovimiento(movimiento.tipoMovimiento)" required>
-          <option value="ENTRADA">Entrada</option>
-          <option value="SALIDA">Salida</option>
-        </select>
+          <div class="col-md-3">
+            <label for="local" class="form-label">Local</label>
+            <select class="form-select" [(ngModel)]="movimiento.local" name="local" (change)="limpiarAlCambiarLocal(movimiento.local)" [disabled]="authService.hasRole('ROLE_VENDEDOR')" required>
+              <option *ngFor="let local of locales" [ngValue]="local">{{ local.nombre }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-3" *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
+            <label for="estadoMovimiento" class="form-label">Estado del Movimiento</label>
+            <select id="estadoMovimiento" class="form-select" [(ngModel)]="movimiento.estadoMovimiento" name="estadoMovimiento" required>
+              <option value="PEDIDO_CRISTALES">Pedido de cristales</option>
+              <option value="ARMANDO_PEDIDO">Armando el pedido</option>
+              <option value="ANTEOJO_TERMINADO">Anteojo terminado</option>
+              <option value="ENTREGADO">Entregado</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label for="fecha" class="form-label">Fecha</label>
+            <input type="datetime-local" class="form-control" [(ngModel)]="movimiento.fecha" name="fecha" required />
+          </div>
+        </div>
       </div>
-      
-      <!-- Local -->
-      <div class="me-3 flex-fill">
-        <label for="local" class="form-label">Local</label>
-        <select class="form-select" [(ngModel)]="movimiento.local" name="local" (change)="limpiarAlCambiarLocal(movimiento.local)" [disabled]="authService.hasRole('ROLE_VENDEDOR')"  required>
-          <option *ngFor="let local of locales" [ngValue]="local" >{{ local.nombre }}</option>
-        </select>
+    </div>
+
+    <!-- Vendedor y ficha del paciente -->
+    <div class="border rounded p-3 mb-4" *ngIf="movimiento.tipoMovimiento">
+      <h5 class="mb-3" >Información adicional</h5>
+      <div class="row g-3">
+        <div class="col-md-6" *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
+          <label class="form-label">Número de Ficha del Paciente</label>
+          <div class="input-group">
+            <input type="number" class="form-control" [(ngModel)]="fichaPaciente" name="fichaPaciente" placeholder="Ingrese N° de ficha" />
+            <button type="button" class="btn btn-primary" (click)="buscarPaciente()">Buscar</button>
+          </div>
+          <div *ngIf="pacienteEncontrado" class="mt-2">
+            <p><strong>Paciente:</strong> {{ pacienteEncontrado.nombreCompleto }}</p>
+          </div>
+        </div>
+        
+        <div class="col-md-6" *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
+          <label class="form-label">Vendedor</label>
+          <input type="text" class="form-control" [(ngModel)]="movimiento.vendedor" name="vendedor" placeholder="Ingrese el nombre del vendedor" required />
+        </div>    
+
+         <!-- Método de salida -->
+         <div class="col md-6" *ngIf="movimiento.tipoMovimiento === 'SALIDA'">
+          <div class="card-body">
+            <label class="form-label">Método de Salida</label>
+            <select class="form-select" [(ngModel)]="metodoSalida" name="metodoPago" [compareWith]="compararMetodosPago" required>
+              <option *ngFor="let metodo of metodosPago" [ngValue]="metodo">{{ metodo.nombre }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="col-md-6" >
+          <div class="card-body">
+            <label class="form-label">Descripción</label>
+            <textarea id="descripcion" class="form-control" [(ngModel)]="movimiento.descripcion" name="descripcion" placeholder="Ingrese una descripción" required></textarea>
+          </div>
+        </div>
       </div>
+    </div>
+
+   
+
     
-      <!-- Estado del Movimiento -->
-      <div *ngIf="movimiento.tipoMovimiento === 'ENTRADA'" class="flex-fill me-3">
-        <label for="estadoMovimiento" class="form-label">Estado del Movimiento</label>
-        <select
-          id="estadoMovimiento"
-          class="form-select"
-          [(ngModel)]="movimiento.estadoMovimiento"
-          name="estadoMovimiento"
-          required
-        >
-          <option value="PEDIDO_CRISTALES">Pedido de cristales</option>
-          <option value="ARMANDO_PEDIDO">Armando el pedido</option>
-          <option value="ANTEOJO_TERMINADO">Anteojo terminado</option>
-          <option value="ENTREGADO">Entregado</option>
-        </select>
-      </div>
 
-      <!-- Fecha -->
-      <div class="mb-3 flex-fill">
-        <label for="fecha" class="form-label">Fecha</label>
-        <input type="datetime-local" class="form-control" [(ngModel)]="movimiento.fecha" name="fecha" required />
-      </div>
-    </div>
-    
+    <!-- Detalles de productos -->
+    <div class="card mb-4" *ngIf="movimiento.local && movimiento.tipoMovimiento === 'ENTRADA'">
+      <div class="card-body">
+        <h5 class="card-title">Detalles de la Compra</h5>
 
-    <!-- Paciente por ficha -->
-    <div class="mb-3" *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
-      <label for="fichaPaciente" class="form-label">Número de Ficha del Paciente</label>
-      <div class="input-group">
-        <input
-          type="number"
-          class="form-control"
-          [(ngModel)]="fichaPaciente"
-          name="fichaPaciente"
-          placeholder="Ingrese N° de ficha"
-        />
-        <button type="button" class="btn btn-primary" (click)="buscarPaciente()">Buscar</button>
-      </div>
-      <div *ngIf="pacienteEncontrado" class="mt-2">
-        <p><strong>Paciente:</strong> {{ pacienteEncontrado.nombreCompleto }}</p>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" [(ngModel)]="codigoProducto" name="codigoProducto" placeholder="Ingrese código del producto" />
+          <button type="button" class="btn btn-primary" (click)="buscarProducto()">Buscar Producto</button>
+        </div>
+
+        <div *ngIf="productoSeleccionado" class="mb-3">
+          <select class="form-select" [(ngModel)]="marcaSeleccionada" name="marcaSeleccionada" (change)="cambiarProductoPorMarca()">
+            <option *ngFor="let marca of marcasDisponibles" [ngValue]="marca">{{ marca.nombre }}</option>
+          </select>
+        </div>
+
+        <div *ngIf="stockLocal !== null" class="mb-3">
+          <p><strong>Stock en local seleccionado:</strong> {{ stockLocal }}</p>
+        </div>
+
+        <div *ngFor="let detalle of detalles; let i = index" class="row g-2 align-items-center mb-2">
+          <div class="col-md-3"><span class="form-control">{{ detalle.producto.modelo }}</span></div>
+          <div class="col-md-3"><span class="form-control">{{ detalle.producto.marca.nombre }}</span></div>
+          <div class="col-md-2"><input type="number" placeholder="Cantidad" class="form-control" [(ngModel)]="detalle.cantidad" name="cantidad{{ i }}" (change)="verificarCantidad(detalle)" required /></div>
+          <div class="col-md-2"><span class="form-control">{{ detalle.subtotal | currency }}</span></div>
+          <div class="col-md-2"><button type="button" class="btn btn-danger w-100" (click)="eliminarDetalle(i)">Eliminar</button></div>
+        </div>
+
+        <button type="button" class="btn btn-primary mt-2" (click)="agregarDetalle()">Agregar Detalle</button>
       </div>
     </div>
 
-    <!-- Método de Pago -->
-    <div class="mb-3" *ngIf="movimiento.tipoMovimiento === 'SALIDA'">
-      <label for="metodoPago" class="form-label">Método de Salida</label >
-      <select class="form-select" [(ngModel)]="metodoSalida" name="metodoPago" [compareWith]="compararMetodosPago" required>
-        <option *ngFor="let metodo of metodosPago" [ngValue]="metodo" >{{ metodo.nombre }}</option>
-      </select>
-    </div>
-
-    <!-- Descripción (solo para SALIDA) -->
-    <div class="mb-3" *ngIf="movimiento.tipoMovimiento === 'SALIDA'">
-      <label for="descripcion" class="form-label">Descripción</label>
-      <textarea
-        id="descripcion"
-        class="form-control"
-        [(ngModel)]="movimiento.descripcion"
-        name="descripcion"
-        placeholder="Ingrese una descripción para la salida"
-        required
-      ></textarea>
-    </div>
-
-    <!-- Sección de Detalles del Movimiento -->
-    <div class="mb-3" *ngIf="movimiento.local && movimiento.tipoMovimiento === 'ENTRADA'">
-      <h5>Detalles de la compra</h5>
-      <div class="input-group mb-2">
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="codigoProducto"
-          name="codigoProducto"
-          placeholder="Ingrese código del producto"
-        />
-        <button type="button" class="btn btn-primary" (click)="buscarProducto()">Buscar Producto</button>
+    <!-- Detalles adicionales -->
+    <div class="card mb-4" *ngIf="movimiento.local && movimiento.tipoMovimiento === 'ENTRADA'">
+      <div class="card-body">
+        <h5 class="card-title">Detalles Adicionales</h5>
+        <table class="table table-bordered align-middle" >
+          <thead>
+            <tr><th>Descripción</th><th>Subtotal</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detalleAdicional of movimiento.detallesAdicionales; let i = index">
+              <td><input type="text" class="form-control" [(ngModel)]="detalleAdicional.descripcion" name="descripcionAdicional{{ i }}" required /></td>
+              <td><input type="number" class="form-control" [(ngModel)]="detalleAdicional.subtotal" name="subtotalAdicional{{ i }}" (change)="calcularTotalAdicional()" required /></td>
+              <td><button type="button" class="btn btn-danger" (click)="eliminarDetalleAdicional(i)">Eliminar</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" class="btn btn-primary" (click)="agregarDetalleAdicional()">Agregar Detalle Adicional</button>
       </div>
-      
-      <!-- Selección de Marca -->
-      <div *ngIf="productoSeleccionado">
-        <select
-          class="form-select"
-          [(ngModel)]="marcaSeleccionada"
-          name="marcaSeleccionada"
-          (change)="cambiarProductoPorMarca()"
-        >
-          <option *ngFor="let marca of marcasDisponibles" [ngValue]="marca">
-            {{ marca.nombre }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Mostrar stock del producto en el local seleccionado -->
-      <div *ngIf="stockLocal !== null" class="mb-2">
-        <p><strong>Stock en local seleccionado:</strong> {{ stockLocal }}</p>
-      </div>
-      
-      <!-- Detalles de productos -->
-      <div *ngFor="let detalle of detalles; let i = index" class="input-group mb-2">
-        <span class="form-control">{{ detalle.producto.modelo }} ({{ detalle.producto.precio | currency }})</span>
-        <input
-          type="number"
-          placeholder="Cantidad"
-          class="form-control"
-          [(ngModel)]="detalle.cantidad"
-          name="cantidad{{ i }}"
-          (change)="verificarCantidad(detalle)"
-          required
-        />
-        <span class="form-control">{{ detalle.subtotal | currency }}</span>
-        <button type="button" class="btn btn-danger" (click)="eliminarDetalle(i)">Eliminar</button>
-      </div>
-      <button type="button" class="btn btn-primary" (click)="agregarDetalle()">Agregar Detalle</button>
-    </div>
-
-    <!-- Detalles Adicionales -->
-    <div class="mb-3" *ngIf="movimiento.local && movimiento.tipoMovimiento === 'ENTRADA'">
-      <label class="form-label">Detalles Adicionales</label>
-      <!-- Tabla de detalles adicionales -->
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Descripción</th>
-            <th>Subtotal</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let detalleAdicional of movimiento.detallesAdicionales; let i = index">
-            <td>
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="detalleAdicional.descripcion"
-                name="descripcionAdicional{{ i }}"
-                required
-                placeholder="Descripción del producto adicional"
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="detalleAdicional.subtotal"
-                name="subtotalAdicional{{ i }}"
-                (change)="calcularTotalAdicional()"
-                required
-                placeholder="Subtotal"
-              />
-            </td>
-            <td>
-              <button type="button" class="btn btn-danger" (click)="eliminarDetalleAdicional(i)">Eliminar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Botón para agregar un nuevo detalle adicional -->
-      <button type="button" class="btn btn-primary" (click)="agregarDetalleAdicional()">Agregar Detalle Adicional</button>
     </div>
 
     <!-- Pagos -->
-    <div class="mb-3" *ngIf="movimiento.local && movimiento.tipoMovimiento === 'ENTRADA'">
-      <h5>Pagos Realizados</h5>
-
-      <!-- Tabla de pagos -->
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Método de Pago</th>
-            <th>Monto</th>
-            <th>Impuesto</th>
-            <th>Fecha</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let cajaMovimiento of movimiento.cajaMovimientos; let i = index">
-            <td>
-              <select
-                class="form-select"
-                [(ngModel)]="cajaMovimiento.metodoPago"
-                name="metodoPago{{ i }}"
-                required
-                [compareWith]="compararMetodosPago"
-              >
-                <option *ngFor="let metodo of metodosPago" [ngValue]="metodo">
-                  {{ metodo.nombre }}
-                </option>
-              </select>
-            </td>
-            <td>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="cajaMovimiento.monto"
-                (change)="calcularTotalYAdviertenciaTotal(cajaMovimiento.monto,i)"
-                name="monto{{ i }}"
-                required
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="cajaMovimiento.montoImpuesto"
-                (change)="calcularMontoImpuestoYAdviertenciaTotal()"
-                name="impuesto{{ i }}"
-                required
-              />
-            </td>
-            <td>
-              <input
-                type="date"
-                class="form-control"
-                [(ngModel)]="cajaMovimiento.fecha"
-                name="fecha{{ i }}"
-                required
-              />
-            </td>
-            <td>
-              <button type="button" class="btn btn-danger" (click)="eliminarPago(i)">
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Botón para agregar un nuevo pago -->
-      <button type="button" class="btn btn-primary" (click)="agregarPago()">Agregar Pago</button>
+    <div class="card mb-4" *ngIf="movimiento.local && movimiento.tipoMovimiento === 'ENTRADA'">
+      <div class="card-body">
+        <h5 class="card-title">Pagos Realizados</h5>
+        <table class="table table-bordered align-middle" *ngIf="movimiento.cajaMovimientos.length>0">
+          <thead>
+            <tr><th>Método de Pago</th><th>Monto</th><th>Impuesto</th><th>Fecha</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cajaMovimiento of movimiento.cajaMovimientos; let i = index">
+              <td>
+                <select class="form-select" [(ngModel)]="cajaMovimiento.metodoPago" name="metodoPago{{ i }}" required [compareWith]="compararMetodosPago">
+                  <option *ngFor="let metodo of metodosPago" [ngValue]="metodo">{{ metodo.nombre }}</option>
+                </select>
+              </td>
+              <td><input type="number" class="form-control" [(ngModel)]="cajaMovimiento.monto" (change)="calcularTotalYAdviertenciaTotal(cajaMovimiento.monto,i)" name="monto{{ i }}" required /></td>
+              <td><input type="number" class="form-control" [(ngModel)]="cajaMovimiento.montoImpuesto" (change)="calcularMontoImpuestoYAdviertenciaTotal()" name="impuesto{{ i }}" required /></td>
+              <td><input type="date" class="form-control" [(ngModel)]="cajaMovimiento.fecha" name="fecha{{ i }}" required /></td>
+              <td><button type="button" class="btn btn-danger" (click)="eliminarPago(i)">Eliminar</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" class="btn btn-primary" (click)="agregarPago()">Agregar Pago</button>
+      </div>
     </div>
 
-    <!-- Total -->
-    <div class="mb-3" *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
-      <label for="total" class="form-label">Deuda</label>
-      <input type="number" class="form-control" [(ngModel)]="deuda" name="deuda" disabled/>
+     <!-- Totales y Descuentos -->
+     <div class="row g-3 mb-4">
+      <div class="col-md-4" *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
+        <label class="form-label">Deuda</label>
+        <input type="number" class="form-control" [(ngModel)]="deuda" name="deuda" disabled />
+      </div>
+
+      <div class="col-md-4" *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
+        <label class="form-label">Descuento (%)</label>
+        <input type="number" class="form-control" [(ngModel)]="movimiento.descuento" name="descuento" min="0" max="100" (change)="aplicarDescuento(movimiento.descuento)" />
+      </div>
+
+      <div class="col-md-4" *ngIf="movimiento.tipoMovimiento">
+        <label class="form-label">Total</label>
+        <input type="number" class="form-control" [(ngModel)]="movimiento.total" name="total" (change)="duplicarTotalImpuesto(movimiento.total)" />
+      </div>
     </div>
 
-    <!-- Descuento -->
-    <div class="mb-3" *ngIf=" movimiento.tipoMovimiento === 'ENTRADA'">
-      <label for="descuento" class="form-label">Descuento</label>
-      <input type="number" class="form-control" [(ngModel)]="movimiento.descuento" name="descuento" min="0" max="100"(change)="aplicarDescuento(movimiento.descuento)"/>
-    </div>
-
-    <!-- Total -->
-    <div class="mb-3" *ngIf="movimiento.tipoMovimiento === 'SALIDA' || movimiento.tipoMovimiento === 'ENTRADA'">
-      <label for="total" class="form-label">Total</label>
-      <input type="number" class="form-control" [(ngModel)]="movimiento.total" name="total" (change)="duplicarTotalImpuesto(movimiento.total)"/>
-    </div>
-
-    <!-- Spinner de carga -->
+    <!-- Spinner -->
     <div *ngIf="isLoading" class="overlay">
       <div class="spinner"></div>
       <p>Guardando...</p>
     </div>
 
-   
-
     <!-- Botones -->
-    <div class="text-center mb-4">
-      <button class="btn btn-secondary m-1" (click)="volverAInicio()">Volver al inicio</button>
-
-      <button
-        type="submit"
-        class="btn btn-success"
-        [disabled]="( movimiento.tipoMovimiento === 'ENTRADA' 
-                      && ( (detalles.length === 0 && movimiento.detallesAdicionales?.length === 0) || !movimiento.local || !movimiento.fecha) )
-        || (movimiento.tipoMovimiento === 'SALIDA' &&
-            (!movimiento.descripcion || !movimiento.local || !movimiento.total || !movimiento.fecha)
-        || movimiento.tipoMovimiento === undefined)
-        "
-      >
+    <div class="text-center mb-5">
+      <button class="btn btn-secondary me-2" (click)="volverAInicio()">Volver al inicio</button>
+      <button type="submit" class="btn btn-success"
+        [disabled]="
+          (movimiento.tipoMovimiento === 'ENTRADA' && ((!movimiento.local || !movimiento.fecha) || (detalles.length === 0 && movimiento.detallesAdicionales?.length === 0))) ||
+          (movimiento.tipoMovimiento === 'SALIDA' && (!movimiento.descripcion || !movimiento.local || !movimiento.total || !movimiento.fecha)) ||
+          !movimiento.tipoMovimiento
+        ">
         Guardar Movimiento
       </button>
     </div>

@@ -1,16 +1,17 @@
 .btn-outline-primary{
-  background-color: #FB8747;
-  color: black;
-  border-color: #FB8747
+  background-color: #3a5fa5;
+  color: white;
+  border-color: #3a5fa5
 }
 
 .btn-outline-primary:hover {
-  background-color: #F4B15B;
-  border-color: #F4B15B
+  background-color: #8fa5d3;
+  border-color: #8fa5d3
 }
 
 .iconos{
   margin-right: 1%;
+  filter: brightness(0) invert(1);
 }
 
 .navbar{
