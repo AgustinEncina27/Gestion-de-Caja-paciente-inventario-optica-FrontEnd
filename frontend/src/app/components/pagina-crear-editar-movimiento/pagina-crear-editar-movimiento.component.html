@@ -140,7 +140,7 @@
     <div class="card mb-4" *ngIf="movimiento.local && movimiento.tipoMovimiento === 'ENTRADA'">
       <div class="card-body">
         <h5 class="card-title">Pagos Realizados</h5>
-        <table class="table table-bordered align-middle" *ngIf="movimiento.cajaMovimientos.length>0">
+        <table class="table table-bordered align-middle" >
           <thead>
             <tr><th>Método de Pago</th><th>Monto</th><th>Impuesto</th><th>Fecha</th><th>Acciones</th></tr>
           </thead>
