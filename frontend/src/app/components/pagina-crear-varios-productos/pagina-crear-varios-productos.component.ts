@@ -101,10 +101,12 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
     const modelosLimpios = this.modelos.map(m => m.trim()).filter(m => m !== '');
   
     // Verificar caracteres inválidos
-    const modelosInvalidosCaracteres = modelosLimpios.filter(m => m.includes('.') || m.includes(';'));
+    const modelosInvalidosCaracteres = modelosLimpios.filter(m =>
+      m.includes('.') || m.includes(';') || m.includes('/') || m.includes('\\')
+    );
     if (modelosInvalidosCaracteres.length > 0) {
       const lista = modelosInvalidosCaracteres.join(', ');
-      Swal.fire('Error', `Los modelos no deben contener punto (.) ni punto y coma (;). Revisá: ${lista}`, 'error');
+      Swal.fire('Error', `Los modelos no deben contener punto (.), punto y coma (;), barra (/), ni barra invertida (\\). Revisá: ${lista}`, 'error');
       this.modelosInvalidos = new Set(modelosInvalidosCaracteres.map(m => m.toLowerCase()));
       return;
     }
