@@ -72,7 +72,7 @@
               <p class="card-text">{{categoria.nombre}}</p>
             </div>
           </td>
-          <td>{{producto.material.nombre}}</td>
+          <td>{{ producto.material?.nombre || '' }}</td>
           <td>{{producto.genero}}</td>
           <td *ngIf="authService.hasRoles()">${{producto.costo}}</td>
           <td>${{producto.precio}}</td>
@@ -84,7 +84,14 @@
           </td>          
           <td>{{producto.descripcion}}</td>
           <td *ngIf="authService.hasRoles()">
-            <button class="btn btn-primary btn-sm me-2" [routerLink]="'/editarProducto/' + producto.id">Editar</button>
+            <button
+              class="btn btn-primary btn-sm me-2"
+              [routerLink]="['/editarProducto', producto.id]"
+              [queryParams]="{ fromPage: paginador.number }"
+            >
+              Editar
+            </button>
+
             <button class="btn btn-danger btn-sm" (click)="eliminarProducto(producto)">Eliminar</button>
           </td>
         </tr>
@@ -92,7 +99,32 @@
     </table>
   </div>
 </div>
-<paginator-nav *ngIf="paginador && modeloSeleccionado==='' && marcaSeleccionado===''" [paginador]="paginador" [url]="url" [categoriaId]="categoriaId" [marcaId]="marcaId" [genero]="genero"></paginator-nav>
+<!-- Paginador para productos -->
+<nav aria-label="Page navigation" *ngIf="paginador && paginador.totalPages > 1">
+  <ul class="pagination justify-content-center mt-3">
+
+    <!-- Botón Anterior -->
+    <li class="page-item" [class.disabled]="paginador.first">
+      <a class="page-link cursor-pointer" (click)="paginaAnterior()" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+
+    <!-- Números de página visibles -->
+    <li *ngFor="let page of pages" [class.active]="paginador.number === page" class="page-item">
+      <a class="page-link cursor-pointer" (click)="cambiarPagina(page)">{{ page + 1 }}</a>
+    </li>
+
+    <!-- Botón Siguiente -->
+    <li class="page-item" [class.disabled]="paginador.last">
+      <a class="page-link cursor-pointer" (click)="paginaSiguiente()" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+
+  </ul>
+</nav>
+
 
 <!-- Modal para seleccionar local -->
 <div
