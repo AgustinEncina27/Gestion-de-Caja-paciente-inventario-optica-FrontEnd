@@ -1,15 +1,16 @@
 .btn-outline-primary{
-  background-color: #3a5fa5;
-  color: white;
-  border-color: #3a5fa5
+  background-color: #2196f3;
+  color: #f5faff;
+  border: none;
 }
 
 .btn-outline-primary:hover {
-  background-color: #8fa5d3;
-  border-color: #8fa5d3
+  background-color: #bbdefb;
+  border-color: #bbdefb;
+  color: #0F0E49;
 }
 .nuestroCatalogo {
-  background-color: #3a5fa5;
+  background-color: #2196f3;
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* Centra horizontalmente los elementos en .nuestroCatalogo */
@@ -24,7 +25,7 @@
 }
 
 .filtros {
-  background-color: #8fa5d3;
+  background-color: #bbdefb;
   display: flex;
   flex-wrap: wrap; /* Asegura que los elementos se envuelvan a una nueva línea cuando no haya suficiente espacio */
 }

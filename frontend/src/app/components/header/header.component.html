@@ -1,8 +1,8 @@
 <nav class="navbar p-0">
-  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.facebook.com/opticasnorapanza" target="_blank"><img src="/assets/iconos/facebook.svg" class="iconos" alt="Facebook"></a>
-  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.instagram.com/opticasnorapanza/" target="_blank"><img src="/assets/iconos/instagram.svg" class="iconos" alt="Instagram"></a>
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.facebook.com/OpticaUniversalAlem" target="_blank"><img src="/assets/iconos/facebook.svg" class="iconos" alt="Facebook"></a>
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.instagram.com/optica.universal/" target="_blank"><img src="/assets/iconos/instagram.svg" class="iconos" alt="Instagram"></a>
   <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" [routerLink]="['/visitanos']" ><img src="/assets/iconos/geo-alt.svg" class="iconos me-1">VISITANOS</a>
-  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://wa.me/+5493765374212" target="_blank"><img src="/assets/iconos/telephone.svg" class="iconos me-1" alt="Teléfono">+54 9 3765374212</a>
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://wa.me/+5493754525955" target="_blank"><img src="/assets/iconos/telephone.svg" class="iconos me-1" alt="Teléfono">+54 9 3765374212</a>
   <div *ngIf="!authService.isAuthenticated()" class="col ">
     <a [routerLink]="['/login']" class="btn btn-outline-primary rounded-0 col-12 navbar-item headerA d-flex align-items-center justify-content-center">INICIAR SESIÓN</a>
   </div>
@@ -19,7 +19,7 @@
 <!-- Navbar 2-->
 <nav class="navbar navbar2 p-3 navbar-expand-lg bg-transparent text-body d-flex justify-content-around">
   <a class="navbar-brand m-1 " [routerLink]="['/inicio']">
-    <img src="/assets/avatar.png" alt="Bootstrap" width="150" height="150">
+    <img src="/assets/avatar.png" alt="Bootstrap" width="200" height="200">
   </a>
   <button class="navbar-toggler m-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -29,17 +29,6 @@
       <li class="nav-item" *ngIf="authService.hasRoles()">
         <a class="nav-link " aria-current="page" [routerLink]="['/inicio']">INVENTARIO</a>
       </li>
-      <!-- 
-      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
-        <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDGafasDeSol+'/0']">GAFAS DE SOL</a>
-      </li>
-      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
-        <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDRecetas+'/0']">RECETAS</a>
-      </li>
-      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
-        <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDAccesorios+'/0']">ACCESORIOS</a>
-      </li>
-      -->
       <li class="nav-item" *ngIf="!authService.hasRoles()">
         <a class="nav-link" [routerLink]="['/cristaleria']">CRISTALERÍA</a>
       </li>
@@ -72,7 +61,7 @@
     </ul>
   </div>
   <a type="button" id="botonImagen" class="btn btn-success btn-lg  rounded m-1 " 
-  href="https://wa.me/+5493765374212" target="_blank" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+  href="https://wa.me/+5493754525955" target="_blank" *ngIf="!authService.hasRole('ROLE_ADMIN')">
   <img src="/assets/iconos/whatsapp.svg"  alt="Bootstrap">Whatsapp</a> 
 </nav>
 

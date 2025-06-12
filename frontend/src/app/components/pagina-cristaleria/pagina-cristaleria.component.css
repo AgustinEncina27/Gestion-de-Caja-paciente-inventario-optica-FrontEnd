@@ -5,16 +5,17 @@ p {
 }
 
 .btn-outline-primary{
-  background-color: #3a5fa5;
+  background-color: #2196f3;
   color: white;
-  border-color: #3a5fa5;
+  border-color: #2196f3;
   width: 200px;
   height: 60px;
 }
 
 .btn-outline-primary:hover {
-  background-color: #8fa5d3;
-  border-color: #8fa5d3
+  background-color: #bbdefb;
+  border-color: #bbdefb;
+  color: black;
 }
 
 .titulo {

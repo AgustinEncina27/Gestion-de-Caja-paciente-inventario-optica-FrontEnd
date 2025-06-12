@@ -1,12 +1,13 @@
 .btn-outline-primary{
-  background-color: #3a5fa5;
-  color: white;
-  border-color: #3a5fa5
+  background-color: #2196f3;
+  color: #f5faff;
+  border: none;
 }
 
 .btn-outline-primary:hover {
-  background-color: #8fa5d3;
-  border-color: #8fa5d3
+  background-color: #bbdefb;
+  border-color: #bbdefb;
+  color: #0F0E49;
 }
 
 .iconos{

@@ -50,23 +50,6 @@ export class ProductoService {
     return this.http.get<Producto[]>(`${this.urlEndPointProducto}/marca/${marca}`)
   }
 
-  getProductosByGeneroAndMarcaAndCategoria(genero:string,marcaid:number,categoriaid:number,page:number): Observable<any>{
-    return this.http.get(`${this.urlEndPointProducto}/page/${genero}/${marcaid}/${categoriaid}/${page}`).pipe(
-      tap((response:any)=> (response.content as Producto[])),
-      catchError(e=>{
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          Swal.fire("ERROR AL OBTENER LOS PRODUCTOS",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          Swal.fire(e.error.mensaje,e.error.error,'error');
-        }
-        return throwError(() => e);
-      })
-    )
-  }
-
   obtenerStockTotalPorSucursal(): Observable<StockTotalSucursal[]> {
     return this.http.get<StockTotalSucursal[]>(`${this.urlEndPointProducto}/stock-total-sucursal`);
   }
