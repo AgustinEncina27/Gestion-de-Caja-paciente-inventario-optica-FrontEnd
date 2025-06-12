@@ -41,6 +41,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   localStocks: { [localId: number]: number } = {}; // Mapa para guardar el stock por local
   localSeleccionados: Set<number> = new Set(); // Conjunto de IDs de locales seleccionados
   isLoading = false; // Variable para la pantalla de carga
+  fromPage: number | null = null;
 
   constructor(
     private productoService: ProductoService,
@@ -54,6 +55,8 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    let page = this.activatedRoute.snapshot.queryParamMap.get('fromPage');
+    this.fromPage = page ? +page : null;
     this.cargarProducto();
     this.cargarCategorias();
     this.cargarProveedores();
@@ -157,35 +160,39 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   }
   
   editarProducto() {
-    this.agregarLocalesYStocksAlProducto(); // Agregar locales y stocks al producto
+    this.agregarLocalesYStocksAlProducto();
     this.producto.categorias = this.selectedCategoriesCheckbox;
     this.producto.proveedores = this.selectedProveedoresCheckbox;
     this.producto.marca = this.marca;
-    if(this.esSoloCristalSeleccionado()){
+  
+    if (this.esSoloCristalSeleccionado()) {
       this.producto.material = null;
       this.producto.genero = '';
-    }else{
+    } else {
       this.producto.material = this.materialProducto;
       this.producto.genero = this.genero;
     }
 
     this.producto.ultimaActualizacion = new Date();
-    
-    this.isLoading = true; // Activar pantalla de carga
+    this.isLoading = true;
 
     this.productoService.updateProducto(this.producto).subscribe({
-        next: (response) => {
-
-        this.isLoading = false; // Desactivar pantalla de carga
+      next: () => {
+        this.isLoading = false;
         Swal.fire('PRODUCTO EDITADO', 'Se ha editado con éxito!', 'success');
-        this.router.navigate(['/inicio']);
+        if (this.fromPage !== null) {
+          this.router.navigate(['/productos/page', this.fromPage]);
+        } else {
+          this.router.navigate(['/productos']);
+        }
       },
       error: (e) => {
-        this.isLoading = false; // Desactivar pantalla de carga en caso de error
+        this.isLoading = false;
         Swal.fire('ERROR', e.error.mensaje, 'error');
       }
     });
   }
+
 
   selecionMarca(marca:Marca){
     this.marca=marca;
@@ -311,5 +318,14 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   hayCategoriasSeleccionadas(): boolean {
     return this.selectedCategoriesCheckbox.length > 0;
   }
+
+  volver() {
+    if (this.fromPage !== null) {
+      this.router.navigate(['/productos/page', this.fromPage]);
+    } else {
+      this.router.navigate(['/productos']);
+    }
+  }
+  
 
 }

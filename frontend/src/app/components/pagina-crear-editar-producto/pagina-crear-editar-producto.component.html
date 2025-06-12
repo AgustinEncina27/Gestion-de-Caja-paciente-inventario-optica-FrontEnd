@@ -82,6 +82,11 @@
                         (change)="selecionGenero('Unisex')" [checked]="generoSeleccionado('Unisex')">
                   <label class="form-check-label" for="unisexGenero">Unisex</label>
                 </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="genero" id="niñoGenero" 
+                        (change)="selecionGenero('Niño/a')" [checked]="generoSeleccionado('Niño/a')">
+                  <label class="form-check-label" for="niñoGenero">Niño/a</label>
+                </div>
               </div>
             </div>
           </div>
@@ -164,6 +169,9 @@
 
         <!-- Botones -->
         <div class="text-center mt-4">
+          <!-- Boton para volver--> 
+          <button class="btn btn-secondary me-2" (click)="volver()">Volver</button>
+
           <!-- Botón Crear Producto -->
           <button 
             type="submit" 
