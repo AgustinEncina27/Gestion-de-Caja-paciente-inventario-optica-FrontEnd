@@ -42,11 +42,11 @@ export class PaginaEstadoMovimientoComponent implements OnInit {
 
     switch (this.movimiento.estadoMovimiento) {
       case 'PEDIDO_CRISTALES':
-        return '20%';
+        return '25%';
       case 'ARMANDO_PEDIDO':
-        return '66%';
+        return '50%';
       case 'ANTEOJO_TERMINADO':
-        return '100%';
+        return '75%';
       case 'ENTREGADO':
         return '100%'; // misma barra que "terminado"
       default:
@@ -75,13 +75,13 @@ export class PaginaEstadoMovimientoComponent implements OnInit {
   
     switch (this.movimiento.estadoMovimiento) {
       case 'PEDIDO_CRISTALES':
-        return 'Tu pedido está en proceso de solicitud de cristales. Recuerda que el pedido tiene un tiempo estimado de entrega de entre 10 y 15 días hábiles.';
+        return 'Tu pedido está en proceso, ya solicitamos los cristales.';
       case 'ARMANDO_PEDIDO':
         return 'Estamos terminando de armar tu pedido. Entre hoy y mañana estará listo para que lo retires.';
       case 'ANTEOJO_TERMINADO':
-        return '¡Tu pedido está listo! Podés pasar a retirarlo cuando gustes.';
+        return '¡Tu pedido está listo! Podés pasar a retirarlo cuando gustes. Te esperamos de lunes a viernes 8:30 a 13:00 y de 16:30 a 20:00.';
       case 'ENTREGADO':
-        return 'Gracias por confiar en nosotros. Tu pedido ya fue entregado. ¡Que lo disfrutes!';
+        return 'Gracias por confiar en nosotros. Tu pedido fue entregado. Recordá que tenes ajustes ilimitados y totalmente gratuitos. Te esperamos.';
       default:
         return 'Estamos procesando tu pedido.';
     }

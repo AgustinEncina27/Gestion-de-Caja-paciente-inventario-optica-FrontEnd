@@ -1,17 +1,18 @@
 .btn-outline-primary{
-    background-color: #FB8747;
-    color: black;
-    border-color: #FB8747
+  background-color: #2196f3;
+  color: #f5faff;
+  border: none;
 }
 
-.btn-outline-primary:hover{
-    background-color: #F4B15B;
-    border-color: #F4B15B;
-    color: #0F0E49;
+.btn-outline-primary:hover {
+  background-color: #bbdefb;
+  border-color: #bbdefb;
+  color: #0F0E49;
 }
+
 
 .nuestroCatalogo {
-  background-color: #FB8747;
+  background-color: #2196f3;
   display: flex;
   flex-wrap: wrap;
   justify-content: center; /* Centra horizontalmente los elementos en .nuestroCatalogo */
@@ -19,14 +20,14 @@
 
 .nuestroCatalogo p {
   font-size: 50px;
-  color: black;
+  color: white;
   font-weight: bold;
   margin: 0; /* Elimina el margen predeterminado del párrafo */
   text-align: center; /* Centra el texto dentro del párrafo */
 }
 
 .filtros {
-  background-color: #F9BF74;
+  background-color: #bbdefb;
   display: flex;
   flex-wrap: wrap; /* Asegura que los elementos se envuelvan a una nueva línea cuando no haya suficiente espacio */
 }

@@ -1,52 +1,68 @@
  
 <!-- Carrusel-->
-<div id="carouselExampleDark" class="carousel carousel-dark slide " data-bs-ride="carousel" *ngIf="!authService.hasRoles()">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        <!--<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="3" aria-label="Slide 4"></button>-->
-      </div>
-      <div class="carousel-inner ">
-        <div class="carousel-item active" data-bs-interval="2000">
-          <img src="/assets/portada/portada1.jpg" class="d-block  w-100" alt="portada1">
-        </div>
-        <div class="carousel-item" data-bs-interval="2000">
-          <img src="/assets/portada/portada3.jpg" class="d-block  w-100" alt="portada2">
-        </div>
-        <div class="carousel-item" data-bs-interval="2000">
-          <img src="/assets/portada/portada2.jpg" class="d-block  w-100" alt="portada3">
-        </div>
-        <!--
-        <div class="carousel-item" data-bs-interval="2000">
-          <img src="/assets/portada/portada6.jpeg" class="d-block  w-100" alt="portada4">
-        </div>
-        -->
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
+<div id="carouselExampleDark" class="carousel carousel-dark slide mx-auto" data-bs-ride="carousel" style="max-width: 1200px;" *ngIf="!authService.hasRoles()">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="3" aria-label="Slide 4"></button>
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="4" aria-label="Slide 5"></button>
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="5" aria-label="Slide 6"></button>
+    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="6" aria-label="Slide 7"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active" data-bs-interval="2000">
+      <img src="/assets/portada/portada1.png" class="d-block w-100" alt="portada1">
+    </div>
+    <div class="carousel-item" data-bs-interval="2000">
+      <img src="/assets/portada/portada2.png" class="d-block w-100" alt="portada2">
+    </div>
+    <div class="carousel-item" data-bs-interval="2000">
+      <img src="/assets/portada/portada3.png" class="d-block w-100" alt="portada3">
+    </div>
+    
+    <div class="carousel-item" data-bs-interval="2000">
+      <img src="/assets/portada/portada4.png" class="d-block w-100" alt="portada4">
+    </div>
+    <div class="carousel-item" data-bs-interval="2000">
+      <img src="/assets/portada/portada5.png" class="d-block w-100" alt="portada5">
+    </div>
+    <div class="carousel-item" data-bs-interval="2000">
+      <img src="/assets/portada/portada6.png" class="d-block w-100" alt="portada6">
+    </div>
+    <div class="carousel-item" data-bs-interval="2000">
+      <img src="/assets/portada/portada7.png" class="d-block w-100" alt="portada7">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
 </div>
+
 
 <!-- Información del local border border-3 rounded-->
 <div class="d-flex justify-content-around my-5 p-5" *ngIf="!authService.hasRoles()">
   <div class="flex-grow-1 text-center m-2 ">
-    <img src="/assets/sunglasses.svg" class="card-img-top mb-5 mt-3" alt="portada" width="150" height="150">
-    <p class="fw-bold fs-5">VENTA EXCLUSIVA DE</p>
-    <p class="fw-bold fs-5">ANTEOJOS DE SOL Y RECETA</p>
+    <img src="/assets/Iconos abajo carrucel/sunglasses.svg" class="card-img-top mb-5 mt-3" alt="portada" width="150" height="150">
+    <p class="fw-bold fs-5">VENTA DE ANTEOJOS</p>
+    <p class="fw-bold fs-5">DE SOL Y RECETADOS</p>
   </div>
   <div class="flex-grow-1 text-center m-2 ">
-    <img src="/assets/truck.svg" class="card-img-top mb-5 mt-3" alt="portada" width="150" height="150">
-    <p class="fw-bold fs-5">ENVÍOS A TODO EL PAÍS</p>
+    <img src="/assets/Iconos abajo carrucel/3.svg" class="card-img-top mb-5 mt-3" alt="portada" width="150" height="150">
+    <p class="fw-bold fs-5">ATENCIÓN PROFESIONAL</p>
   </div>
   <div class="flex-grow-1 text-center m-2 ">
-    <img src="/assets/3-square.svg" class="card-img-top mb-5 mt-3" alt="portada" width="150" height="150">
-    <p class="fw-bold fs-5">3 CUOTAS SIN INTERÉS</p>
+    <img src="/assets/Iconos abajo carrucel/2.svg" class="card-img-top mb-5 mt-3" alt="portada" width="150" height="150">
+    <p class="fw-bold fs-5">OBRAS SOCIALES</p>
+  </div>
+  <div class="flex-grow-1 text-center m-2 ">
+    <img src="/assets/Iconos abajo carrucel/1.svg" class="card-img-top mb-5 mt-3" alt="portada" width="150" height="150">
+    <p class="fw-bold fs-5">6 CUOTAS SIN INTERÉS</p>
   </div>
 </div>
 
