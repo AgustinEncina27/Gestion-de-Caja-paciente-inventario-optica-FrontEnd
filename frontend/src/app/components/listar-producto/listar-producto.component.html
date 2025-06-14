@@ -72,7 +72,7 @@
               <p class="card-text">{{categoria.nombre}}</p>
             </div>
           </td>
-          <td>{{ producto.material?.nombre || '' }}</td>
+          <td>{{ producto.material.nombre  }}</td>
           <td>{{producto.genero}}</td>
           <td *ngIf="authService.hasRoles()">${{producto.costo}}</td>
           <td>${{producto.precio}}</td>
