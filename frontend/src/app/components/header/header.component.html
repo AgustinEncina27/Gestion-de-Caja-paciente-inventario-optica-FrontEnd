@@ -35,7 +35,7 @@
       <li class="nav-item" *ngIf="!authService.hasRoles()">
         <a class="nav-link" [routerLink]="['/sobreNosotros']">SOBRE NOSOTROS</a>
       </li>
-      <li class="nav-item" *ngIf="authService.hasRoles()">
+      <li class="nav-item" *ngIf="authService.hasRole('ROLE_ADMIN')">
         <a class="nav-link " aria-current="page" [routerLink]="['/crearVariosProductos']">CREAR PRODUCTOS</a>
       </li>
       <li class="nav-item dropdown" *ngIf="authService.hasRoles()">
