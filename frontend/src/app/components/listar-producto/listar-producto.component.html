@@ -72,7 +72,7 @@
               <p class="card-text">{{categoria.nombre}}</p>
             </div>
           </td>
-          <td>{{ producto.material?.nombre || '' }}</td>
+          <td>{{ producto.material.nombre  }}</td>
           <td>{{producto.genero}}</td>
           <td *ngIf="authService.hasRoles()">${{producto.costo}}</td>
           <td>${{producto.precio}}</td>
@@ -99,10 +99,8 @@
     </table>
   </div>
 </div>
-
-<div *ngIf="paginador && modeloSeleccionado==='' && marcaSeleccionado===''">
   <!-- Paginador para productos -->
-  <nav aria-label="Page navigation" *ngIf="paginador && paginador.totalPages > 1" >
+<nav aria-label="Page navigation" *ngIf="paginador && paginador.totalPages > 1">
     <ul class="pagination justify-content-center mt-3">
 
       <!-- Botón Anterior -->
@@ -126,7 +124,7 @@
 
     </ul>
   </nav>
-</div>
+
 
 <!-- Modal para seleccionar local -->
 <div
