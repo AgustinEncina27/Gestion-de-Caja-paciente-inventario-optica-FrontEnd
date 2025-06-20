@@ -344,7 +344,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       nuevoPago.monto=this.movimiento.total;
       nuevoPago.montoImpuesto=this.movimiento.total;
       nuevoPago.metodoPago=this.metodoSalida;
-      nuevoPago.fecha=this.obtenerFechaHoy();
+      nuevoPago.fecha=this.obtenerFechaHoyConHora();
 
       this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
       this.movimiento.cajaMovimientos.push(nuevoPago);
@@ -469,7 +469,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     nuevoPago.monto=0;
     nuevoPago.montoImpuesto=0;
     nuevoPago.metodoPago=this.metodosPago[0];
-    nuevoPago.fecha=this.obtenerFechaHoy();
+    nuevoPago.fecha=this.obtenerFechaHoyConHora();
 
     this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
     this.movimiento.cajaMovimientos.push(nuevoPago);
