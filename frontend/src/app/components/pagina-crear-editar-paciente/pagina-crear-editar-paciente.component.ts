@@ -76,7 +76,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
         this.paciente.local = this.local;
         this.paciente.genero = this.genero;
         Swal.fire("PACIENTE CREADO", "El paciente ha sido guardado con éxito!", "success");
-        this.router.navigate(['/adminitrarPaciente']);
+        this.router.navigate(['/crearMovimiento/'+this.paciente.id]);
       },
       error: (e) => {
         this.isLoading = false;
@@ -99,7 +99,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
         this.paciente.local = this.local;
         this.paciente.genero = this.genero;
         Swal.fire("PACIENTE EDITADO", "Se ha editado con éxito!", "success");
-        this.router.navigate(['/adminitrarPaciente']);
+        this.router.navigate(['/crearMovimiento/'+this.paciente.id]);
       },
       error: (e) => {
         this.isLoading = false;

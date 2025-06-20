@@ -153,7 +153,7 @@
               </td>
               <td><input type="number" class="form-control" [(ngModel)]="cajaMovimiento.monto" (change)="calcularTotalYAdviertenciaTotal(cajaMovimiento.monto,i)" name="monto{{ i }}" required /></td>
               <td><input type="number" class="form-control" [(ngModel)]="cajaMovimiento.montoImpuesto" (change)="calcularMontoImpuestoYAdviertenciaTotal()" name="impuesto{{ i }}" required /></td>
-              <td><input type="date" class="form-control" [(ngModel)]="cajaMovimiento.fecha" name="fecha{{ i }}" required /></td>
+                <td><input type="datetime-local" class="form-control" [(ngModel)]="cajaMovimiento.fecha" name="fecha{{ i }}" required /></td>
               <td><button type="button" class="btn btn-danger" (click)="eliminarPago(i)">Eliminar</button></td>
             </tr>
           </tbody>
