@@ -278,6 +278,13 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       this.esMovimientoSalida(this.movimiento.id);
     }
   
+    // Validar que haya al menos un pago
+    if (!this.movimiento.cajaMovimientos || this.movimiento.cajaMovimientos.length === 0) {
+      Swal.fire('VALIDACIÓN', 'Debe ingresar al menos un pago para guardar el movimiento.', 'warning');
+      return;
+    }
+      
+  
     this.isLoading = true;
   
     const afterSave = () => {
@@ -344,7 +351,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       nuevoPago.monto=this.movimiento.total;
       nuevoPago.montoImpuesto=this.movimiento.total;
       nuevoPago.metodoPago=this.metodoSalida;
-      nuevoPago.fecha=this.obtenerFechaHoy();
+      nuevoPago.fecha=this.obtenerFechaHoyConHora();
 
       this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
       this.movimiento.cajaMovimientos.push(nuevoPago);
@@ -469,7 +476,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     nuevoPago.monto=0;
     nuevoPago.montoImpuesto=0;
     nuevoPago.metodoPago=this.metodosPago[0];
-    nuevoPago.fecha=this.obtenerFechaHoy();
+    nuevoPago.fecha=this.obtenerFechaHoyConHora();
 
     this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
     this.movimiento.cajaMovimientos.push(nuevoPago);

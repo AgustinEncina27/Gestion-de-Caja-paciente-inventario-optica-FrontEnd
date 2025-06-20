@@ -231,4 +231,42 @@ export class ListarMovimientoComponent {
     const totalPagado = movimiento.cajaMovimientos.reduce((sum: number, caja: any) => sum + caja.monto, 0);
     return totalPagado >= movimiento.total;
   }
+
+
+
+  copiarEnlace(id: number): void {
+    const enlace = `${this.URL_FRONTEND}/estadoCompra/${id}`;
+    navigator.clipboard.writeText(enlace).then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Enlace copiado',
+        text: 'El enlace fue copiado al portapapeles.',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true
+      });
+    }).catch(err => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo copiar el enlace.',
+      });
+      console.error('Error al copiar el enlace:', err);
+    });
+  }
+
+  esMismaFechaHoraMinuto(fecha1: string | Date, fecha2: string | Date): boolean {
+    const f1 = new Date(fecha1);
+    const f2 = new Date(fecha2);
+  
+    return (
+      f1.getFullYear() === f2.getFullYear() &&
+      f1.getMonth() === f2.getMonth() &&
+      f1.getDate() === f2.getDate() &&
+      f1.getHours() === f2.getHours() &&
+      f1.getMinutes() === f2.getMinutes()
+    );
+  }
 }
