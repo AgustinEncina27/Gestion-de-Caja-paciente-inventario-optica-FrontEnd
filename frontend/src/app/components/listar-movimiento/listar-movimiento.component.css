@@ -129,3 +129,8 @@
   margin: 0;
 }
 
+.col-id {
+  width: 1%;
+  white-space: nowrap;
+}
+
