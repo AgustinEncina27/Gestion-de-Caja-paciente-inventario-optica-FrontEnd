@@ -270,13 +270,20 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   guardarMovimiento(): void {
     if (this.advertenciaMonto() && this.movimiento.tipoMovimiento === 'ENTRADA') {
       return;
-    }
+    }    
   
     this.movimiento.detalles = this.detalles;
   
     if (this.movimiento.tipoMovimiento === 'SALIDA') {
       this.esMovimientoSalida(this.movimiento.id);
     }
+
+    // Validar que haya al menos un pago
+    if (!this.movimiento.cajaMovimientos || this.movimiento.cajaMovimientos.length === 0) {
+      Swal.fire('VALIDACIÓN', 'Debe ingresar al menos un pago para guardar el movimiento.', 'warning');
+      return;
+    }
+      
   
     this.isLoading = true;
   
@@ -307,7 +314,8 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       Swal.fire('MOVIMIENTO GUARDADO', 'El movimiento ha sido guardado con éxito', 'success');
       this.router.navigate(['/adminitrarCaja']);
     };
-  
+
+
     if (this.movimiento.id) {
       this.movimientoService.updateMovimiento(this.movimiento).subscribe({
         next: afterSave,
