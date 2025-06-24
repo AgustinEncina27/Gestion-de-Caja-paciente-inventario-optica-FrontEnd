@@ -362,7 +362,9 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   
     if (this.movimiento.id) {
       this.movimientoService.updateMovimiento(this.movimiento).subscribe({
-        next: afterSave,
+        next: () => {
+          this.isLoading = false;
+        },
         error: (e) => {
           this.isLoading = false;
         }
