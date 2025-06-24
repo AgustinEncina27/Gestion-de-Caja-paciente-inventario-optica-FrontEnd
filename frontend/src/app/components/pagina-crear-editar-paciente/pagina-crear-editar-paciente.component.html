@@ -81,7 +81,7 @@
         
           <!-- Botón para registrar un movimiento -->
           <div class="col-md-6" *ngIf="paciente?.id != null">
-            <button type="button" class="btn btn-success" [routerLink]="['/crearMovimiento', paciente.id]">
+            <button type="button" class="btn btn-success" (click)="editarPaciente()" >
               Registrar un movimiento
             </button>
           </div>

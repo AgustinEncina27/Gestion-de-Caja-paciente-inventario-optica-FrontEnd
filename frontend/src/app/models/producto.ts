@@ -13,7 +13,7 @@ export class Producto {
     descripcion!: string;
     precio!: number;
     costo!: number;
-    material!: MaterialProducto;
+    material: MaterialProducto | null = null;
     genero!:string;
     categorias!: Categoria[];
     proveedores!: Proveedor[];
