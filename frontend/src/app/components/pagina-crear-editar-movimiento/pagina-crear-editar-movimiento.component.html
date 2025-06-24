@@ -90,16 +90,6 @@
           <button type="button" class="btn btn-primary" (click)="buscarProducto()">Buscar Producto</button>
         </div>
         
-        <div *ngIf="productoSeleccionado" class="mb-3">
-          <select class="form-select" [(ngModel)]="marcaSeleccionada" name="marcaSeleccionada" (change)="cambiarProductoPorMarca()">
-            <option *ngFor="let marca of marcasDisponibles" [ngValue]="marca">{{ marca.nombre }}</option>
-          </select> 
-        </div>
-
-        <div *ngIf="stockLocal !== null" class="mb-3">
-          <p><strong>Stock en local seleccionado:</strong> {{ stockLocal }}</p>
-        </div>
-        
         <div *ngFor="let detalle of detalles; let i = index" class="row g-2 align-items-center mb-2">
           <div class="col-md-3"><span class="form-control">{{ detalle.producto.modelo }}</span></div>
           <div class="col-md-3"><span class="form-control">{{ detalle.producto.marca.nombre }}</span></div>
@@ -108,7 +98,6 @@
           <div class="col-md-2"><button type="button" class="btn btn-danger w-100" (click)="eliminarDetalle(i)">Eliminar</button></div>
         </div>
 
-        <button type="button" class="btn btn-primary mt-2" (click)="agregarDetalle()">Agregar Detalle</button>
       </div>
     </div>
 
@@ -128,8 +117,6 @@
             </tr>
           </tbody>
         </table>
-
-        <!-- Botón para agregar un nuevo detalle adicional -->
         <button type="button" class="btn btn-primary" (click)="agregarDetalleAdicional()">Agregar Detalle Adicional</button>
       </div>
     </div>
@@ -185,21 +172,51 @@
     </div>
 
     <!-- Botones -->
-    <div class="text-center mb-4">
-      <button class="btn btn-secondary m-1" (click)="volverAInicio()">Volver al inicio</button>
-
-      <button
-        type="submit"
-        class="btn btn-success"
-        [disabled]="( movimiento.tipoMovimiento === 'ENTRADA' 
-                      && ( (detalles.length === 0 && movimiento.detallesAdicionales?.length === 0) || !movimiento.local || !movimiento.fecha) )
-        || (movimiento.tipoMovimiento === 'SALIDA' &&
-            (!movimiento.descripcion || !movimiento.local || !movimiento.total || !movimiento.fecha)
-        || movimiento.tipoMovimiento === undefined)
-        "
-      >
+    <div class="text-center mb-5">
+      <button class="btn btn-secondary me-2" (click)="volverAInicio()">Volver al inicio</button>
+      <button type="submit" class="btn btn-success"
+        [disabled]="
+          (movimiento.tipoMovimiento === 'ENTRADA' && ((!movimiento.local || !movimiento.fecha) || (detalles.length === 0 && movimiento.detallesAdicionales?.length === 0))) ||
+          (movimiento.tipoMovimiento === 'SALIDA' && (!movimiento.descripcion || !movimiento.local || !movimiento.total || !movimiento.fecha)) ||
+          !movimiento.tipoMovimiento
+        ">
         Guardar Movimiento
       </button>
     </div>
   </form>
+</div>
+
+<div class="modal fade" id="modalProductos" tabindex="-1" aria-labelledby="modalProductosLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Seleccionar Producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Modelo</th>
+              <th>Marca</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Seleccionar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let producto of productosEncontrados">
+              <td>{{ producto.modelo }}</td>
+              <td>{{ producto.marca?.nombre }}</td>
+              <td>{{ producto.precio | currency }}</td>
+              <td>{{ getStockEnLocal(producto) }}</td>
+              <td>
+                <button class="btn btn-primary" (click)="seleccionarProducto(producto)">Elegir</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

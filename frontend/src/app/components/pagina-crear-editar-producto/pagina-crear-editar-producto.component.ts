@@ -111,7 +111,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
           this.marca = producto.marca;
 
           //Carga el material en la pagina
-          this.materialProducto = producto.material;
+          this.materialProducto = producto.material==null?new MaterialProducto():producto.material;
           
           // Cargar los locales seleccionados y sus stocks
           this.localSeleccionados = new Set(
@@ -134,33 +134,6 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
     });
   }
 
-  crearProducto() {
-    this.agregarLocalesYStocksAlProducto(); // Agregar locales y stocks al producto
-    this.producto.categorias = this.selectedCategoriesCheckbox;
-    this.producto.proveedores = this.selectedProveedoresCheckbox;
-    this.producto.genero = this.genero;
-    this.producto.marca = this.marca;
-    this.producto.material = this.materialProducto;
-    this.producto.creadoEn = new Date();
-    this.producto.ultimaActualizacion = new Date();
-    
-    this.isLoading = true; // Activar pantalla de carga
-
-    this.productoService.createProducto(this.producto).subscribe({
-      next: (response) => {
-        
-        this.isLoading = false; // Desactivar pantalla de carga
-        Swal.fire('PRODUCTO CREADO', 'El producto ha sido guardado con éxito!', 'success');
-        this.router.navigate(['/inicio']);
-        
-      },
-      error: (e) => {
-        this.isLoading = false; // Desactivar pantalla de carga en caso de error
-        Swal.fire('ERROR', e.error.mensaje, 'error');
-      }
-    });
-  }
-  
   editarProducto() {
     this.agregarLocalesYStocksAlProducto();
     this.producto.categorias = this.selectedCategoriesCheckbox;
@@ -168,6 +141,15 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
     this.producto.genero = this.genero;
     this.producto.marca = this.marca;
     this.producto.material = this.materialProducto;
+    
+    if(this.materialProducto.nombre === undefined){
+      this.producto.material = null;
+    }
+    
+    if(this.genero == null){
+      this.producto.genero = '';
+    }
+
     this.producto.ultimaActualizacion = new Date();
     this.isLoading = true;
 

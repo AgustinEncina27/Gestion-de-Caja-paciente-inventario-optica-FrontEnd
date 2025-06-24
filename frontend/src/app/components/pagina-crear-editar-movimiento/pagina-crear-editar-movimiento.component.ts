@@ -17,6 +17,8 @@ import { CajaMovimiento } from 'src/app/models/cajaMovimiento';
 import { DetalleAdicional } from 'src/app/models/detalleAdicional';
 import { AuthService } from 'src/app/services/auth.service';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-pagina-crear-editar-movimiento',
   templateUrl: './pagina-crear-editar-movimiento.component.html',
@@ -39,7 +41,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   metodoSalida: MetodoPago= new MetodoPago();
   isLoading = false; // Variable para la pantalla de carga
   deuda: number = 0; 
-
+  productosEncontrados: Producto[] = [];
 
   constructor(
     private movimientoService: MovimientoService,
@@ -178,25 +180,55 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   }
 
   buscarProducto(): void {
-    if (this.codigoProducto) {
-      this.productoService.getProductosPorModelo(this.codigoProducto).subscribe({
-        next: (productos: Producto[]) => {
-          const productosFiltrados = productos.filter((producto) =>
-            producto.productoLocales.some((pl) => pl.local.id === this.movimiento.local.id)
-          );
-  
-          if (productosFiltrados.length > 0) {
-            this.marcasDisponibles = productosFiltrados.map((producto) => producto.marca);
-            this.productoSeleccionado = productosFiltrados[0]; // Seleccionar el primero por defecto
-            this.marcaSeleccionada = productosFiltrados[0].marca; // Seleccionar el primero por defecto
-            this.actualizarStockLocal(); // Actualizar el stock inicial
-          } else {
-            Swal.fire('ERROR', 'Producto no encontrado en el local seleccionado', 'error');
-          }
+    if (this.codigoProducto.trim() && this.movimiento.local?.id) {
+      this.productoService.getProductosPorModeloYLocal(this.codigoProducto, this.movimiento.local.id).subscribe({
+        next: (productos) => {
+          this.productosEncontrados = productos;
+          const modal = new bootstrap.Modal(document.getElementById('modalProductos')!);
+          modal.show();
         },
         error: () => Swal.fire('ERRPR', 'Producto no encontrado', 'error'),
       });
     }
+  }
+
+  seleccionarProducto(producto: Producto): void {
+    const productoLocal = producto.productoLocales.find(pl => pl.local.id === this.movimiento.local.id);
+    const stock = productoLocal?.stock ?? 0;
+  
+    if (stock <= 0) {
+      Swal.fire('ADVERTENCIA', 'Este producto no tiene stock en esta sucursal', 'warning');
+      return;
+    }
+  
+    const detalle: DetalleMovimiento = new DetalleMovimiento();
+    detalle.producto = producto;
+    detalle.cantidad = 1;
+    detalle.precioUnitario = producto.precio;
+    detalle.subtotal = detalle.cantidad * detalle.precioUnitario;
+  
+    this.detalles.push(detalle);
+    this.productoSeleccionado = null;
+    this.codigoProducto = '';
+    this.stockLocal = null;
+    this.marcasDisponibles = [];
+    this.marcaSeleccionada = null;
+  
+    this.calcularTotalAdicional();
+  
+    const modalElement = document.getElementById('modalProductos');
+    if (modalElement) {
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      modal?.hide();
+    }
+  }
+
+  getStockEnLocal(producto: Producto): number {
+    const localId = this.movimiento.local?.id;
+    if (!producto.productoLocales || !localId) return 0;
+  
+    const productoLocal = producto.productoLocales.find(pl => pl.local?.id === localId);
+    return productoLocal?.stock ?? 0;
   }
 
   cambiarProductoPorMarca(): void {
@@ -315,13 +347,11 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       this.router.navigate(['/adminitrarCaja']);
     };
 
-
     if (this.movimiento.id) {
       this.movimientoService.updateMovimiento(this.movimiento).subscribe({
         next: afterSave,
         error: (e) => {
           this.isLoading = false;
-          Swal.fire('ERROR', e.error.mensaje, 'error');
         }
       });
     } else {
@@ -329,7 +359,6 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
         next: afterSave,
         error: (e) => {
           this.isLoading = false;
-          Swal.fire('ERROR', e.error.mensaje, 'error');
         }
       });
     }
@@ -600,5 +629,4 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   volverAInicio() {
     this.router.navigate(['/adminitrarCaja']); // Cambia '/inicio' por la ruta deseada
   }
-
 }

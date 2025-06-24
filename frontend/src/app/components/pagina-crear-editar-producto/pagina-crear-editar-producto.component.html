@@ -175,36 +175,19 @@
           <!-- Boton para volver--> 
           <button class="btn btn-secondary me-2" (click)="volver()">Volver</button>
 
-          <!-- Botón Crear Producto -->
-          <button 
-            type="submit" 
-            class="btn btn-success me-2" 
-            (click)="crearProducto()" 
-            *ngIf="producto.id == null" 
-            [disabled]="!productoForm.form.valid  
-            || !(localSeleccionados.size>0) 
-            || marca.id===undefined 
-            || materialProducto.id===undefined 
-            || !genero 
-            || !(selectedCategoriesCheckbox.length>0)
-            || !(selectedProveedoresCheckbox.length>0)"
-            >
-            Crear Producto
-          </button>
-
           <!-- Botón Editar Producto -->
           <button 
             type="submit" 
             class="btn btn-success" 
             (click)="editarProducto()" 
             *ngIf="producto.id != null" 
-            [disabled]="!productoForm.form.valid  
-            || !(localSeleccionados.size>0) 
-            || marca.id===undefined 
-            || materialProducto.id===undefined 
-            || !genero 
-            || !(selectedCategoriesCheckbox.length>0)
-            || !(selectedProveedoresCheckbox.length>0)"
+            [disabled]="
+                !productoForm.form.valid ||
+                !(localSeleccionados.size > 0) ||
+                marca.id === undefined ||
+                !(selectedCategoriesCheckbox.length > 0) ||
+                !(selectedProveedoresCheckbox.length > 0)
+              "
             >
             Editar Producto
           </button>
