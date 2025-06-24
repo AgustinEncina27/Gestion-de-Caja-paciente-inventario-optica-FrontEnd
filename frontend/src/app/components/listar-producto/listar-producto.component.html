@@ -29,6 +29,9 @@
   <!-- Botón Registrar Paciente -->
   <button class="btn btn-success m-1"  *ngIf="authService.hasRole('ROLE_ADMIN')" [routerLink]="['/crearVariosProductos']">Crear producto</button>
 
+  <!-- Botón Registrar Paciente -->
+  <button class="btn btn-success m-1" [routerLink]="['/crearPaciente']">Registrar paciente</button>
+  
   <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRole('ROLE_ADMIN')">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generarStockModal">
       Generar Stock del Local

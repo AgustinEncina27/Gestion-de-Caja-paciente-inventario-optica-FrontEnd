@@ -50,6 +50,11 @@ export class ProductoService {
     return this.http.get<Producto[]>(`${this.urlEndPointProducto}/marca/${marca}`)
   }
 
+
+  getProductosPorModeloYLocal(modelo: string, localId: number): Observable<Producto[]> {
+    return this.http.get<Producto[]>(`${this.urlEndPointProducto}/buscar?modelo=${modelo}&localId=${localId}`);
+  }
+
   obtenerStockTotalPorSucursal(): Observable<StockTotalSucursal[]> {
     return this.http.get<StockTotalSucursal[]>(`${this.urlEndPointProducto}/stock-total-sucursal`);
   }

@@ -133,46 +133,26 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
       }
     });
   }
-
-  crearProducto() {
-    this.agregarLocalesYStocksAlProducto(); // Agregar locales y stocks al producto
-    this.producto.categorias = this.selectedCategoriesCheckbox;
-    this.producto.proveedores = this.selectedProveedoresCheckbox;
-    this.producto.genero = this.genero;
-    this.producto.marca = this.marca;
-    this.producto.material = this.materialProducto;
-    this.producto.creadoEn = new Date();
-    this.producto.ultimaActualizacion = new Date();
-    
-    this.isLoading = true; // Activar pantalla de carga
-
-    this.productoService.createProducto(this.producto).subscribe({
-      next: (response) => {
-        
-        this.isLoading = false; // Desactivar pantalla de carga
-        Swal.fire('PRODUCTO CREADO', 'El producto ha sido guardado con éxito!', 'success');
-        this.router.navigate(['/inicio']);
-        
-      },
-      error: (e) => {
-        this.isLoading = false; // Desactivar pantalla de carga en caso de error
-        Swal.fire('ERROR', e.error.mensaje, 'error');
-      }
-    });
-  }
   
   editarProducto() {
     this.agregarLocalesYStocksAlProducto();
     this.producto.categorias = this.selectedCategoriesCheckbox;
     this.producto.proveedores = this.selectedProveedoresCheckbox;
     this.producto.marca = this.marca;
-  
+    this.producto.material = this.materialProducto;
+    this.producto.genero = this.genero;
+
     if (this.esSoloCristalSeleccionado()) {
       this.producto.material = null;
       this.producto.genero = '';
-    } else {
-      this.producto.material = this.materialProducto;
-      this.producto.genero = this.genero;
+    } 
+    console.log(this.materialProducto.nombre+'2');
+    if(this.materialProducto.nombre === undefined){
+      this.producto.material = null;
+    }
+    console.log(this.genero+'3');
+    if(this.genero == null){
+      this.producto.genero = '';
     }
   
     this.producto.ultimaActualizacion = new Date();
