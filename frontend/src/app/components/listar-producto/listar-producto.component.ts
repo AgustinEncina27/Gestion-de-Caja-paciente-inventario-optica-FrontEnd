@@ -5,10 +5,8 @@ import { Local } from 'src/app/models/local';
 import { Marca } from 'src/app/models/marca';
 import { Producto } from 'src/app/models/producto';
 import { AuthService } from 'src/app/services/auth.service';
-import { CategoriaService } from 'src/app/services/categoria.service';
 import { ExcelService } from 'src/app/services/excel.service';
 import { LocalService } from 'src/app/services/local.service';
-import { MarcaService } from 'src/app/services/marca.service';
 import { ProductoService } from 'src/app/services/producto.service';
 import Swal from 'sweetalert2';
 
@@ -28,35 +26,24 @@ export class ListarProductoComponent {
  marcaId:number=-1;
  genero:string='-1';
  paginador: any;
- url:string='';
  modeloSeleccionado: string = ''; // Código del modelo ingresado
  marcaSeleccionado: string = ''; // Código del modelo ingresado
  locales: Local[] = [];
  localSeleccionado: number | null = null;
+ pages: number[] = [];
 
  constructor(private productoService: ProductoService,
   private activateRoute: ActivatedRoute,
   public authService: AuthService,
   private localService: LocalService,
   private excelService: ExcelService,
-  private categoriaService:CategoriaService,
-  private marcaService:MarcaService,
   private router: Router){
   }
 
   ngOnInit(): void{
-    this.cargarUrlActual();
     this.cargarProductos();
-    this.cargarCategorias();
-    this.cargarMarcas();
     this.cargarProductoModal();
     this.cargarLocales();
-  }
-
-  cargarUrlActual(){
-    this.activateRoute.url.subscribe((segments) => {
-      this.url = '/' + segments.map((segment) => segment.path).join('/');
-    });
   }
 
   cargarLocales(): void {
@@ -68,29 +55,6 @@ export class ListarProductoComponent {
         console.error('Error al cargar locales:', err);
       },
     });
-  }
-
-  cargarCategorias(){
-
-    this.categoriaService.getCategories().subscribe(
-      categorias=>{
-        this.categoria.id=0
-        this.categoria.nombre="Todas"
-        this.categorias=categorias
-        this.categorias.unshift(this.categoria);
-      }
-    )
-  }
-
-  cargarMarcas(){
-    this.marcaService.getMarcas().subscribe(
-      marcas=>{
-        this.marca.id=0
-        this.marca.nombre="Todas"
-        this.marcas=marcas
-        this.marcas.unshift(this.categoria);
-      }
-    )
   }
 
   eliminarProducto(productoAEliminar:Producto){
@@ -136,90 +100,17 @@ export class ListarProductoComponent {
     }
   }
 
-  cargarProductoPorGenero(genero: string){
-    this.genero=genero;
-    if(this.url.includes("inicio")){
-      this.router.navigate(['inicio/page/'+this.genero+'/'+this.marcaId+'/'+this.categoriaId+'/'+0]);
-    }else{
-      this.router.navigate(['producto/page/'+this.genero+'/'+this.marcaId+'/'+this.categoriaId+'/'+0]);
-    }
-  }
-
-  cargarProductoPorMarca(marcaId: number){
-    if(marcaId==0){
-      this.marcaId=-1
-    }else{
-      this.marcaId=marcaId;
-    }
-    if(this.url.includes("inicio")){
-      this.router.navigate(['inicio/page/'+this.genero+'/'+this.marcaId+'/'+this.categoriaId+'/'+0]);
-    }else{
-      this.router.navigate(['producto/page/'+this.genero+'/'+this.marcaId+'/'+this.categoriaId+'/'+0]);
-    } 
-  }
-  
-  cargarProductoPorCategoria(categoriaId: number){
-    if(categoriaId==0){
-      this.categoriaId=-1
-    }else{
-      this.categoriaId=categoriaId;
-    }  
-    if(this.url.includes("inicio")){
-      this.router.navigate(['inicio/page/'+this.genero+'/'+this.marcaId+'/'+this.categoriaId+'/'+0]);
-    }else{
-      this.router.navigate(['producto/page/'+this.genero+'/'+this.marcaId+'/'+this.categoriaId+'/'+0]);
-    }
-  }
-
-  cargarProductos(){
-    this.activateRoute.paramMap.subscribe(params=>{
+  cargarProductos() {
+    this.activateRoute.paramMap.subscribe(params => {
       let page: number = +params.get('page')!;
-      if (params?.get('marca') !== null && params?.get('marca') !== undefined && !params?.get('marca')?.includes('0') && !params?.get('genero')?.includes('0') && !params?.get('categoria')?.includes('0')) {
-        this.genero= params.get('genero')!;
-        this.marcaId= +params.get('marca')!;
-        this.categoriaId= +params.get('categoria')!;
-      }
-      if(!page){
-        page=0;
-      }
-      if(this.categoriaId==-1 && this.marcaId==-1 && this.genero.includes('-1')){
-        this.productoService.getProductos(page).subscribe(
-          response=> {
-            this.productos= (response.content as Producto[])
-            this.paginador= response;
-          }
-        )
-      }else{
-        this.productoService.getProductosByGeneroAndMarcaAndCategoria(this.genero,this.marcaId,this.categoriaId,page).subscribe(
-          response=> {
-            this.productos= (response.content as Producto[])
-            this.paginador= response;
-          }
-        )
-      }
-      })
-  }
-
-  generoEstaTildado(genero:string):boolean{
-    if(this.genero.includes(genero)){
-      return true
-    }
-    
-    return false
-  }
-
-  categoriaEstaTildado(categoria:number):boolean{
-    if(this.categoriaId==categoria){
-      return true
-    }
-    return false
-  }
-
-  marcaEstaTildado(marca:number):boolean{
-    if(this.marcaId == marca){
-      return true
-    }
-    return false
+      if (!page) page = 0;
+  
+      this.productoService.getProductos(page).subscribe(response => {
+        this.productos = (response.content as Producto[]);
+        this.paginador = response;
+        this.generarPaginador(response.totalPages);
+      });
+    });
   }
 
   buscarProductoPorModelo(): void {
@@ -303,5 +194,41 @@ export class ListarProductoComponent {
       },
     });
   }
+
+  
+  //paginador
+  paginaAnterior() {
+    if (this.paginador.number > 0) {
+      this.cambiarPagina(this.paginador.number - 1);
+    }
+  }
+  
+  paginaSiguiente() {
+    if (this.paginador.number < this.paginador.totalPages - 1) {
+      this.cambiarPagina(this.paginador.number + 1);
+    }
+  }
+  
+  cambiarPagina(pagina: number): void {
+    if (pagina < 0 || pagina >= this.paginador.totalPages) return;
+    this.router.navigate(['productos/page', pagina]);
+  }
+  
+  generarPaginador(totalPages: number) {
+    const maxVisible = 5;
+    const currentPage = this.paginador.number;
+  
+    let start = Math.max(currentPage - Math.floor(maxVisible / 2), 0);
+    let end = start + maxVisible;
+  
+    if (end > totalPages) {
+      end = totalPages;
+      start = Math.max(end - maxVisible, 0);
+    }
+  
+    this.pages = Array.from({ length: end - start }, (_, i) => start + i);
+  }
+  
+
 
 }

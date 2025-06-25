@@ -43,6 +43,10 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
   isLoading = false; // Variable para la pantalla de carga
   modelos: string[] = ['']; // empieza con un campo
   modelosInvalidos: Set<string> = new Set(); // modelos repetidos
+  filtroMarca: string = '';
+  filtroProveedor: string = '';
+
+
 
   constructor(
     private productoService: ProductoService,
@@ -179,7 +183,21 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
   }
   
 
- 
+  get marcasFiltradas(): Marca[] {
+    if (!this.filtroMarca.trim()) {
+      return this.marcas;
+    }
+    const filtro = this.filtroMarca.toLowerCase();
+    return this.marcas.filter(m => m.nombre.toLowerCase().includes(filtro));
+  }
+
+  get proveedoresFiltrados(): Proveedor[] {
+    if (!this.filtroProveedor.trim()) {
+      return this.proveedores;
+    }
+    const filtro = this.filtroProveedor.toLowerCase();
+    return this.proveedores.filter(p => p.nombre.toLowerCase().includes(filtro));
+  }
   
   
   selecionMarca(marca:Marca){

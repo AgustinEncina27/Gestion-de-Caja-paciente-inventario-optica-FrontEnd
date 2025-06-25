@@ -88,14 +88,17 @@ export class MovimientoService {
     return this.http.post<any>(this.urlEndPointMovimiento, movimiento).pipe(
       map((response: any) => response.movimiento as Movimiento),
       catchError((e) => {
-        if (e.status === 400) {
+        // Errores de validación (BindingResult con lista de errores)
+        if (e.status === 400 && e.error?.errors) {
           const error = e.error.errors.join(' ');
-          Swal.fire('ERROR AL CREAR EL MOVIMIENTO', error, 'error');
+          Swal.fire('ERROR DE VALIDACIÓN', error, 'error');
         }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          Swal.fire(e.error.mensaje, e.error.error, 'error');
+      
+        // Errores con mensaje simple (como IllegalArgumentException)
+        else if (e.error?.mensaje) {
+          Swal.fire(e.error.mensaje, e.error.error ?? '', 'error');
         }
+      
         return throwError(() => e);
       })
     );
@@ -105,14 +108,17 @@ export class MovimientoService {
     return this.http.put<any>(`${this.urlEndPointMovimiento}/${movimiento.id}`, movimiento).pipe(
       map((response: any) => response.movimiento as Movimiento),
       catchError((e) => {
-        if (e.status === 400) {
+        // Errores de validación (BindingResult con lista de errores)
+        if (e.status === 400 && e.error?.errors) {
           const error = e.error.errors.join(' ');
-          Swal.fire('ERROR AL ACTUALIZAR EL MOVIMIENTO', error, 'error');
+          Swal.fire('ERROR DE VALIDACIÓN', error, 'error');
         }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          Swal.fire(e.error.mensaje, e.error.error, 'error');
+      
+        // Errores con mensaje simple (como IllegalArgumentException)
+        else if (e.error?.mensaje) {
+          Swal.fire(e.error.mensaje, e.error.error ?? '', 'error');
         }
+      
         return throwError(() => e);
       })
     );

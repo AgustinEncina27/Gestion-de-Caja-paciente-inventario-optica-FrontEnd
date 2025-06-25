@@ -27,9 +27,9 @@ import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-v
 const routes: Routes = [
   {path:'', redirectTo:'/inicio', pathMatch:'full'},
   {path:'inicio',component: PaginaPrincipalComponent},
-  {path:'inicio/page/:genero/:marca/:categoria/:page',component: PaginaPrincipalComponent},
+  {path:'productos/page/:page', component: PaginaFiltrarProductoComponent }, 
+  {path: 'productos', redirectTo: 'productos/page/0', pathMatch: 'full' }, 
   {path:'sobreNosotros',component: PaginaSobreNosotrosComponent},
-  {path:'productos/page/:genero/:marca/:categoria/:page',component: PaginaFiltrarProductoComponent},
   {path:'cristaleria',component: PaginaCristaleriaComponent},
   {path:'limpieza',component: PaginaLimpiezaComponent},
   {path:'politicaEnvio',component: PaginaPoliticaEnvioComponent},

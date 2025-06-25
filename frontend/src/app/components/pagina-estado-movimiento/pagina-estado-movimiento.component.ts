@@ -42,11 +42,11 @@ export class PaginaEstadoMovimientoComponent implements OnInit {
 
     switch (this.movimiento.estadoMovimiento) {
       case 'PEDIDO_CRISTALES':
-        return '20%';
+        return '25%';
       case 'ARMANDO_PEDIDO':
-        return '66%';
+        return '50%';
       case 'ANTEOJO_TERMINADO':
-        return '100%';
+        return '75%';
       case 'ENTREGADO':
         return '100%'; // misma barra que "terminado"
       default:

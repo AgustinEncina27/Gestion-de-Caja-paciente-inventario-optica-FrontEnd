@@ -25,8 +25,12 @@
           <!-- Marca -->
           <div class="col-md-6">
             <p class="form-label fw-bold">Marca</p>
+
+            <!-- Campo de búsqueda -->
+            <input type="text" class="form-control mb-2" placeholder="Buscar marca..." [(ngModel)]="filtroMarca" name="filtroMarca">
+
             <div class="border overflow-auto p-2 rounded bg-white" style="height: 200px;">
-              <div class="form-check mx-1" *ngFor="let marca of marcas">
+              <div class="form-check mx-1" *ngFor="let marca of marcasFiltradas">
                 <input class="form-check-input" type="radio" name="marca" [id]="+marca.id+'marca'" 
                        (change)="selecionMarca(marca)" [checked]="marcaSeleccionado(marca)">
                 <label class="form-check-label" [for]="+marca.id+'marca'">
@@ -98,10 +102,12 @@
          <!-- Proveedores -->
           <div class="col-md-6">
             <p><label class="form-label fw-bold" for="InputProveedor">Proveedores</label></p>
-            <div 
-              class="border overflow-auto rounded bg-white" 
-              style="max-height: 200px;">
-              <div class="form-check m-1" *ngFor="let proveedor of proveedores">
+
+            <!-- Campo de búsqueda para proveedores -->
+            <input type="text" class="form-control mb-2" placeholder="Buscar proveedor..." [(ngModel)]="filtroProveedor" name="filtroProveedor">
+
+            <div class="border overflow-auto rounded bg-white" style="max-height: 200px;">
+              <div class="form-check m-1" *ngFor="let proveedor of proveedoresFiltrados">
                 <input 
                   class="form-check-input" 
                   type="checkbox" 
@@ -139,6 +145,11 @@
                      (change)="selecionGenero('Unisex')" [checked]="generoSeleccionado('Unisex')">
               <label class="form-check-label" for="unisexGenero">Unisex</label>
             </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="genero" id="niñoGenero" 
+                    (change)="selecionGenero('Niño/a')" [checked]="generoSeleccionado('Niño/a')">
+              <label class="form-check-label" for="niñoGenero">Niño/a</label>
+            </div>
           </div>
 
           <!-- Categoría -->
@@ -161,22 +172,8 @@
 
         <!-- Botones -->
         <div class="text-center mt-4">
-          <!-- Botón Crear Producto -->
-          <button 
-            type="submit" 
-            class="btn btn-success me-2" 
-            (click)="crearProducto()" 
-            *ngIf="producto.id == null" 
-            [disabled]="!productoForm.form.valid  
-            || !(localSeleccionados.size>0) 
-            || marca.id===undefined 
-            || materialProducto.id===undefined 
-            || !genero 
-            || !(selectedCategoriesCheckbox.length>0)
-            || !(selectedProveedoresCheckbox.length>0)"
-            >
-            Crear Producto
-          </button>
+          <!-- Boton para volver--> 
+          <button class="btn btn-secondary me-2" (click)="volver()">Volver</button>
 
           <!-- Botón Editar Producto -->
           <button 
@@ -184,13 +181,13 @@
             class="btn btn-success" 
             (click)="editarProducto()" 
             *ngIf="producto.id != null" 
-            [disabled]="!productoForm.form.valid  
-            || !(localSeleccionados.size>0) 
-            || marca.id===undefined 
-            || materialProducto.id===undefined 
-            || !genero 
-            || !(selectedCategoriesCheckbox.length>0)
-            || !(selectedProveedoresCheckbox.length>0)"
+            [disabled]="
+                !productoForm.form.valid ||
+                !(localSeleccionados.size > 0) ||
+                marca.id === undefined ||
+                !(selectedCategoriesCheckbox.length > 0) ||
+                !(selectedProveedoresCheckbox.length > 0)
+              "
             >
             Editar Producto
           </button>
