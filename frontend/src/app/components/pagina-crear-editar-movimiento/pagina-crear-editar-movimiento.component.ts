@@ -364,6 +364,8 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       this.movimientoService.updateMovimiento(this.movimiento).subscribe({
         next: () => {
           this.isLoading = false;
+          Swal.fire('MOVIMIENTO GUARDADO', 'El movimiento ha sido guardado con éxito', 'success');
+          this.router.navigate(['/adminitrarCaja']);
         },
         error: (e) => {
           this.isLoading = false;
