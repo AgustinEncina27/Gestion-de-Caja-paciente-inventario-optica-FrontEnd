@@ -11,9 +11,6 @@ import { PaginaGestionarCategoriasComponent } from './components/pagina-gestiona
 import { PaginaVisitanosComponent } from './components/pagina-visitanos/pagina-visitanos.component';
 import { PaginaGestionarMarcasComponent } from './components/pagina-gestionar-marcas/pagina-gestionar-marcas.component';
 import { PaginaGestionarLocalesComponent } from './components/pagina-gestionar-locales/pagina-gestionar-locales.component';
-import { PaginaPoliticaEnvioComponent } from './components/pagina-politica-envio/pagina-politica-envio.component';
-import { PaginaPoliticaGarantiaComponent } from './components/pagina-politica-garantia/pagina-politica-garantia.component';
-import { PaginaLimpiezaComponent } from './components/pagina-limpieza/pagina-limpieza.component';
 import { PaginaEstadoMovimientoComponent } from './components/pagina-estado-movimiento/pagina-estado-movimiento.component';
 import { PaginaGestionarPacientesComponent } from './components/pagina-gestionar-pacientes/pagina-gestionar-pacientes.component';
 import { PaginaGestionarCajaComponent } from './components/pagina-gestionar-caja/pagina-gestionar-caja.component';
@@ -31,9 +28,6 @@ const routes: Routes = [
   {path: 'productos', redirectTo: 'productos/page/0', pathMatch: 'full' }, 
   {path:'sobreNosotros',component: PaginaSobreNosotrosComponent},
   {path:'cristaleria',component: PaginaCristaleriaComponent},
-  {path:'limpieza',component: PaginaLimpiezaComponent},
-  {path:'politicaEnvio',component: PaginaPoliticaEnvioComponent},
-  {path:'politicaGarantia',component: PaginaPoliticaGarantiaComponent},
   {path:'crearProducto',component: PaginaCrearEditarProductoComponent},
   {path:'crearVariosProductos',component: PaginaCrearVariosProductosComponent},
   {path:'crearMovimiento',component: PaginaCrearEditarMovimientoComponent},

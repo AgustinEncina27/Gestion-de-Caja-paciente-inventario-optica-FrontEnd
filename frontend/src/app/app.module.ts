@@ -18,12 +18,10 @@ import { LoginComponent } from './components/user/login.component';
 import { HeaderComponent } from './components/header/header.component';
 import { AuthToken } from './services/interceptors/auth.interceptor';
 import { TokenInterceptor } from './services/interceptors/token.interceptor';
-import { FooterComponent } from './components/footer/footer.component';
 import { ListarProductoComponent } from './components/listar-producto/listar-producto.component';
 import { ListarPacienteComponent } from './components/listar-paciente/listar-paciente.component';
 import { ListarMovimientoComponent } from './components/listar-movimiento/listar-movimiento.component';
 import { PaginaPrincipalComponent } from './components/pagina-principal/pagina-principal.component';
-import { PaginatorComponent } from './components/paginator/paginator.component';
 import { PaginaSobreNosotrosComponent } from './components/pagina-sobre-nosotros/pagina-sobre-nosotros.component';
 import { PaginaCristaleriaComponent } from './components/pagina-cristaleria/pagina-cristaleria.component';
 import { PaginaFiltrarProductoComponent } from './components/pagina-filtrar-producto/pagina-filtrar-producto.component';
@@ -38,9 +36,6 @@ import { PaginaGestionarMetodosPagosComponent } from './components/pagina-gestio
 import { PaginaGestionarLocalesComponent } from './components/pagina-gestionar-locales/pagina-gestionar-locales.component';
 import { PaginaGestionarPacientesComponent } from './components/pagina-gestionar-pacientes/pagina-gestionar-pacientes.component';
 import { PaginaGestionarCajaComponent } from './components/pagina-gestionar-caja/pagina-gestionar-caja.component';
-import { PaginaLimpiezaComponent } from './components/pagina-limpieza/pagina-limpieza.component';
-import { PaginaPoliticaEnvioComponent } from './components/pagina-politica-envio/pagina-politica-envio.component';
-import { PaginaPoliticaGarantiaComponent } from './components/pagina-politica-garantia/pagina-politica-garantia.component';
 import { PaginaEstadoMovimientoComponent } from './components/pagina-estado-movimiento/pagina-estado-movimiento.component';
 import { MaterialProductoService } from './services/materialProducto.service';
 import { PaginaGestionarMaterialProductoComponent } from './components/pagina-gestionar-material-producto/pagina-gestionar-material-producto.component';
@@ -56,11 +51,9 @@ import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-v
     AppComponent,
     LoginComponent,
     HeaderComponent,
-    FooterComponent,
     ListarProductoComponent,
     ListarPacienteComponent,
     PaginaPrincipalComponent,
-    PaginatorComponent,
     PaginaSobreNosotrosComponent,
     PaginaCristaleriaComponent,
     PaginaFiltrarProductoComponent,
@@ -76,9 +69,6 @@ import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-v
     PaginaGestionarProveedoresComponent,
     PaginaGestionarLocalesComponent,
     PaginaGestionarPacientesComponent,
-    PaginaLimpiezaComponent,
-    PaginaPoliticaEnvioComponent,
-    PaginaPoliticaGarantiaComponent,
     PaginaGestionarCajaComponent,
     PaginaCrearEditarMovimientoComponent,
     PaginaEstadoMovimientoComponent,
