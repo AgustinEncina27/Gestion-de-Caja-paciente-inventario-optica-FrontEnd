@@ -42,6 +42,7 @@ import { PaginaGestionarMaterialProductoComponent } from './components/pagina-ge
 import { PaginaGestionarProveedoresComponent } from './components/pagina-gestionar-proveedores/pagina-gestionar-proveedores.component';
 import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagina-estadistica.component';
 import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-varios-productos/pagina-crear-varios-productos.component';
+import { PaginaActualizarProductosComponent } from './components/pagina-actualizar-productos/pagina-actualizar-productos.component';
 
 
 
@@ -74,6 +75,7 @@ import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-v
     PaginaEstadoMovimientoComponent,
     PaginaEstaditicaComponent,
     ListarMovimientoComponent,
+    PaginaActualizarProductosComponent
   ],
   imports: [
     BrowserModule,

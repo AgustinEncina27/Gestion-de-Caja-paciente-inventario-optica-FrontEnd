@@ -35,8 +35,14 @@
       <li class="nav-item" *ngIf="!authService.hasRoles()">
         <a class="nav-link" [routerLink]="['/sobreNosotros']">SOBRE NOSOTROS</a>
       </li>
-      <li class="nav-item" *ngIf="authService.hasRoles()">
-        <a class="nav-link " aria-current="page" [routerLink]="['/crearVariosProductos']">CREAR PRODUCTOS</a>
+      <li class="nav-item dropdown" *ngIf="authService.hasRoles()">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          GESTIONAR PRODUCTOS
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/crearVariosProductos']">Crear productos</a></li>
+          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/actualizar-productos']">Actualizar precio o costo</a></li>
+        </ul>
       </li>
       <li class="nav-item dropdown" *ngIf="authService.hasRoles()">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">

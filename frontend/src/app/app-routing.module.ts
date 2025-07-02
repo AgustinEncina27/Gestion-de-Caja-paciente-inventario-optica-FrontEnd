@@ -20,6 +20,7 @@ import { PaginaGestionarMaterialProductoComponent } from './components/pagina-ge
 import { PaginaGestionarProveedoresComponent } from './components/pagina-gestionar-proveedores/pagina-gestionar-proveedores.component';
 import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagina-estadistica.component';
 import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-varios-productos/pagina-crear-varios-productos.component';
+import { PaginaActualizarProductosComponent } from './components/pagina-actualizar-productos/pagina-actualizar-productos.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'/inicio', pathMatch:'full'},
@@ -48,6 +49,7 @@ const routes: Routes = [
   {path:'estadistica',component: PaginaEstaditicaComponent},
   {path:'adminitrarCajaPaciente/:pacienteFicha',component: PaginaGestionarCajaComponent},
   {path:'visitanos',component: PaginaVisitanosComponent},
+  {path:'actualizar-productos',component: PaginaActualizarProductosComponent},
   {path:'login',component: LoginComponent},
   { path: '**', redirectTo: '/inicio' }
 ];
