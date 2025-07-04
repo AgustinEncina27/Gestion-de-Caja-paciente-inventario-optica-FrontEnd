@@ -211,7 +211,7 @@
           <tbody>
             <tr *ngFor="let producto of productosEncontrados">
               <td>{{ producto.modelo }}</td>
-              <td>{{ producto.marca?.nombre }}</td>
+              <td>{{ producto.marca.nombre }}</td>
               <td>{{ producto.precio | currency }}</td>
               <td>{{ getStockEnLocal(producto) }}</td>
               <td>

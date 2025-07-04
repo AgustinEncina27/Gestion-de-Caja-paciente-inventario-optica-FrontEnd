@@ -146,11 +146,11 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
       this.producto.material = null;
       this.producto.genero = '';
     } 
-    console.log(this.materialProducto.nombre+'2');
+    
     if(this.materialProducto.nombre === undefined){
       this.producto.material = null;
     }
-    console.log(this.genero+'3');
+    
     if(this.genero == null){
       this.producto.genero = '';
     }
