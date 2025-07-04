@@ -1,0 +1,86 @@
+<div class="container my-5">
+  <div class="card shadow-sm border-0 rounded-4 bg-white">
+    <div class="card-header bg-white border-bottom-0">
+      <h3 class="text-center m-0" style="color: var(--color-principal);">Actualizar Precios o Costos</h3>
+    </div>
+
+    <div class="card-body p-4">
+
+      <form (ngSubmit)="actualizar()">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">¿Qué deseas actualizar?</label>
+            <select [(ngModel)]="tipoActualizacion" name="tipoActualizacion" class="form-select" required>
+              <option value="precio">Precio</option>
+              <option value="costo">Costo</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Tipo de cambio</label>
+            <select [(ngModel)]="tipoCambio" name="tipoCambio" class="form-select" required>
+              <option value="porcentaje">Porcentaje (%)</option>
+              <option value="fijo">Monto fijo ($)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Valor a aplicar</label>
+          <input type="number" class="form-control" [(ngModel)]="valor" name="valor" required>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Categoría</label>
+            <select [(ngModel)]="filtro.categoria" name="categoria" class="form-select">
+              <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nombre }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6 position-relative">
+            <label class="form-label fw-semibold">Proveedor</label>
+            <input type="text" class="form-control mb-1" [(ngModel)]="busquedaProveedor"
+                   (input)="filtrarProveedores()" placeholder="Buscar proveedor..." name="proveedorInput" autocomplete="off">
+            <ul class="list-group position-absolute w-100 z-index-100 shadow scroll-list" *ngIf="proveedoresFiltrados.length > 0 && busquedaProveedor">
+              <li class="list-group-item list-group-item-action"
+                  *ngFor="let p of proveedoresFiltrados"
+                  (click)="seleccionarProveedor(p)">
+                {{ p.nombre }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Material</label>
+            <select [(ngModel)]="filtro.material" name="material" class="form-select">
+              <option *ngFor="let m of materiales" [value]="m.id">{{ m.nombre }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6 position-relative">
+            <label class="form-label fw-semibold">Marca</label>
+            <input type="text" class="form-control mb-1" [(ngModel)]="busquedaMarca"
+                   (input)="filtrarMarcas()" placeholder="Buscar marca..." name="marcaInput" autocomplete="off">
+            <ul class="list-group position-absolute w-100 z-index-100 shadow scroll-list" *ngIf="marcasFiltradas.length > 0 && busquedaMarca">
+              <li class="list-group-item list-group-item-action"
+                  *ngFor="let m of marcasFiltradas"
+                  (click)="seleccionarMarca(m)">
+                {{ m.nombre }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-lg px-4 py-2 text-white" style="background-color: #3a5fa5;">
+            <i class="bi bi-check-circle me-2"></i>Aplicar Cambios
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

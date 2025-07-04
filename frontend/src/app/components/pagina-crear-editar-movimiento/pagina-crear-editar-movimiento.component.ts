@@ -187,7 +187,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
           const modal = new bootstrap.Modal(document.getElementById('modalProductos')!);
           modal.show();
         },
-        error: () => Swal.fire('ERRPR', 'Producto no encontrado', 'error'),
+        error: () => Swal.fire('ERROR', 'Error al buscar productos', 'error')
       });
     }
   }
@@ -414,7 +414,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   }
 
   calcularSubtotal(detalle: DetalleMovimiento): void {
-    detalle.subtotal=detalle.cantidad * detalle.precioUnitario;
+    detalle.subtotal=detalle.cantidad * detalle.subtotal;
     this.calcularTotalAdicional(); // Llama al cálculo del total
   }
 

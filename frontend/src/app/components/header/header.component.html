@@ -29,25 +29,20 @@
       <li class="nav-item" *ngIf="authService.hasRoles()">
         <a class="nav-link " aria-current="page" [routerLink]="['/inicio']">INVENTARIO</a>
       </li>
-      <!-- 
-      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
-        <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDGafasDeSol+'/0']">GAFAS DE SOL</a>
-      </li>
-      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
-        <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDRecetas+'/0']">RECETAS</a>
-      </li>
-      <li class="nav-item" *ngIf="!authService.hasRole('ROLE_ADMIN')">
-        <a class="nav-link" [routerLink]="['/productos/page/-1/-1/'+categoriaIDAccesorios+'/0']">ACCESORIOS</a>
-      </li>
-      -->
       <li class="nav-item" *ngIf="!authService.hasRoles()">
         <a class="nav-link" [routerLink]="['/cristaleria']">CRISTALERÍA</a>
       </li>
       <li class="nav-item" *ngIf="!authService.hasRoles()">
         <a class="nav-link" [routerLink]="['/sobreNosotros']">SOBRE NOSOTROS</a>
       </li>
-      <li class="nav-item" *ngIf="authService.hasRoles()">
-        <a class="nav-link " aria-current="page" [routerLink]="['/crearVariosProductos']">CREAR PRODUCTOS</a>
+      <li class="nav-item dropdown" *ngIf="authService.hasRoles()">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          GESTIONAR PRODUCTOS
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+          <li *ngIf="authService.hasRoles()"><a class="dropdown-item" [routerLink]="['/crearVariosProductos']">Crear productos</a></li>
+          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/actualizar-productos']">Actualizar precio o costo</a></li>
+        </ul>
       </li>
       <li class="nav-item dropdown" *ngIf="authService.hasRoles()">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">

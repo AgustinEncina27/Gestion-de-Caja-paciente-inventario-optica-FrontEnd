@@ -27,7 +27,7 @@
             <select id="estadoMovimiento" class="form-select" [(ngModel)]="movimiento.estadoMovimiento" name="estadoMovimiento" required>
               <option value="PEDIDO_CRISTALES">Pedido de cristales</option>
               <option value="ARMANDO_PEDIDO">Armando el pedido</option>
-              <option value="ANTEOJO_TERMINADO">Anteojo terminado</option>
+              <option value="ANTEOJO_TERMINADO">Anteojos terminados</option>
               <option value="ENTREGADO">Entregado</option>
             </select>
           </div>
@@ -98,7 +98,7 @@
           <div class="col-md-3"><span class="form-control">{{ detalle.producto.modelo }}</span></div>
           <div class="col-md-3"><span class="form-control">{{ detalle.producto.marca.nombre }}</span></div>
           <div class="col-md-2"><input type="number" placeholder="Cantidad" class="form-control" [(ngModel)]="detalle.cantidad" name="cantidad{{ i }}" (change)="verificarCantidad(detalle)" required /></div>
-          <div class="col-md-2"><span class="form-control">{{ detalle.subtotal | currency }}</span></div>
+          <div class="col-md-2"><input type="number" placeholder="subtotal" class="form-control" [(ngModel)]="detalle.subtotal" name="subtotal{{ i }}" (change)="calcularSubtotal(detalle)" required /></div>
           <div class="col-md-2"><button type="button" class="btn btn-danger w-100" (click)="eliminarDetalle(i)">Eliminar</button></div>
         </div>
 
@@ -211,7 +211,7 @@
           <tbody>
             <tr *ngFor="let producto of productosEncontrados">
               <td>{{ producto.modelo }}</td>
-              <td>{{ producto.marca?.nombre }}</td>
+              <td>{{ producto.marca.nombre }}</td>
               <td>{{ producto.precio | currency }}</td>
               <td>{{ getStockEnLocal(producto) }}</td>
               <td>
