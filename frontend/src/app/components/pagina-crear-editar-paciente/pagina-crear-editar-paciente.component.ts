@@ -51,6 +51,11 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
           this.paciente = paciente;
           this.local = this.paciente.local;
           this.genero = this.paciente.genero;
+        
+          // Ordenar las graduaciones de todas las fichas
+          for (const ficha of this.paciente.historialFichas) {
+            this.ordenarGraduaciones(ficha);
+          }
         });
       }
     });
@@ -68,7 +73,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     this.paciente.creadoEn = new Date();
     this.paciente.ultimaActualizacion = new Date();
     this.isLoading = true;
-
+    
     this.pacienteService.createPaciente(this.paciente).subscribe({
       next: (response) => {
         this.isLoading = false;
@@ -132,8 +137,8 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
       { ojo: 'DERECHO', esferico: 0, cilindrico: 0, eje: 0, adicion: 0, cerca: 0 },
       { ojo: 'IZQUIERDO', esferico: 0, cilindrico: 0, eje: 0, adicion: 0, cerca: 0 }
     ];
-
     nuevaFicha.cristales = [];
+    this.ordenarGraduaciones(nuevaFicha); // 🔽 ordenar antes de pushear
     this.paciente.historialFichas.push(nuevaFicha);
   }
 
@@ -171,6 +176,66 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     ficha.cristales?.push({
       nombre: '',
       fecha: new Date().toISOString().split('T')[0]
+    });
+  }
+
+  normalizarNumero(obj: any, campo: string): void {
+    const valor = obj[campo];
+    if (typeof valor === 'string') {
+      const normalizado = parseFloat(valor.replace('+', '').trim());
+      obj[campo] = isNaN(normalizado) ? null : normalizado;
+    }
+  }
+
+  formatearConSigno(valor: number | null): string {
+    if (valor === null || valor === undefined || isNaN(valor)) return '';
+    return valor > 0 ? `+${valor}` : `${valor}`;
+  }
+  
+  actualizarConSigno(event: Event, objeto: any, campo: string): void {
+    const input = (event.target as HTMLInputElement).value;
+    const limpio = input.replace(/\s+/g, '').replace(',', '.');
+    const parseado = parseFloat(limpio.replace('+', ''));
+  
+    // Guardar el número sin el signo (pero lo mostramos con signo si es necesario)
+    objeto[campo] = isNaN(parseado) ? null : parseado;
+  }
+  
+  actualizarAdicionYSumarCerca(event: Event, grad: any): void {
+    const input = (event.target as HTMLInputElement).value;
+    grad.adicion = this.parsearValorNumerico(input);
+    this.actualizarCerca(grad);
+  }
+  
+  actualizarEsfericoYSumarCerca(event: Event, grad: any): void {
+    const input = (event.target as HTMLInputElement).value;
+    grad.esferico = this.parsearValorNumerico(input);
+    this.actualizarCerca(grad);
+  }
+  
+  actualizarCerca(grad: any): void {
+    const esf = typeof grad.esferico === 'number' ? grad.esferico : null;
+    const adi = typeof grad.adicion === 'number' ? grad.adicion : null;
+  
+    if (adi !== null && adi !== 0 && esf !== null) {
+      const suma = esf + adi;
+      grad.cerca = parseFloat(suma.toFixed(2));
+    } else {
+      grad.cerca = 0; 
+    }
+  }
+  
+  parsearValorNumerico(valor: string): number | null {
+    const limpio = valor.replace('+', '').replace(',', '.').trim();
+    const num = parseFloat(limpio);
+    return isNaN(num) ? null : num;
+  }
+
+  ordenarGraduaciones(ficha: FichaGraduacion) {
+    ficha.graduaciones.sort((a, b) => {
+      if (a.ojo === 'DERECHO') return -1;
+      if (b.ojo === 'DERECHO') return 1;
+      return 0;
     });
   }
 }
