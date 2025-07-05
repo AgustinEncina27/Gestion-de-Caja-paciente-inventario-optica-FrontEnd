@@ -12,6 +12,7 @@ export class Movimiento {
   descuento!: number;
   totalImpuesto!: number;
   descripcion?: string; // Opcional
+  vendedor?: string; // Opcional
   paciente: Paciente | null = null; // Relación con Paciente
   detallesAdicionales: DetalleAdicional[] | null = null; // Lista de detalles del movimiento
   detalles: DetalleMovimiento[] | null = null; // Lista de detalles del movimiento

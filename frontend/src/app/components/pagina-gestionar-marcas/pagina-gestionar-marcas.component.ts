@@ -46,7 +46,8 @@ export class PaginaGestionarMarcasComponent {
     this.marcaService.crearMarca(this.marca).subscribe( 
       response=>{
         Swal.fire('MARCA CREADA', 'La marca fue cargada con éxito!','success')
-        this.router.navigate(['/inicio']);
+        this.cargarMarcas();
+        this.limpiarSeleccion();
       })
   }
 
@@ -54,7 +55,8 @@ export class PaginaGestionarMarcasComponent {
     this.marcaService.actualizarMarca(this.marca).subscribe( 
       response=>{
         Swal.fire('MARCA EDITADA', 'La Marca fue editada con éxito!','success')
-        this.router.navigate(['/inicio']);
+        this.cargarMarcas();
+        this.limpiarSeleccion();
       })
   }
 
@@ -72,7 +74,8 @@ export class PaginaGestionarMarcasComponent {
         this.marcaService.eliminarMarca(this.marca.id).subscribe( 
           response=>{
             Swal.fire('MARCA ELIMINADA', 'La marca fue eliminada con éxito!','success')
-            this.router.navigate(['/inicio']);
+            this.cargarMarcas();
+            this.limpiarSeleccion();
           })
       }
     })

@@ -23,9 +23,8 @@ export class ListarPacienteComponent {
  URL_BACKEND: string=URL_BACKEND;
 
  constructor(private pacienteService: PacienteService,
-  private activateRoute: ActivatedRoute,
   public authService: AuthService,
-  private router: Router){
+  ){
   }
 
   ngOnInit(): void{

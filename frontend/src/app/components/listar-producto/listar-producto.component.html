@@ -27,10 +27,12 @@
   </div>
   
   <!-- Botón Registrar Paciente -->
-  <button class="btn btn-success m-1"  *ngIf="authService.hasRoles()" [routerLink]="['/crearVariosProductos']">Crear producto</button>
-<!-- Botón Registrar Paciente -->
-<button class="btn btn-success m-1" [routerLink]="['/crearPaciente']">Registrar paciente</button>
-  <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRoles()">
+  <button class="btn btn-success m-1"  *ngIf="authService.hasRole('ROLE_ADMIN')" [routerLink]="['/crearVariosProductos']">Crear producto</button>
+
+  <!-- Botón Registrar Paciente -->
+  <button class="btn btn-success m-1" [routerLink]="['/crearPaciente']">Registrar paciente</button>
+  
+  <div class="d-flex justify-content-between align-items-center " *ngIf="authService.hasRole('ROLE_ADMIN')">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generarStockModal">
       Generar Stock del Local
     </button>
@@ -56,11 +58,11 @@
           <th>Categoria</th>
           <th>Material</th>
           <th>Genero</th>
-          <th *ngIf="authService.hasRoles()">Costo</th>
+          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Costo</th>
           <th>Precio</th>
           <th>Stock</th>
           <th>Descripción</th>
-          <th *ngIf="authService.hasRoles()">Acciones</th>
+          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -75,7 +77,7 @@
           </td>
           <td>{{ producto.material?.nombre || '' }}</td>
           <td>{{producto.genero}}</td>
-          <td *ngIf="authService.hasRoles()">${{producto.costo}}</td>
+          <td *ngIf="authService.hasRole('ROLE_ADMIN')">${{producto.costo}}</td>
           <td>${{producto.precio}}</td>
           <!-- Iterar sobre productoLocales -->
           <td>
@@ -84,7 +86,7 @@
             </div>
           </td>          
           <td>{{producto.descripcion}}</td>
-          <td *ngIf="authService.hasRoles()">
+          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
             <button
               class="btn btn-primary btn-sm me-2"
               [routerLink]="['/editarProducto', producto.id]"
@@ -100,31 +102,31 @@
     </table>
   </div>
 </div>
-  <!-- Paginador para productos -->
+<!-- Paginador para productos -->
 <nav aria-label="Page navigation" *ngIf="paginador && paginador.totalPages > 1">
-    <ul class="pagination justify-content-center mt-3">
+  <ul class="pagination justify-content-center mt-3">
 
-      <!-- Botón Anterior -->
-      <li class="page-item" [class.disabled]="paginador.first">
-        <a class="page-link cursor-pointer" (click)="paginaAnterior()" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
-      </li>
+    <!-- Botón Anterior -->
+    <li class="page-item" [class.disabled]="paginador.first">
+      <a class="page-link cursor-pointer" (click)="paginaAnterior()" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
 
-      <!-- Números de página visibles -->
-      <li *ngFor="let page of pages" [class.active]="paginador.number === page" class="page-item">
-        <a class="page-link cursor-pointer" (click)="cambiarPagina(page)">{{ page + 1 }}</a>
-      </li>
+    <!-- Números de página visibles -->
+    <li *ngFor="let page of pages" [class.active]="paginador.number === page" class="page-item">
+      <a class="page-link cursor-pointer" (click)="cambiarPagina(page)">{{ page + 1 }}</a>
+    </li>
 
-      <!-- Botón Siguiente -->
-      <li class="page-item" [class.disabled]="paginador.last">
-        <a class="page-link cursor-pointer" (click)="paginaSiguiente()" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
-      </li>
+    <!-- Botón Siguiente -->
+    <li class="page-item" [class.disabled]="paginador.last">
+      <a class="page-link cursor-pointer" (click)="paginaSiguiente()" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
 
-    </ul>
-  </nav>
+  </ul>
+</nav>
 
 
 <!-- Modal para seleccionar local -->
