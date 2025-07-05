@@ -1,0 +1,16 @@
+.z-index-100 {
+  z-index: 100;
+}
+
+.scroll-list {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+}
+
+.list-group-item:hover {
+  background-color: #2196f3;
+  color: white;
+  cursor: pointer;
+}

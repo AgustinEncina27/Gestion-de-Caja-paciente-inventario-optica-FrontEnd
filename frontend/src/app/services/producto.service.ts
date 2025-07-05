@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { URL_BACKEND } from '../config/config';
 import { StockTotalSucursal } from '../dto/StockTotalSucursal';
 import { StockPorMaterial } from '../dto/StockPorMaterial';
+import { ActualizacionRequest } from '../dto/ActualizacionRequest';
 
 @Injectable()
 export class ProductoService {
@@ -79,6 +80,18 @@ export class ProductoService {
         return throwError(() => e);
       })
     )
+  }
+
+  actualizarMasivo(payload: ActualizacionRequest): Observable<any> {
+    return this.http.post(`${this.urlEndPointProducto}/actualizar-precios`, payload).pipe(
+      tap(() => {
+        Swal.fire('Actualización Exitosa', 'Los precios o costos se actualizaron correctamente.', 'success');
+      }),
+      catchError((e) => {
+        Swal.fire('Error', 'Ocurrió un error al actualizar los productos', 'error');
+        return throwError(() => e);
+      })
+    );
   }
 
   createVariosProductos(productos: Producto[]) {

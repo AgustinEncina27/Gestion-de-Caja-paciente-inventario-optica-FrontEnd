@@ -6,4 +6,5 @@ export class DetalleMovimiento {
   precioUnitario!: number; // Precio por unidad
   subtotal!: number; // Subtotal del detalle (cantidad * precioUnitario)
   producto!: Producto; // Relación con Producto
+  cantidadAnterior?: number;
 }

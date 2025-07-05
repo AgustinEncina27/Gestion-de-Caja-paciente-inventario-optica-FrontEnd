@@ -133,26 +133,31 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
       }
     });
   }
-
+  
   editarProducto() {
     this.agregarLocalesYStocksAlProducto();
     this.producto.categorias = this.selectedCategoriesCheckbox;
     this.producto.proveedores = this.selectedProveedoresCheckbox;
-    this.producto.genero = this.genero;
     this.producto.marca = this.marca;
     this.producto.material = this.materialProducto;
+    this.producto.genero = this.genero;
+
+    if (this.esSoloCristalSeleccionado()) {
+      this.producto.material = null;
+      this.producto.genero = '';
+    } 
     
     if(this.materialProducto.nombre === undefined){
       this.producto.material = null;
-      }
+    }
     
     if(this.genero == null){
       this.producto.genero = '';
     }
-
+  
     this.producto.ultimaActualizacion = new Date();
     this.isLoading = true;
-
+  
     this.productoService.updateProducto(this.producto).subscribe({
       next: () => {
         this.isLoading = false;
@@ -169,7 +174,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
       }
     });
   }
-
+  
 
   selecionMarca(marca:Marca){
     this.marca=marca;
@@ -193,11 +198,30 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   }
   
   toggleCategorySelection(categoria: Categoria) {
-    if (this.isCategorySelectedInCheckBox(categoria)) {
-      this.selectedCategoriesCheckbox = this.selectedCategoriesCheckbox.filter(selectedCategory => selectedCategory.id !== categoria.id); 
+    const esCristal = categoria.nombre.toLowerCase() === 'cristal';
+  
+    if (esCristal) {
+      const yaSeleccionado = this.selectedCategoriesCheckbox.some(c => c.id === categoria.id);
+
+      if (yaSeleccionado) {
+        // Si ya estaba seleccionada, la quitamos y dejamos vacío
+        this.selectedCategoriesCheckbox = [];
+      } else {
+        // Si no estaba seleccionada, se selecciona solo "Cristal"
+        this.selectedCategoriesCheckbox = [categoria];
+      }
     } else {
-      this.selectedCategoriesCheckbox.push(categoria);
-    }
+      // Si había "Cristal", lo eliminamos
+      this.selectedCategoriesCheckbox = this.selectedCategoriesCheckbox.filter(c => c.nombre.toLowerCase() !== 'cristal');
+    
+      // Alternar la categoría actual
+      const index = this.selectedCategoriesCheckbox.findIndex(c => c.id === categoria.id);
+      if (index === -1) {
+        this.selectedCategoriesCheckbox.push(categoria);
+      } else {
+        this.selectedCategoriesCheckbox.splice(index, 1);
+      }
+    }    
   }
 
   //Proveedores
@@ -267,6 +291,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   calcularPrecio(costo:number){
     this.producto.precio= costo*3;
   }
+
   esSoloCristalSeleccionado(): boolean {
     return this.selectedCategoriesCheckbox.length === 1 &&
            this.selectedCategoriesCheckbox[0].nombre.toLowerCase() === 'cristal';
@@ -283,7 +308,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
       this.router.navigate(['/productos']);
     }
   }
-
+  
   get marcasFiltradas(): Marca[] {
     if (!this.filtroMarca.trim()) {
       return this.marcas;

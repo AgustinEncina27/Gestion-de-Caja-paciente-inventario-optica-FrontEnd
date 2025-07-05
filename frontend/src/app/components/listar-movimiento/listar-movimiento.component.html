@@ -84,6 +84,7 @@
           <th class="fecha-col">Fecha Movimiento</th>
           <th>N° Ficha</th>
           <th>Pagado</th>
+          <th>Vendedor</th>
           <th>Local</th>
           <th>Movimiento</th>
           <th>Total de pagado</th>
@@ -106,6 +107,7 @@
               </span>
             </div>
           </td>
+          <td>{{movimiento.vendedor}}</td>
           <td>{{movimiento.local.nombre}}</td>
           <td>{{movimiento.tipoMovimiento}}</td>
           <td class="metodo-cobro-col">
@@ -127,7 +129,7 @@
             <div class="d-flex justify-content-center">
               
               <button class="btn btn-primary btn-sm me-2" [routerLink]="'/editarMovimiento/' + movimiento.id">Editar</button>
-              <button class="btn btn-danger btn-sm me-2" (click)="eliminarMovimiento(movimiento)">Eliminar</button>
+              <button class="btn btn-danger btn-sm me-2" (click)="eliminarMovimiento(movimiento)" *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</button>
 
               <!-- Botón: Copiar enlace (color celeste sólido) -->
               <button

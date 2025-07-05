@@ -187,7 +187,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
           const modal = new bootstrap.Modal(document.getElementById('modalProductos')!);
           modal.show();
         },
-        error: () => Swal.fire('ERRPR', 'Producto no encontrado', 'error'),
+        error: () => Swal.fire('ERROR', 'Error al buscar productos', 'error')
       });
     }
   }
@@ -303,13 +303,13 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     if (this.advertenciaMonto() && this.movimiento.tipoMovimiento === 'ENTRADA') {
       return;
     }
-
+  
     this.movimiento.detalles = this.detalles;
-
+  
     if (this.movimiento.tipoMovimiento === 'SALIDA') {
       this.esMovimientoSalida(this.movimiento.id);
     }
-
+  
     // Validar que haya al menos un pago
     if (!this.movimiento.cajaMovimientos || this.movimiento.cajaMovimientos.length === 0) {
       Swal.fire('VALIDACIÓN', 'Debe ingresar al menos un pago para guardar el movimiento.', 'warning');
@@ -320,33 +320,46 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     this.isLoading = true;
   
     const afterSave = () => {
-      // Solo si es ENTRADA y tiene paciente y detalles adicionales
-      if (
-        this.movimiento.tipoMovimiento === 'ENTRADA' &&
-        this.movimiento.paciente?.id &&
-        this.movimiento.detallesAdicionales
-      ) {
-        const cristales = this.movimiento.detallesAdicionales
-          .filter(d => d.descripcion.toLowerCase().includes('cristal'))
-          .map(d => {
-            const texto = d.descripcion.toLowerCase();
-            const index = texto.indexOf('cristal');
-            return d.descripcion.substring(index + 7).trim(); // nombre después de "cristal "
-          });
-  
-        cristales.forEach(nombreCristal => {
-          this.pacienteService.guardarCristal(this.movimiento.paciente!.id,nombreCristal).subscribe({
+      if (this.movimiento.tipoMovimiento === 'ENTRADA' && this.movimiento.paciente?.id) {
+        const cristalesPorDetalle = this.movimiento.detalles?.filter(detalle =>
+          detalle.producto.categorias.some(c => c.nombre.toLowerCase() === 'cristal')
+        ) || [];
+    
+        cristalesPorDetalle.forEach(detalle => {
+          const modelo = detalle.producto.modelo;
+          const marca = detalle.producto.marca.nombre;
+          const nombreCristal = `${modelo} ${marca}`;
+    
+          this.pacienteService.guardarCristal(this.movimiento.paciente!.id, nombreCristal).subscribe({
             next: () => console.log(`Cristal guardado: ${nombreCristal}`),
             error: err => console.error('Error al guardar cristal:', err)
           });
         });
+    
+        // También podés mantener lo de los detallesAdicionales si lo querés seguir usando:
+        if (this.movimiento.detallesAdicionales) {
+          const cristalesTexto = this.movimiento.detallesAdicionales
+            .filter(d => d.descripcion.toLowerCase().includes('cristal'))
+            .map(d => {
+              const texto = d.descripcion.toLowerCase();
+              const index = texto.indexOf('cristal');
+              return d.descripcion.substring(index + 7).trim();
+            });
+    
+          cristalesTexto.forEach(nombreCristal => {
+            this.pacienteService.guardarCristal(this.movimiento.paciente!.id, nombreCristal).subscribe({
+              next: () => console.log(`Cristal guardado: ${nombreCristal}`),
+              error: err => console.error('Error al guardar cristal desde texto:', err)
+            });
+          });
+        }
       }
-  
+    
       this.isLoading = false;
       Swal.fire('MOVIMIENTO GUARDADO', 'El movimiento ha sido guardado con éxito', 'success');
       this.router.navigate(['/adminitrarCaja']);
     };
-
+  
     if (this.movimiento.id) {
       this.movimientoService.updateMovimiento(this.movimiento).subscribe({
         next: () => {
@@ -422,7 +435,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     this.movimiento.total=0;
     this.movimiento.totalImpuesto=0;
     this.movimiento.descripcion='';
-
+    this.movimiento.vendedor='';
     this.movimiento.detallesAdicionales=[];
 
     this.detalles = [];
@@ -446,7 +459,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     this.movimiento.total=0;
     this.movimiento.totalImpuesto=0;
     this.movimiento.descripcion='';
-
+    this.movimiento.vendedor='';
     this.movimiento.paciente = paciente;
     this.pacienteEncontrado= paciente;
 

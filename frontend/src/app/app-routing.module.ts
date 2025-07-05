@@ -11,9 +11,6 @@ import { PaginaGestionarCategoriasComponent } from './components/pagina-gestiona
 import { PaginaVisitanosComponent } from './components/pagina-visitanos/pagina-visitanos.component';
 import { PaginaGestionarMarcasComponent } from './components/pagina-gestionar-marcas/pagina-gestionar-marcas.component';
 import { PaginaGestionarLocalesComponent } from './components/pagina-gestionar-locales/pagina-gestionar-locales.component';
-import { PaginaPoliticaEnvioComponent } from './components/pagina-politica-envio/pagina-politica-envio.component';
-import { PaginaPoliticaGarantiaComponent } from './components/pagina-politica-garantia/pagina-politica-garantia.component';
-import { PaginaLimpiezaComponent } from './components/pagina-limpieza/pagina-limpieza.component';
 import { PaginaEstadoMovimientoComponent } from './components/pagina-estado-movimiento/pagina-estado-movimiento.component';
 import { PaginaGestionarPacientesComponent } from './components/pagina-gestionar-pacientes/pagina-gestionar-pacientes.component';
 import { PaginaGestionarCajaComponent } from './components/pagina-gestionar-caja/pagina-gestionar-caja.component';
@@ -23,6 +20,7 @@ import { PaginaGestionarMaterialProductoComponent } from './components/pagina-ge
 import { PaginaGestionarProveedoresComponent } from './components/pagina-gestionar-proveedores/pagina-gestionar-proveedores.component';
 import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagina-estadistica.component';
 import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-varios-productos/pagina-crear-varios-productos.component';
+import { PaginaActualizarProductosComponent } from './components/pagina-actualizar-productos/pagina-actualizar-productos.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'/inicio', pathMatch:'full'},
@@ -31,9 +29,6 @@ const routes: Routes = [
   {path: 'productos', redirectTo: 'productos/page/0', pathMatch: 'full' }, 
   {path:'sobreNosotros',component: PaginaSobreNosotrosComponent},
   {path:'cristaleria',component: PaginaCristaleriaComponent},
-  {path:'limpieza',component: PaginaLimpiezaComponent},
-  {path:'politicaEnvio',component: PaginaPoliticaEnvioComponent},
-  {path:'politicaGarantia',component: PaginaPoliticaGarantiaComponent},
   {path:'crearProducto',component: PaginaCrearEditarProductoComponent},
   {path:'crearVariosProductos',component: PaginaCrearVariosProductosComponent},
   {path:'crearMovimiento',component: PaginaCrearEditarMovimientoComponent},
@@ -54,6 +49,7 @@ const routes: Routes = [
   {path:'estadistica',component: PaginaEstaditicaComponent},
   {path:'adminitrarCajaPaciente/:pacienteFicha',component: PaginaGestionarCajaComponent},
   {path:'visitanos',component: PaginaVisitanosComponent},
+  {path:'actualizar-productos',component: PaginaActualizarProductosComponent},
   {path:'login',component: LoginComponent},
   { path: '**', redirectTo: '/inicio' }
 ];
