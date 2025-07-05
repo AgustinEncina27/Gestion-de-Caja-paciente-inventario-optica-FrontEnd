@@ -200,12 +200,6 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     // Guardar el número sin el signo (pero lo mostramos con signo si es necesario)
     objeto[campo] = isNaN(parseado) ? null : parseado;
   }
-
-  actualizarEsfericoYSumarCerca(event: Event, grad: any): void {
-    const input = (event.target as HTMLInputElement).value;
-    grad.esferico = this.parsearValorNumerico(input);
-    this.actualizarCerca(grad);
-  }
   
   actualizarAdicionYSumarCerca(event: Event, grad: any): void {
     const input = (event.target as HTMLInputElement).value;
@@ -213,13 +207,22 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     this.actualizarCerca(grad);
   }
   
-  actualizarCerca(grad: any): void {
-    const esf = typeof grad.esferico === 'number' ? grad.esferico : 0;
-    const adi = typeof grad.adicion === 'number' ? grad.adicion : 0;
-    const suma = esf + adi;
+  actualizarEsfericoYSumarCerca(event: Event, grad: any): void {
+    const input = (event.target as HTMLInputElement).value;
+    grad.esferico = this.parsearValorNumerico(input);
+    this.actualizarCerca(grad);
+  }
   
-    // Redondear a 2 decimales
-    grad.cerca = parseFloat(suma.toFixed(2));
+  actualizarCerca(grad: any): void {
+    const esf = typeof grad.esferico === 'number' ? grad.esferico : null;
+    const adi = typeof grad.adicion === 'number' ? grad.adicion : null;
+  
+    if (adi !== null && adi !== 0 && esf !== null) {
+      const suma = esf + adi;
+      grad.cerca = parseFloat(suma.toFixed(2));
+    } else {
+      grad.cerca = 0; 
+    }
   }
   
   parsearValorNumerico(valor: string): number | null {
