@@ -4,18 +4,18 @@ p {
   font-size: 18px;
 }
 
-.btn-outline-primary {
-  background-color: #FB8747;
-  color: black;
-  border-color: #FB8747;
+.btn-outline-primary{
+  background-color: var(--color-principal);
+  color: white;
+  border-color: var(--color-principal);
   width: 200px;
   height: 60px;
 }
 
 .btn-outline-primary:hover {
-  background-color: #F4B15B;
-  border-color: #F4B15B;
-  color: #0F0E49;
+  background-color: var(--color-secundario);
+  border-color: var(--color-secundario);
+  color: var( --color-letra-hover);
 }
 
 .titulo {

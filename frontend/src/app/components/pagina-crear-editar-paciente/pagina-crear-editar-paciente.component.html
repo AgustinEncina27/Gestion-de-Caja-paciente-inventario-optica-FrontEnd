@@ -63,6 +63,12 @@
             <input type="text" class="form-control" id="InputObraSocial" 
                    [(ngModel)]="paciente.obraSocial" name="obraSocial" >
           </div>
+          <!-- observaciones -->
+          <div class="col-md-6">
+            <label for="InputObservaciones" class="form-label fw-bold">Observaciones</label>
+            <input type="text" class="form-control" id="InputObservaciones" 
+                   [(ngModel)]="paciente.observaciones" name="observaciones" >
+          </div>
         </div>
 
         <!-- Quinta fila -->
@@ -153,13 +159,20 @@
           <div class="accordion-item" *ngFor="let ficha of paciente.historialFichas.slice().reverse(); let i = index">
             <h2 class="accordion-header" id="heading{{i}}">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse'+i" aria-expanded="false" [attr.aria-controls]="'collapse'+i">
-                Ficha del {{ ficha.fecha }}
+                Ficha del {{ ficha.fecha ? (ficha.fecha | date: 'dd/MM/yyyy') : 'Sin fecha' }}
               </button>
             </h2>
             <div [id]="'collapse'+i" class="accordion-collapse collapse" [attr.aria-labelledby]="'heading'+i" data-bs-parent="#accordionFichas">
-              <div class="accordion-body">
-                <div class="row g-3">
-                  <h6 class="mt-3 fw-bold">Datos del Paciente</h6>
+              <div class="accordion-body p-3 bg-light border rounded">
+                <!-- Fecha editable -->
+                <div class="mb-4 d-flex align-items-center gap-2">
+                  <label class="form-label mb-0 fw-bold">Fecha de la Ficha:</label>
+                  <input type="date" class="form-control w-auto" [(ngModel)]="ficha.fecha" name="fichaFecha{{i}}">
+                </div>
+
+                <!-- DATOS DEL PACIENTE -->
+                <div class="mb-4 p-3 border-start border-4 border-primary bg-white shadow-sm">
+                  <h6 class="fw-bold mb-3 text-primary">Datos del Paciente</h6>
                   <div class="row g-3">
                     <div class="col-md-3">
                       <label class="form-label">DNP Derecho</label>
@@ -182,9 +195,11 @@
                       <input type="text" class="form-control" [(ngModel)]="ficha.alturaPelicula" name="alturaPelicula{{i}}" (blur)="normalizarNumero(ficha, 'alturaPelicula')">
                     </div>
                   </div>
-
-                  <!-- Datos del Armazón -->
-                  <h6 class="mt-4 fw-bold">Datos del Armazón</h6>
+                </div>
+              
+                <!-- DATOS DEL ARMAZÓN -->
+                <div class="mb-4 p-3 border-start border-4 border-secondary bg-white shadow-sm">
+                  <h6 class="fw-bold mb-3 text-secondary">Datos del Armazón</h6>
                   <div class="row g-3">
                     <div class="col-md-3">
                       <label class="form-label">Puente</label>
@@ -203,63 +218,77 @@
                       <input type="text" class="form-control" [(ngModel)]="ficha.alturaArmazon" name="alturaArmazon{{i}}" (blur)="normalizarNumero(ficha, 'alturaArmazon')">
                     </div>
                   </div>
-                  <h6 class="mt-3">Graduaciones</h6>
+                </div>
+              
+                <!-- GRADUACIONES LEJOS -->
+                <div class="mb-4 p-3 border-start border-4 border-info bg-white shadow-sm">
+                  <h6 class="fw-bold mb-3 text-info">Graduaciones - Lejos</h6>
                   <div class="table-responsive">
                     <table class="table table-sm">
                       <thead>
-                        <tr>
-                          <th>Ojo</th>
-                          <th>Esférico</th>
-                          <th>Cilíndrico</th>
-                          <th>Eje</th>
-                          <th>Adición</th>
-                          <th>Cerca</th>
-                        </tr>
+                        <tr><th>Ojo</th><th>Esférico</th><th>Cilíndrico</th><th>Eje</th></tr>
                       </thead>
                       <tbody>
-                        <tr *ngFor="let grad of ficha.graduaciones; let j = index">
+                        <tr *ngFor="let grad of getGraduacionesPorTipo(ficha, 'LEJOS'); let j = index">
                           <td>{{grad.ojo}}</td>
-                          <td>
-                            <input type="text" class="form-control"
-                                   [value]="formatearConSigno(grad.esferico)"
-                                   (blur)="actualizarEsfericoYSumarCerca($event, grad)"
-                                   name="esferico{{i}}{{j}}">
-                          </td>
-                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.cilindrico)" (blur)="actualizarConSigno($event, grad, 'cilindrico')" name="cilindrico{{i}}{{j}}"></td>
-                          <td><input type="text" class="form-control" [(ngModel)]="grad.eje" name="eje{{i}}{{j}}" (blur)="normalizarNumero(grad, 'eje')"></td>
-                          <td>
-                            <input type="text" class="form-control"
-                                   [value]="formatearConSigno(grad.adicion)"
-                                   (blur)="actualizarAdicionYSumarCerca($event, grad)"
-                                   name="adicion{{i}}{{j}}">
-                          </td>
-                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.cerca)" (blur)="actualizarConSigno($event, grad, 'cerca')" name="cerca{{i}}{{j}}"></td>
+                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.esferico)" (blur)="actualizarEsfericoLejosYRecalcularCerca($event, ficha, grad)" name="lejosEsferico{{i}}{{j}}"></td>
+                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.cilindrico)" (blur)="actualizarConSigno($event, grad, 'cilindrico')" name="lejosCilindrico{{i}}{{j}}"></td>
+                          <td><input type="text" class="form-control" [(ngModel)]="grad.eje" (blur)="normalizarNumero(grad, 'eje')" name="lejosEje{{i}}{{j}}"></td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
-
-                  <h6 class="mt-4">Historial de Cristales</h6>
+                </div>
+              
+                <!-- ADICIÓN -->
+                <div class="mb-4 p-3 border-start border-4 border-success bg-white shadow-sm">
+                  <h6 class="fw-bold mb-3 text-success">Adición</h6>
+                  <div class="row g-3">
+                    <div class="col-md-3">
+                      <label class="form-label">Adición Derecho</label>
+                      <input type="text" class="form-control" [value]="formatearConSigno(ficha.adicionDerecho)" (blur)="actualizarAdicionYRecalcularCerca($event, ficha, 'DERECHO')" name="adicionDerecho{{i}}">
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Adición Izquierdo</label>
+                      <input type="text" class="form-control" [value]="formatearConSigno(ficha.adicionIzquierdo)" (blur)="actualizarAdicionYRecalcularCerca($event, ficha, 'IZQUIERDO')" name="adicionIzquierdo{{i}}">
+                    </div>
+                  </div>
+                </div>
+              
+                <!-- GRADUACIONES CERCA -->
+                <div class="mb-4 p-3 border-start border-4 border-warning bg-white shadow-sm">
+                  <h6 class="fw-bold mb-3 text-warning">Graduaciones - Cerca</h6>
+                  <div class="table-responsive">
+                    <table class="table table-sm">
+                      <thead>
+                        <tr><th>Ojo</th><th>Esférico</th><th>Cilíndrico</th><th>Eje</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let grad of getGraduacionesPorTipo(ficha, 'CERCA'); let j = index">
+                          <td>{{grad.ojo}}</td>
+                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.esferico)" name="cercaEsferico{{i}}{{j}}"></td>
+                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.cilindrico)" (blur)="actualizarConSigno($event, grad, 'cilindrico')" name="cercaCilindrico{{i}}{{j}}"></td>
+                          <td><input type="text" class="form-control" [(ngModel)]="grad.eje" (blur)="normalizarNumero(grad, 'eje')" name="cercaEje{{i}}{{j}}"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              
+                <!-- HISTORIAL DE CRISTALES -->
+                <div class="mb-4 p-3 border-start border-4 border-dark bg-white shadow-sm">
+                  <h6 class="fw-bold mb-3 text-dark">Historial de Cristales</h6>
                   <table class="table table-sm">
-                    <thead>
-                      <tr>
-                        <th>Nombre</th>
-                        <th>Fecha</th>
-                        <th>Acción</th>
-                      </tr>
-                    </thead>
+                    <thead><tr><th>Nombre</th><th>Fecha</th><th>Acción</th></tr></thead>
                     <tbody>
                       <tr *ngFor="let cristal of ficha.cristales; let k = index">
                         <td><input type="text" class="form-control" [(ngModel)]="cristal.nombre" name="cristalNombre{{i}}{{k}}"></td>
                         <td><input type="date" class="form-control" [(ngModel)]="cristal.fecha" name="cristalFecha{{i}}{{k}}"></td>
-                        <td>
-                          <button class="btn btn-danger btn-sm" (click)="ficha.cristales?.splice(k, 1)">Eliminar</button>
-                        </td>
+                        <td><button class="btn btn-danger btn-sm" (click)="ficha.cristales?.splice(k, 1)">Eliminar</button></td>
                       </tr>
                     </tbody>
                   </table>
-
-                  <div class="text-end" >
+                  <div class="text-end">
                     <button class="btn btn-outline-primary btn-sm" (click)="agregarCristal(ficha)">Agregar Cristal</button>
                   </div>
                 </div>

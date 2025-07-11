@@ -40,31 +40,39 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
   }
 
   cargarPaciente() {
-    this.activatedRoute.paramMap.subscribe(params => {
-      this.titulo = 'Crear Paciente';
-      this.paciente = new Paciente();
+  this.activatedRoute.paramMap.subscribe(params => {
+    this.titulo = 'Crear Paciente';
+    this.paciente = new Paciente();
 
-      let id: number = +params.get('id')!;
-      if (id) {
-        this.titulo = 'Editar Paciente';
-        this.pacienteService.getPaciente(id).subscribe(paciente => {
-          this.paciente = paciente;
-          this.local = this.paciente.local;
-          this.genero = this.paciente.genero;
-        
-          // Ordenar las graduaciones de todas las fichas
-          for (const ficha of this.paciente.historialFichas) {
-            this.ordenarGraduaciones(ficha);
-          }
-        });
-      }
-    });
-  }
+    let id: number = +params.get('id')!;
+    if (id) {
+      this.titulo = 'Editar Paciente';
+      this.pacienteService.getPaciente(id).subscribe(paciente => {
+        console.log(paciente);
+        this.paciente = paciente;
+        this.local = this.paciente.local;
+        this.genero = this.paciente.genero;
+
+        // Validar arrays y ordenar graduaciones
+        for (const ficha of this.paciente.historialFichas) {
+          if (!ficha.graduaciones) ficha.graduaciones = [];
+          if (!ficha.cristales) ficha.cristales = [];
+
+          this.ordenarGraduaciones(ficha);
+        }
+      });
+    }
+  });
+}
 
   cargarLocales() {
     this.localService.getLocales().subscribe(locales => {
       this.locales = locales;
     });
+  }
+
+  getGraduacionesPorTipo(ficha: FichaGraduacion, tipo: 'LEJOS' | 'CERCA') {
+    return (ficha.graduaciones || []).filter(g => g.tipo === tipo);
   }
 
   crearPaciente() {
@@ -134,20 +142,14 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     const nuevaFicha = new FichaGraduacion();
     nuevaFicha.fecha = new Date().toISOString().slice(0, 10);
     nuevaFicha.graduaciones = [
-      { ojo: 'DERECHO', esferico: 0, cilindrico: 0, eje: 0, adicion: 0, cerca: 0 },
-      { ojo: 'IZQUIERDO', esferico: 0, cilindrico: 0, eje: 0, adicion: 0, cerca: 0 }
+      { ojo: 'DERECHO', tipo: 'LEJOS', esferico: 0, cilindrico: 0, eje: 0 },
+      { ojo: 'IZQUIERDO', tipo: 'LEJOS', esferico: 0, cilindrico: 0, eje: 0 },
+      { ojo: 'DERECHO', tipo: 'CERCA', esferico: 0, cilindrico: 0, eje: 0 },
+      { ojo: 'IZQUIERDO', tipo: 'CERCA', esferico: 0, cilindrico: 0, eje: 0 }
     ];
     nuevaFicha.cristales = [];
-    this.ordenarGraduaciones(nuevaFicha); // 🔽 ordenar antes de pushear
+    this.ordenarGraduaciones(nuevaFicha);
     this.paciente.historialFichas.push(nuevaFicha);
-  }
-
-  eliminarGraduacion(ficha: FichaGraduacion, index: number) {
-    ficha.graduaciones.splice(index, 1);
-  }
-
-  calcularCerca(graduacion: Graduacion) {
-    graduacion.cerca = (graduacion.esferico || 0) + (graduacion.adicion || 0);
   }
 
   confirmarEliminarUltimaFicha(): void {
@@ -187,7 +189,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     }
   }
 
-  formatearConSigno(valor: number | null): string {
+  formatearConSigno(valor: number | null | undefined): string {
     if (valor === null || valor === undefined || isNaN(valor)) return '';
     return valor > 0 ? `+${valor}` : `${valor}`;
   }
@@ -201,29 +203,6 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     objeto[campo] = isNaN(parseado) ? null : parseado;
   }
   
-  actualizarAdicionYSumarCerca(event: Event, grad: any): void {
-    const input = (event.target as HTMLInputElement).value;
-    grad.adicion = this.parsearValorNumerico(input);
-    this.actualizarCerca(grad);
-  }
-  
-  actualizarEsfericoYSumarCerca(event: Event, grad: any): void {
-    const input = (event.target as HTMLInputElement).value;
-    grad.esferico = this.parsearValorNumerico(input);
-    this.actualizarCerca(grad);
-  }
-  
-  actualizarCerca(grad: any): void {
-    const esf = typeof grad.esferico === 'number' ? grad.esferico : null;
-    const adi = typeof grad.adicion === 'number' ? grad.adicion : null;
-  
-    if (adi !== null && adi !== 0 && esf !== null) {
-      const suma = esf + adi;
-      grad.cerca = parseFloat(suma.toFixed(2));
-    } else {
-      grad.cerca = 0; 
-    }
-  }
   
   parsearValorNumerico(valor: string): number | null {
     const limpio = valor.replace('+', '').replace(',', '.').trim();
@@ -233,9 +212,81 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
 
   ordenarGraduaciones(ficha: FichaGraduacion) {
     ficha.graduaciones.sort((a, b) => {
-      if (a.ojo === 'DERECHO') return -1;
-      if (b.ojo === 'DERECHO') return 1;
-      return 0;
+      if (a.tipo === b.tipo) {
+        if (a.ojo === 'DERECHO') return -1;
+        if (b.ojo === 'DERECHO') return 1;
+        return 0;
+      }
+      return a.tipo === 'LEJOS' ? -1 : 1;
     });
   }
+
+  actualizarAdicionYRecalcularCerca(event: Event, ficha: FichaGraduacion, ojo: 'DERECHO' | 'IZQUIERDO'): void {
+    const input = (event.target as HTMLInputElement).value;
+    const valor = this.parsearValorNumerico(input);
+  
+    // Guardar la adición
+    if (ojo === 'DERECHO') {
+      ficha.adicionDerecho = valor;
+    } else {
+      ficha.adicionIzquierdo = valor;
+    }
+  
+    // Buscar las graduaciones
+    const lejos = ficha.graduaciones.find(g => g.ojo === ojo && g.tipo === 'LEJOS');
+    const cerca = ficha.graduaciones.find(g => g.ojo === ojo && g.tipo === 'CERCA');
+  
+    if (lejos && cerca) {
+      if (typeof valor === 'number' && typeof lejos.esferico === 'number' && valor !== 0) {
+        cerca.esferico = parseFloat((lejos.esferico + valor).toFixed(2));
+      } else {
+        // Si valor no es número o es 0, se asigna 0
+        cerca.esferico = 0;
+      }
+    }
+  }
+
+  actualizarEsfericoLejosYRecalcularCerca(event: Event, ficha: FichaGraduacion, grad: Graduacion): void {
+    const input = (event.target as HTMLInputElement).value;
+    const esf = this.parsearValorNumerico(input);
+    if (typeof esf === 'number') {
+      grad.esferico = esf;
+    }
+  
+    const ojo = grad.ojo;
+    const adicion = ojo === 'DERECHO' ? ficha.adicionDerecho : ficha.adicionIzquierdo;
+    let cerca = ficha.graduaciones.find(g => g.ojo === ojo && g.tipo === 'CERCA');
+  
+    if (typeof adicion === 'number') {
+      if (adicion !== 0 && typeof esf === 'number') {
+        if (!cerca) {
+          // Si no existe, la creamos
+          cerca = {
+            ojo,
+            tipo: 'CERCA',
+            esferico: 0,
+            cilindrico: 0,
+            eje: 0
+          };
+          ficha.graduaciones.push(cerca);
+        }
+        cerca.esferico = parseFloat((esf + adicion).toFixed(2));
+      } else if (adicion === 0) {
+        // Si la adición es cero, aseguramos que exista una cerca con esférico en 0
+        if (!cerca) {
+          cerca = {
+            ojo,
+            tipo: 'CERCA',
+            esferico: 0,
+            cilindrico: 0,
+            eje: 0
+          };
+          ficha.graduaciones.push(cerca);
+        } else {
+          cerca.esferico = 0;
+        }
+      }
+    }
+  }
+
 }
