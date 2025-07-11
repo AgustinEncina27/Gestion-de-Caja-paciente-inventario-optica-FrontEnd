@@ -50,6 +50,11 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
       this.pacienteService.getPaciente(id).subscribe(paciente => {
         console.log(paciente);
         this.paciente = paciente;
+        this.paciente.historialFichas.sort((a, b) => {
+          const fechaA = new Date(a.fecha ?? '').getTime();
+          const fechaB = new Date(b.fecha ?? '').getTime();
+          return fechaB - fechaA; // más nueva primero
+        });
         this.local = this.paciente.local;
         this.genero = this.paciente.genero;
 
@@ -150,6 +155,13 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     nuevaFicha.cristales = [];
     this.ordenarGraduaciones(nuevaFicha);
     this.paciente.historialFichas.push(nuevaFicha);
+  
+    // Reordenar por fecha descendente
+    this.paciente.historialFichas.sort((a, b) => {
+      const fechaA = new Date(a.fecha ?? '').getTime();
+      const fechaB = new Date(b.fecha ?? '').getTime();
+      return fechaB - fechaA;
+    });
   }
 
   confirmarEliminarUltimaFicha(): void {
@@ -171,7 +183,22 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
   }
   
   eliminarUltimaFicha(): void {
-    this.paciente.historialFichas.pop();
+    if (this.paciente.historialFichas.length === 0) return;
+  
+    // Buscar la ficha con la fecha más reciente
+    let indexMasReciente = 0;
+    let fechaMasReciente = new Date(this.paciente.historialFichas[0].fecha ?? '').getTime();
+  
+    this.paciente.historialFichas.forEach((ficha, index) => {
+      const fechaActual = new Date(ficha.fecha ?? '').getTime();
+      if (fechaActual > fechaMasReciente) {
+        fechaMasReciente = fechaActual;
+        indexMasReciente = index;
+      }
+    });
+  
+    // Eliminar la ficha más reciente
+    this.paciente.historialFichas.splice(indexMasReciente, 1);
   }
 
   agregarCristal(ficha: FichaGraduacion) {
