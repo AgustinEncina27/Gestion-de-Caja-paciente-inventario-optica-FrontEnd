@@ -176,19 +176,22 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
   eliminarUltimaFicha(): void {
     if (this.paciente.historialFichas.length === 0) return;
   
-    // Buscar la ficha con la fecha más reciente
     let indexMasReciente = 0;
-    let fechaMasReciente = new Date(this.paciente.historialFichas[0].fecha ?? '').getTime();
+    let fichaMasReciente = this.paciente.historialFichas[0];
   
     this.paciente.historialFichas.forEach((ficha, index) => {
       const fechaActual = new Date(ficha.fecha ?? '').getTime();
-      if (fechaActual > fechaMasReciente) {
-        fechaMasReciente = fechaActual;
+      const fechaMasReciente = new Date(fichaMasReciente.fecha ?? '').getTime();
+  
+      if (
+        fechaActual > fechaMasReciente || 
+        (fechaActual === fechaMasReciente && (ficha.id ?? 0) > (fichaMasReciente.id ?? 0))
+      ) {
+        fichaMasReciente = ficha;
         indexMasReciente = index;
       }
     });
   
-    // Eliminar la ficha más reciente
     this.paciente.historialFichas.splice(indexMasReciente, 1);
   }
 
