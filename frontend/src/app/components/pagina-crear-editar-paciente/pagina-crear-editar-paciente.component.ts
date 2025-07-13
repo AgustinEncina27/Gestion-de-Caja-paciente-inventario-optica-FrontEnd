@@ -50,11 +50,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
       this.pacienteService.getPaciente(id).subscribe(paciente => {
         console.log(paciente);
         this.paciente = paciente;
-        this.paciente.historialFichas.sort((a, b) => {
-          const fechaA = new Date(a.fecha ?? '').getTime();
-          const fechaB = new Date(b.fecha ?? '').getTime();
-          return fechaB - fechaA; // más nueva primero
-        });
+        this.ordenarHistorialFichas();
         this.local = this.paciente.local;
         this.genero = this.paciente.genero;
 
@@ -156,12 +152,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     this.ordenarGraduaciones(nuevaFicha);
     this.paciente.historialFichas.push(nuevaFicha);
   
-    // Reordenar por fecha descendente
-    this.paciente.historialFichas.sort((a, b) => {
-      const fechaA = new Date(a.fecha ?? '').getTime();
-      const fechaB = new Date(b.fecha ?? '').getTime();
-      return fechaB - fechaA;
-    });
+    this.ordenarHistorialFichas();
   }
 
   confirmarEliminarUltimaFicha(): void {
@@ -314,6 +305,22 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
         }
       }
     }
+  }
+
+  ordenarHistorialFichas() {
+    this.paciente.historialFichas.sort((a, b) => {
+      const fechaA = new Date(a.fecha ?? '').getTime();
+      const fechaB = new Date(b.fecha ?? '').getTime();
+  
+      if (fechaA !== fechaB) {
+        return fechaB - fechaA; // orden descendente por fecha
+      }
+  
+      // Si las fechas son iguales, ordenar por ID (mayor primero)
+      const idA = a.id ?? 0;
+      const idB = b.id ?? 0;
+      return idB - idA;
+    });
   }
 
 }
