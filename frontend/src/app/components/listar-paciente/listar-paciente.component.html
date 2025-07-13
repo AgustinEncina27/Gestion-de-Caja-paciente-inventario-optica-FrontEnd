@@ -56,8 +56,9 @@
           <td *ngIf="authService.hasRoles()" class="text-center">
             <div class="d-flex justify-content-center">
               <button class="btn btn-primary btn-sm me-2" [routerLink]="'/editarPaciente/' + paciente.id">Editar</button>
-              <button class="btn btn-danger btn-sm me-2" (click)="eliminarPaciente(paciente)">Eliminar</button>
-              <button type="button" class="btn btn-success btn-sm"  [routerLink]="['/crearMovimiento', paciente.id]">Registrar un movimiento</button>   
+              <button class="btn btn-danger btn-sm me-2" (click)="eliminarPaciente(paciente)" *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</button>
+              <button type="button" class="btn btn-secondary btn-sm me-2" [routerLink]="['/adminitrarCajaPaciente', paciente.nombreCompleto]" >Ver compras </button>   
+              <button type="button" class="btn btn-success btn-sm "  [routerLink]="['/crearMovimiento', paciente.id]">Registrar un movimiento</button>
             </div>
           </td>
         </tr>

@@ -26,23 +26,23 @@ export class ListarProductoComponent {
  marcaId:number=-1;
  genero:string='-1';
  paginador: any;
-  modeloSeleccionado: string = ''; // Código del modelo ingresado
+ modeloSeleccionado: string = ''; // Código del modelo ingresado
  marcaSeleccionado: string = ''; // Código del modelo ingresado
  locales: Local[] = [];
  localSeleccionado: number | null = null;
-pages: number[] = [];
+ pages: number[] = [];
 
  constructor(private productoService: ProductoService,
   private activateRoute: ActivatedRoute,
   public authService: AuthService,
   private localService: LocalService,
   private excelService: ExcelService,
-    private router: Router){
+  private router: Router){
   }
 
   ngOnInit(): void{
-        this.cargarProductos();
-        this.cargarProductoModal();
+    this.cargarProductos();
+    this.cargarProductoModal();
     this.cargarLocales();
   }
 
@@ -101,14 +101,14 @@ pages: number[] = [];
   }
 
   cargarProductos() {
-      this.activateRoute.paramMap.subscribe(params => {
+    this.activateRoute.paramMap.subscribe(params => {
       let page: number = +params.get('page')!;
       if (!page) page = 0;
-
-        this.productoService.getProductos(page).subscribe(response => {
-            this.productos = (response.content as Producto[]);
-            this.paginador = response;
-          this.generarPaginador(response.totalPages);
+  
+      this.productoService.getProductos(page).subscribe(response => {
+        this.productos = (response.content as Producto[]);
+        this.paginador = response;
+        this.generarPaginador(response.totalPages);
       });
     });
   }

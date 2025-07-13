@@ -93,7 +93,7 @@
               Editar
             </button>
 
-            <button class="btn btn-danger btn-sm" (click)="eliminarProducto(producto)">Eliminar</button>
+            <button class="btn btn-danger btn-sm" (click)="eliminarProducto(producto)" *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</button>
           </td>
         </tr>
       </tbody>

@@ -133,7 +133,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
       }
     });
   }
-
+  
   editarProducto() {
     this.agregarLocalesYStocksAlProducto();
     this.producto.categorias = this.selectedCategoriesCheckbox;
@@ -141,7 +141,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
     this.producto.marca = this.marca;
     this.producto.material = this.materialProducto;
     this.producto.genero = this.genero;
-  
+
     if (this.esSoloCristalSeleccionado()) {
       this.producto.material = null;
       this.producto.genero = '';
@@ -174,7 +174,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
       }
     });
   }
-
+  
 
   selecionMarca(marca:Marca){
     this.marca=marca;

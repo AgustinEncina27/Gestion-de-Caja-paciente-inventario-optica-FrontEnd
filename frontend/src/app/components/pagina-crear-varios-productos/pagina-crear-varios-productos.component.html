@@ -69,9 +69,9 @@
             <div class="col-md-6">
               <label class="form-label fw-bold" for="InputDescipcion">Descripción</label>
               <textarea type="text" class="form-control" id="InputDescipcion" [(ngModel)]="producto.descripcion" name="descripcion"></textarea>
-            </div>     
+            </div>
           </div>
-        </div>
+        </div> 
 
         <div *ngIf="hayCategoriasSeleccionadas()">
           <div *ngIf="!esSoloCristalSeleccionado()">
@@ -162,7 +162,7 @@
                   [disabled]="!isLocalSelected(local)">
               </div>
             </div>
-          <!-- Proveedores -->
+            <!-- Proveedores -->
             <div class="col-md-6">
               <p><label class="form-label fw-bold" for="InputProveedor">Proveedores</label></p>
               <!-- Campo de búsqueda para proveedores -->
