@@ -39,7 +39,7 @@
           GESTIONAR PRODUCTOS
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
-          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/crearVariosProductos']">Crear productos</a></li>
+          <li ><a class="dropdown-item" [routerLink]="['/crearVariosProductos']">Crear productos</a></li>
           <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/actualizar-productos']">Actualizar precio o costo</a></li>
         </ul>
       </li>

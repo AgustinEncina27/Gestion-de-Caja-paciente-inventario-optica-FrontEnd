@@ -317,7 +317,7 @@ export class PaginaCrearVariosProductosComponent implements OnInit {
   }
 
   calcularPrecio(costo:number){
-    this.producto.precio= ((costo * 0.20)+costo)*3;
+    this.producto.precio= costo*3;
   }
 
   agregarModelo() {
