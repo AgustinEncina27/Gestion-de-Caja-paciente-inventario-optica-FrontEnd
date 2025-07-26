@@ -49,7 +49,7 @@ export class MovimientoService {
 
     if (filtros.local) params = params.set('idLocal', filtros.local.toString());
     if (filtros.tipoMovimiento) params = params.set('tipoMovimiento', filtros.tipoMovimiento);
-    if (filtros.nroFicha) params = params.set('nroFicha', filtros.nroFicha.toString());
+    if (filtros.nombrePaciente) params = params.set('nombrePaciente', filtros.nombrePaciente);
     if (filtros.fecha) params = params.set('fecha', filtros.fecha);
     if (filtros.metodoPago) params = params.set('metodoPago', filtros.metodoPago);
 

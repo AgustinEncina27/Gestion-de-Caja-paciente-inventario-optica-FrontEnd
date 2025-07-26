@@ -27,7 +27,7 @@ export class ListarMovimientoComponent {
   localSeleccionado: number = 0; // Almacena el ID del local seleccionado
   metodosPago: MetodoPago[] = [];
   tipoMovimientoSeleccionado: string = '';
-  nroFicha: string = '';
+  nombrePaciente: string = '';
   fechaSeleccionada: string = '';
   metodoPagoSeleccionado: string = '';
 
@@ -60,7 +60,7 @@ export class ListarMovimientoComponent {
     
       if (rutaActual.includes("adminitrarCajaPaciente")) {
         if (pacienteFicha) {
-          this.nroFicha = pacienteFicha.toString();
+          this.nombrePaciente = pacienteFicha.toString();
         } 
       }
     });
@@ -136,7 +136,7 @@ export class ListarMovimientoComponent {
   limpiarFiltros() {
     this.localSeleccionado=0;
     this.tipoMovimientoSeleccionado='';
-    this.nroFicha='';
+    this.nombrePaciente='';
     this.fechaSeleccionada='';
     this.metodoPagoSeleccionado='';
     this.aplicarFiltros(); // Vuelve a cargar todos los pacientes sin filtros
@@ -146,7 +146,7 @@ export class ListarMovimientoComponent {
     const filtros = {
       local: this.localSeleccionado,
       tipoMovimiento: this.tipoMovimientoSeleccionado,
-      nroFicha: this.nroFicha,
+      nombrePaciente: this.nombrePaciente,
       fecha: this.fechaSeleccionada,
       metodoPago: this.metodoPagoSeleccionado
     };

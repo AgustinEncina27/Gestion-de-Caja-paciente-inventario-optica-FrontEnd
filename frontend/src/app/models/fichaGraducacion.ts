@@ -17,5 +17,9 @@ export class FichaGraduacion {
   alturaArmazon?: number;
 
   graduaciones: Graduacion[] = [];
+
+  adicionDerecho: number | null = null;
+  adicionIzquierdo: number | null = null;
+
   cristales?: CristalHistorial[] = [];
 }

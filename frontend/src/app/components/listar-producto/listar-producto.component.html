@@ -58,11 +58,11 @@
           <th>Categoria</th>
           <th>Material</th>
           <th>Genero</th>
-          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Costo</th>
+          <th >Costo</th>
           <th>Precio</th>
           <th>Stock</th>
           <th>Descripción</th>
-          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Acciones</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -77,7 +77,7 @@
           </td>
           <td>{{ producto.material?.nombre || '' }}</td>
           <td>{{producto.genero}}</td>
-          <td *ngIf="authService.hasRole('ROLE_ADMIN')">${{producto.costo}}</td>
+          <td >${{producto.costo}}</td>
           <td>${{producto.precio}}</td>
           <!-- Iterar sobre productoLocales -->
           <td>
@@ -86,7 +86,7 @@
             </div>
           </td>          
           <td>{{producto.descripcion}}</td>
-          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+          <td >
             <button
               class="btn btn-primary btn-sm me-2"
               [routerLink]="['/editarProducto', producto.id]"
@@ -95,7 +95,7 @@
               Editar
             </button>
 
-            <button class="btn btn-danger btn-sm" (click)="eliminarProducto(producto)">Eliminar</button>
+            <button class="btn btn-danger btn-sm" (click)="eliminarProducto(producto)" *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</button>
           </td>
         </tr>
       </tbody>

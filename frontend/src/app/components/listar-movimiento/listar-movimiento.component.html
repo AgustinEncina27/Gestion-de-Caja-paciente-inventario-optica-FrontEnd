@@ -23,7 +23,7 @@
 
   <!-- Filtro por N° Ficha -->
   <div class="input-group m-1" style="width: 300px;">
-    <input type="text" class="form-control" placeholder="N° Ficha" [(ngModel)]="nroFicha" (keyup.enter)="aplicarFiltros()" />
+    <input type="text" class="form-control" placeholder="Nombre Paciente" [(ngModel)]="nombrePaciente" (keyup.enter)="aplicarFiltros()" />
   </div>
 
   <!-- Filtro por Fecha -->
@@ -82,7 +82,7 @@
         <tr>
           <th class="col-id">N°</th>
           <th class="fecha-col">Fecha Movimiento</th>
-          <th>N° Ficha</th>
+          <th>Paciente</th>
           <th>Pagado</th>
           <th>Vendedor</th>
           <th>Local</th>
@@ -96,7 +96,7 @@
         <tr *ngFor="let movimiento of movimientos">
           <td class="col-id">{{movimiento.id}}</td>
           <td class="fecha-col">{{ movimiento.fecha | date:'yyyy-MM-dd' }}</td>
-          <td>{{movimiento.paciente?.ficha}}</td>
+          <td>{{movimiento.paciente?.nombreCompleto}}</td>
           <td>
             <div *ngIf="movimiento.tipoMovimiento === 'ENTRADA'">
               <span *ngIf="esPagoTotal(movimiento)" class="text-success ms-2">

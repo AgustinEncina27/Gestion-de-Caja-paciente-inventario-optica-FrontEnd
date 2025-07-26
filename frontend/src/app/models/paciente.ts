@@ -9,6 +9,7 @@ export class Paciente {
   correo?: string;
   medico?: string;
   obraSocial?: string;
+  observaciones?: string;
   genero!: string;
   local: any;
   ficha!: number;
