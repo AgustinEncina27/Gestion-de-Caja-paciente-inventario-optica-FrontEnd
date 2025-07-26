@@ -60,15 +60,60 @@
           <input type="text" class="form-control" [(ngModel)]="movimiento.vendedor" name="vendedor" placeholder="Ingrese el nombre del vendedor" required />
         </div>    
 
-         <!-- Método de salida -->
-         <div class="col md-6" *ngIf="movimiento.tipoMovimiento === 'SALIDA'">
+        <!-- Método de salida -->
+        <div class="col-md-6" *ngIf="movimiento.tipoMovimiento === 'SALIDA'">
           <div class="card-body">
             <label class="form-label">Método de Salida</label>
-            <select class="form-select" [(ngModel)]="metodoSalida" name="metodoPago" [compareWith]="compararMetodosPago" required>
-              <option *ngFor="let metodo of metodosPago" [ngValue]="metodo">{{ metodo.nombre }}</option>
+            <select class="form-select"
+                    [(ngModel)]="metodoSalida.metodoPago"
+                    name="metodoSalida"
+                    required
+                    (ngModelChange)="onCambioMetodoSalida()">
+              <option *ngFor="let metodo of metodosPago" [ngValue]="metodo">
+                {{ metodo.tipo.replace('_', ' ') }}
+              </option>
             </select>
+          </div>      
+
+          <!-- Si se elige método de pago OTRA (no tarjeta), pedir descripción -->
+          <div class="card-body" *ngIf="metodoSalida?.metodoPago?.tipo === 'OTRA'">
+            <label class="form-label">Descripción otro método</label>
+            <input type="text"
+                  class="form-control"
+                  [(ngModel)]="metodoSalida.descripcionOtras"
+                  name="descripcionOtrasSalida"
+                  placeholder="Ingrese el método de pago" />
+          </div>
+
+          <!-- Tipo de tarjeta -->
+          <div class="card-body"
+              *ngIf="metodoSalida?.metodoPago?.tipo === 'TARJETA_CREDITO' || metodoSalida?.metodoPago?.tipo === 'TARJETA_DEBITO'">
+            <div *ngIf="metodoSalida.tarjetaDetalle as tarjetaDetalle">
+              <label class="form-label">Tipo de Tarjeta</label>
+              <select class="form-select"
+                      [(ngModel)]="tarjetaDetalle.tipoTarjeta"
+                      name="tipoTarjetaSalida">
+                <option *ngFor="let tipo of filtrarTiposTarjeta(metodoSalida.metodoPago.tipo)" [ngValue]="tipo">
+                  {{ tipo.nombre }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Nombre si es "Otra" -->
+          <div class="card-body"
+              *ngIf="metodoSalida?.tarjetaDetalle?.tipoTarjeta?.nombre === 'Otra'">
+            <div *ngIf="metodoSalida.tarjetaDetalle as tarjetaDetalle">
+              <label class="form-label">Nombre de la tarjeta</label>
+              <input type="text"
+                    class="form-control"
+                    [(ngModel)]="tarjetaDetalle.nombreOtro"
+                    name="nombreOtroSalida"
+                    placeholder="Especifique el nombre" />
+            </div>
           </div>
         </div>
+
 
         <!-- Descripción -->
         <div class="col-md-6" >
@@ -129,25 +174,93 @@
     <div class="card mb-4" *ngIf="movimiento.local && movimiento.tipoMovimiento === 'ENTRADA'">
       <div class="card-body">
         <h5 class="card-title">Pagos Realizados</h5>
-        <table class="table table-bordered align-middle" >
-          <thead>
-            <tr><th>Método de Pago</th><th>Monto</th><th>Impuesto</th><th>Fecha</th><th>Acciones</th></tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let cajaMovimiento of movimiento.cajaMovimientos; let i = index">
-              <td>
-                <select class="form-select" [(ngModel)]="cajaMovimiento.metodoPago" name="metodoPago{{ i }}" required [compareWith]="compararMetodosPago">
-                  <option *ngFor="let metodo of metodosPago" [ngValue]="metodo">{{ metodo.nombre }}</option>
+
+        <div *ngFor="let cajaMovimiento of movimiento.cajaMovimientos; let i = index" class="mb-4 border rounded p-3 bg-light">
+          <div class="row g-2 align-items-center">
+            <!-- Método de pago -->
+            <div class="col-md-4">
+              <label class="form-label">Método de Pago</label>
+              <select class="form-select"
+                      [(ngModel)]="cajaMovimiento.metodoPago.tipo"
+                      name="metodoPago{{ i }}"
+                      required
+                      (ngModelChange)="onCambioMetodoPago(cajaMovimiento)">
+                <option *ngFor="let metodo of metodosPago" [value]="metodo.tipo">
+                  {{ metodo.tipo.replace('_', ' ') }}
+                </option>
+              </select> 
+            </div>
+            
+            <!-- Si se elige método de pago OTRA (no tarjeta), pedir descripción -->
+            <div class="col-md-4" *ngIf="cajaMovimiento.metodoPago.tipo === 'OTRA'">
+              <label class="form-label">Descripción otro método</label>
+              <input type="text"
+                    class="form-control"
+                    [(ngModel)]="cajaMovimiento.descripcionOtras"
+                    name="descripcionOtras{{ i }}"
+                    placeholder="Ingrese el método de pago" />
+            </div>
+
+            <!-- Tipo de tarjeta -->
+            <div class="col-md-4" *ngIf="cajaMovimiento.metodoPago?.tipo === 'TARJETA_CREDITO' || cajaMovimiento.metodoPago?.tipo === 'TARJETA_DEBITO'">
+              <div *ngIf="cajaMovimiento.tarjetaDetalle as tarjetaDetalle"> <!-- cambio aquí -->
+                <label class="form-label">Tipo de tarjeta</label>
+                <select class="form-select"
+                        [(ngModel)]="tarjetaDetalle.tipoTarjeta"
+                        name="tipoTarjeta{{ i }}">
+                  <option *ngFor="let tipo of filtrarTiposTarjeta(cajaMovimiento.metodoPago.tipo)" [ngValue]="tipo">{{ tipo.nombre }}</option>
                 </select>
-              </td>
-              <td><input type="number" class="form-control" [(ngModel)]="cajaMovimiento.monto" (change)="calcularTotalYAdviertenciaTotal(cajaMovimiento.monto,i)" name="monto{{ i }}" required /></td>
-              <td><input type="number" class="form-control" [(ngModel)]="cajaMovimiento.montoImpuesto" (change)="calcularMontoImpuestoYAdviertenciaTotal()" name="impuesto{{ i }}" required /></td>
-                <td><input type="datetime-local" class="form-control" [(ngModel)]="cajaMovimiento.fecha" name="fecha{{ i }}" required /></td>
-              <td><button type="button" class="btn btn-danger" (click)="eliminarPago(i)">Eliminar</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <button type="button" class="btn btn-primary" (click)="agregarPago()">Agregar Pago</button>
+              </div>
+            </div>
+
+            <!-- Otra tarjeta -->
+            <div class="col-md-4" *ngIf="cajaMovimiento.tarjetaDetalle?.tipoTarjeta?.nombre === 'Otra'">
+              <ng-container *ngIf="cajaMovimiento.tarjetaDetalle as tarjetaDetalle">
+                  <label class="form-label">Nombre de Tarjeta</label>
+                  <input class="form-control"
+                        type="text"
+                        [(ngModel)]="tarjetaDetalle.nombreOtro"
+                        name="nombreOtro{{ i }}"
+                        placeholder="Nombre tarjeta" />
+              </ng-container>
+            </div>
+
+            <!-- Monto -->
+            <div class="col-md-4">
+              <label class="form-label">Monto</label>
+              <input type="number" class="form-control"
+                    [(ngModel)]="cajaMovimiento.monto"
+                    (change)="calcularTotalYAdviertenciaTotal(cajaMovimiento.monto,i)"
+                    name="monto{{ i }}" required />
+            </div>
+
+            <!-- Impuesto -->
+            <div class="col-md-4">
+              <label class="form-label">Impuesto</label>
+              <input type="number" class="form-control"
+                    [(ngModel)]="cajaMovimiento.montoImpuesto"
+                    (change)="calcularMontoImpuestoYAdviertenciaTotal()"
+                    name="impuesto{{ i }}" required />
+            </div>
+
+            <!-- Fecha -->
+            <div class="col-md-4">
+              <label class="form-label">Fecha</label>
+              <input type="datetime-local" class="form-control"
+                    [(ngModel)]="cajaMovimiento.fecha"
+                    name="fecha{{ i }}" required />
+            </div>
+
+            
+
+            <!-- Acción -->
+            <div class="col-md-4 d-flex align-items-end">
+              <button type="button" class="btn btn-danger w-100" (click)="eliminarPago(i)">Eliminar</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary mt-3" (click)="agregarPago()">Agregar Pago</button>
       </div>
     </div>
 

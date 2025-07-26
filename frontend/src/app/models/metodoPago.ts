@@ -1,4 +1,6 @@
+import { TarjetaDetalle } from "./tarjetaDetalle";
+
 export class MetodoPago {
-    id!: number;
-    nombre!: string; // Nombre del método de pago (por ejemplo, efectivo, débito, crédito)
-  }
+  id?: number;
+  tipo!: 'CONTADO' | 'CHEQUE' | 'TARJETA_CREDITO' | 'TARJETA_DEBITO' | 'CUENTA_CORRIENTE' | 'TRANSFERENCIA' | 'OTRA';
+}

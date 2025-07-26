@@ -13,7 +13,7 @@ import { CategoriaService } from './services/categoria.service';
 import { MarcaService } from './services/marca.service';
 
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './components/user/login.component';
 import { HeaderComponent } from './components/header/header.component';
 import { AuthToken } from './services/interceptors/auth.interceptor';
@@ -32,7 +32,6 @@ import { PaginaGestionarCategoriasComponent } from './components/pagina-gestiona
 import { WhatsappComponent } from './components/whatsapp/whatsapp.component';
 import { PaginaVisitanosComponent } from './components/pagina-visitanos/pagina-visitanos.component';
 import { PaginaGestionarMarcasComponent } from './components/pagina-gestionar-marcas/pagina-gestionar-marcas.component';
-import { PaginaGestionarMetodosPagosComponent } from './components/pagina-gestionar-metodoPago/pagina-gestionar-metodoPago.component';
 import { PaginaGestionarLocalesComponent } from './components/pagina-gestionar-locales/pagina-gestionar-locales.component';
 import { PaginaGestionarPacientesComponent } from './components/pagina-gestionar-pacientes/pagina-gestionar-pacientes.component';
 import { PaginaGestionarCajaComponent } from './components/pagina-gestionar-caja/pagina-gestionar-caja.component';
@@ -43,6 +42,7 @@ import { PaginaGestionarProveedoresComponent } from './components/pagina-gestion
 import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagina-estadistica.component';
 import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-varios-productos/pagina-crear-varios-productos.component';
 import { PaginaActualizarProductosComponent } from './components/pagina-actualizar-productos/pagina-actualizar-productos.component';
+import { FacturarMovimientoComponent } from './components/facturar-movimiento/facturar-movimiento.component';
 
 
 
@@ -66,7 +66,6 @@ import { PaginaActualizarProductosComponent } from './components/pagina-actualiz
     PaginaVisitanosComponent,
     PaginaGestionarMarcasComponent,
     PaginaGestionarMaterialProductoComponent,
-    PaginaGestionarMetodosPagosComponent,
     PaginaGestionarProveedoresComponent,
     PaginaGestionarLocalesComponent,
     PaginaGestionarPacientesComponent,
@@ -75,13 +74,15 @@ import { PaginaActualizarProductosComponent } from './components/pagina-actualiz
     PaginaEstadoMovimientoComponent,
     PaginaEstaditicaComponent,
     ListarMovimientoComponent,
-    PaginaActualizarProductosComponent
+    PaginaActualizarProductosComponent,
+    FacturarMovimientoComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     ProductoService,

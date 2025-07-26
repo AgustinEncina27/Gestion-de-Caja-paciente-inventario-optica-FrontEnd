@@ -14,13 +14,13 @@ import { PaginaGestionarLocalesComponent } from './components/pagina-gestionar-l
 import { PaginaEstadoMovimientoComponent } from './components/pagina-estado-movimiento/pagina-estado-movimiento.component';
 import { PaginaGestionarPacientesComponent } from './components/pagina-gestionar-pacientes/pagina-gestionar-pacientes.component';
 import { PaginaGestionarCajaComponent } from './components/pagina-gestionar-caja/pagina-gestionar-caja.component';
-import { PaginaGestionarMetodosPagosComponent } from './components/pagina-gestionar-metodoPago/pagina-gestionar-metodoPago.component';
 import { PaginaCrearEditarMovimientoComponent } from './components/pagina-crear-editar-movimiento/pagina-crear-editar-movimiento.component';
 import { PaginaGestionarMaterialProductoComponent } from './components/pagina-gestionar-material-producto/pagina-gestionar-material-producto.component';
 import { PaginaGestionarProveedoresComponent } from './components/pagina-gestionar-proveedores/pagina-gestionar-proveedores.component';
 import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagina-estadistica.component';
 import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-varios-productos/pagina-crear-varios-productos.component';
 import { PaginaActualizarProductosComponent } from './components/pagina-actualizar-productos/pagina-actualizar-productos.component';
+import { FacturarMovimientoComponent } from './components/facturar-movimiento/facturar-movimiento.component';
 
 const routes: Routes = [
   {path:'', redirectTo:'/inicio', pathMatch:'full'},
@@ -41,7 +41,6 @@ const routes: Routes = [
   {path:'adminitrarProveedor',component: PaginaGestionarProveedoresComponent},
   {path:'adminitrarMarca',component: PaginaGestionarMarcasComponent},
   {path:'adminitrarMaterial',component: PaginaGestionarMaterialProductoComponent},
-  {path:'adminitrarMetodoPago',component: PaginaGestionarMetodosPagosComponent},
   {path:'adminitrarLocal',component: PaginaGestionarLocalesComponent},
   {path:'adminitrarPaciente',component: PaginaGestionarPacientesComponent},
   {path:'estadoCompra/:id',component: PaginaEstadoMovimientoComponent},
@@ -51,6 +50,7 @@ const routes: Routes = [
   {path:'visitanos',component: PaginaVisitanosComponent},
   {path:'actualizar-productos',component: PaginaActualizarProductosComponent},
   {path:'login',component: LoginComponent},
+  { path: 'facturar/:idMovimiento', component: FacturarMovimientoComponent },
   { path: '**', redirectTo: '/inicio' }
 ];
 

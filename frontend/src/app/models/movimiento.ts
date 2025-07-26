@@ -3,6 +3,7 @@ import { DetalleMovimiento } from "./detalleMovimiento";
 import { Local } from "./local";
 import { CajaMovimiento } from "./cajaMovimiento"; // Nueva clase para pagos
 import { DetalleAdicional } from "./detalleAdicional";
+import { Factura } from "./factura";
 
 export class Movimiento {
   id!: number;
@@ -11,6 +12,7 @@ export class Movimiento {
   total!: number;
   descuento!: number;
   totalImpuesto!: number;
+  facturas: Factura[] = [];
   descripcion?: string; // Opcional
   vendedor?: string; // Opcional
   paciente: Paciente | null = null; // Relación con Paciente

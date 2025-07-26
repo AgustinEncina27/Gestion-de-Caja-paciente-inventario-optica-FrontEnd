@@ -35,7 +35,9 @@
   <div class="input-group m-1" style="width: 300px;">
     <select class="form-select" [(ngModel)]="metodoPagoSeleccionado" (change)="aplicarFiltros()">
       <option value="">Todos los métodos</option>
-      <option *ngFor="let metodo of metodosPago" [value]="metodo.nombre">{{ metodo.nombre }}</option>
+      <option *ngFor="let metodo of metodosPago" [value]="metodo.tipo">
+        {{ formatearMetodo(metodo.tipo) }}
+      </option>
     </select>
   </div>
 
@@ -119,8 +121,7 @@
                     'text-danger fw-bold': movimiento.tipoMovimiento === 'SALIDA' && esMismaFechaHoraMinuto(movimiento.fecha, cajaMovimiento.fecha)
                   }"
                 >
-                {{ cajaMovimiento.metodoPago.nombre }} - {{ cajaMovimiento.montoImpuesto | currency }}
-              
+                  {{ mostrarMetodoPago(cajaMovimiento) }} - {{ cajaMovimiento.montoImpuesto | currency }}
                 </span>
               </li>
             </ul>
@@ -130,6 +131,16 @@
               
               <button class="btn btn-primary btn-sm me-2" [routerLink]="'/editarMovimiento/' + movimiento.id">Editar</button>
               <button class="btn btn-danger btn-sm me-2" (click)="eliminarMovimiento(movimiento)" *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</button>
+
+              <!-- Botón Emitir Factura SOLO si no tiene -->
+              <button
+              *ngIf="!movimiento.facturas || movimiento.facturas.length === 0"
+              class="btn btn-outline-success btn-sm fw-semibold me-2"
+              [routerLink]="'/facturar/' + movimiento.id"
+              title="Emitir factura"
+              >
+              <i class="bi bi-receipt me-1"></i> Emitir Factura
+              </button>
 
               <!-- Botón: Copiar enlace (color celeste sólido) -->
               <button
@@ -157,6 +168,8 @@
               >
               <i class="bi bi-filetype-pdf me-1"></i> 
               </button>
+
+
             </div>
           </td>
         </tr>

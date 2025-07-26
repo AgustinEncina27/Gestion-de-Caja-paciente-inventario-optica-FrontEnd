@@ -1,0 +1,137 @@
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Emitir Factura</h2>
+
+  <div *ngIf="cargando" class="text-center p-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <div *ngIf="!cargando && movimiento">
+    <!-- Resumen del movimiento -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Resumen del Movimiento</h5>
+        <div class="row g-3">
+          <div class="col-md-3"><strong>Fecha:</strong> {{ movimiento.fecha | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div class="col-md-3"><strong>Tipo:</strong> {{ movimiento.tipoMovimiento }}</div>
+          <div class="col-md-3"><strong>Vendedor:</strong> {{ movimiento.vendedor || 'Sin vendedor' }}</div>
+          <div class="col-md-3"><strong>Descripción:</strong> {{ movimiento.descripcion || 'Sin descripción' }}</div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-6" *ngIf="movimiento.paciente">
+            <strong>Paciente:</strong> {{ movimiento.paciente.nombreCompleto || 'Sin nombre' }}
+          </div>
+        </div>
+        <div class="row mt-2" *ngIf="movimiento.paciente?.documento">
+          <div class="col-md-6">
+            <strong>DNI del Paciente:</strong> {{ movimiento.paciente?.documento }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalles del movimiento -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Detalles</h5>
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of movimiento.detalles">
+                <td>{{ d.producto.modelo }}</td>
+                <td>{{ d.cantidad }}</td>
+                <td>${{ d.precioUnitario }}</td>
+                <td>${{ d.cantidad * d.precioUnitario }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalles adicionales -->
+    <div class="card mb-4" *ngIf="movimiento.detallesAdicionales?.length">
+      <div class="card-body">
+        <h5 class="card-title">Detalles Adicionales</h5>
+        <ul class="mb-0">
+          <li *ngFor="let da of movimiento.detallesAdicionales">
+            {{ da.descripcion }} - ${{ da.subtotal }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Pagos realizados -->
+    <div class="card mb-4" *ngIf="movimiento.cajaMovimientos?.length">
+      <div class="card-body">
+        <h5 class="card-title">Pagos Realizados</h5>
+        <ul class="mb-0">
+          <li *ngFor="let pago of movimiento.cajaMovimientos">
+            {{ mostrarMetodoPago(pago) }} - ${{ pago.monto }} ({{ pago.fecha | date:'dd/MM/yyyy' }})
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Resumen final -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Resumen Final</h5>
+        <div class="row g-3">
+          <div class="col-md-4 text-success"><strong>Total:</strong> ${{ movimiento.total }}</div>
+          <div class="col-md-4"><strong>Descuento:</strong> ${{ movimiento.descuento || 0 }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario para emitir factura -->
+    <form [formGroup]="form" (ngSubmit)="emitirFactura()" class="form-group">
+      <div class="card mb-5">
+        <div class="card-body">
+          <h5 class="card-title">Datos de la Factura</h5>
+
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Tipo de Comprobante</label>
+              <select class="form-select" formControlName="tipoComprobante">
+                <option value="B">Factura A</option>
+                <option value="B">Factura B</option>
+                <option value="A">Factura C</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Tipo de Cliente</label>
+              <select class="form-select" formControlName="tipoCliente">
+                <option value="CONSUMIDOR_FINAL">Consumidor Final</option>
+                <option value="MONOTRIBUTISTA">Monotributista</option>
+                <option value="RESPONSABLE_INSCRIPTO">Responsable Inscripto</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">DNI o CUIT</label>
+              <input class="form-control" formControlName="dni" placeholder="Ej: 12345678" />
+              <small class="text-muted" *ngIf="movimiento.paciente?.documento">
+                (DNI registrado del paciente: {{ movimiento.paciente?.documento }})
+              </small>
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+              Emitir Factura
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

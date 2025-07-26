@@ -16,6 +16,9 @@ import { Marca } from 'src/app/models/marca';
 import { CajaMovimiento } from 'src/app/models/cajaMovimiento';
 import { DetalleAdicional } from 'src/app/models/detalleAdicional';
 import { AuthService } from 'src/app/services/auth.service';
+import { TipoTarjeta } from 'src/app/models/tipoTarjeta';
+import { TipoTarjetaService } from 'src/app/services/tipoTarjeta.service';
+import { TarjetaDetalle } from 'src/app/models/tarjetaDetalle';
 
 declare var bootstrap: any;
 
@@ -38,10 +41,11 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   stockLocal: number | null = null; 
   productoSeleccionado: Producto | null = null;
   marcaSeleccionada: Marca | null = null;
-  metodoSalida: MetodoPago= new MetodoPago();
+  metodoSalida: CajaMovimiento = new CajaMovimiento();
   isLoading = false; // Variable para la pantalla de carga
   deuda: number = 0; 
   productosEncontrados: Producto[] = [];
+  tiposTarjeta: TipoTarjeta[] = [];
 
   constructor(
     private movimientoService: MovimientoService,
@@ -51,6 +55,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     private localService: LocalService,
     private metodoPagoService: MetodoPagoService,
     private activatedRoute: ActivatedRoute,
+    private tipoTarjetaService: TipoTarjetaService,
     private router: Router
   ) {}
 
@@ -58,8 +63,11 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     this.movimiento.fecha = this.obtenerFechaHoyConHora();
     this.cargarLocales();
     this.cargarMetodosPago();
+    this.cargarTiposTarjeta();
     this.cargarMovimientoOPaciente();
   }
+
+
 
   validarUsuario(): void {
     if (!this.authService.hasRole('ROLE_ADMIN')) {
@@ -76,6 +84,12 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     }
   }
 
+  cargarTiposTarjeta(): void {
+    this.tipoTarjetaService.getTiposTarjeta().subscribe(tipos => {
+      this.tiposTarjeta = tipos;
+    });
+  }
+
   obtenerFechaHoy(): string {
     const hoy = new Date();
     const year = hoy.getFullYear();
@@ -83,6 +97,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     const day = String(hoy.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+
 
   obtenerFechaHoyConHora(): string {
     const hoy = new Date();
@@ -140,8 +155,43 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
       this.movimiento = data;
       this.detalles = data.detalles || [];
       if(this.movimiento.cajaMovimientos.length !== 0){
-        this.metodoSalida=this.movimiento.cajaMovimientos[0].metodoPago;
+        const original = this.movimiento.cajaMovimientos[0];
+  
+        // Buscar el método de pago exacto en la lista
+        const metodoCoincidente = this.metodosPago.find(
+          m => m.id === original.metodoPago?.id
+        );
+      
+        // Crear instancia de CajaMovimiento (metodoSalida)
+        this.metodoSalida = new CajaMovimiento();
+        this.metodoSalida.metodoPago = metodoCoincidente ?? original.metodoPago;
+        this.metodoSalida.monto = original.monto;
+        this.metodoSalida.montoImpuesto = original.montoImpuesto;
+        this.metodoSalida.fecha = original.fecha;
+        this.metodoSalida.descripcionOtras = original.descripcionOtras || '';
+        this.metodoSalida.tarjetaDetalle = original.tarjetaDetalle ? { ...original.tarjetaDetalle } : undefined;
+
+        const tipo = this.metodoSalida.metodoPago?.tipo;
+
+        if ((tipo === 'TARJETA_CREDITO' || tipo === 'TARJETA_DEBITO') && this.metodoSalida.tarjetaDetalle?.tipoTarjeta?.id) {
+          const idTipo = this.metodoSalida.tarjetaDetalle.tipoTarjeta.id;
+          const tipoCoincidente = this.filtrarTiposTarjeta(tipo).find(t => t.id === idTipo);
+          if (tipoCoincidente) {
+            this.metodoSalida.tarjetaDetalle.tipoTarjeta = tipoCoincidente;
+          }
+        }
       }
+
+      this.movimiento.cajaMovimientos.forEach(caja => {
+        const tipo = caja.metodoPago?.tipo;
+        if ((tipo === 'TARJETA_CREDITO' || tipo === 'TARJETA_DEBITO') && caja.tarjetaDetalle?.tipoTarjeta?.id) {
+          const idTipo = caja.tarjetaDetalle.tipoTarjeta.id;
+          const tipoCoincidente = this.filtrarTiposTarjeta(tipo).find(t => t.id === idTipo);
+          if (tipoCoincidente) {
+            caja.tarjetaDetalle.tipoTarjeta = tipoCoincidente;
+          }
+        }
+      });
 
       // Esperar a que la lista de locales se cargue antes de asignar la referencia
       this.localService.getLocales().subscribe((locales) => {
@@ -163,9 +213,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     });
   }
 
-  compararMetodosPago(o1: MetodoPago, o2: MetodoPago): boolean {
-    return o1 && o2 ? o1.id === o2.id : o1 === o2;
-  }
+
 
   buscarPaciente(): void {
     if (this.fichaPaciente) {
@@ -300,83 +348,80 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   }
 
   guardarMovimiento(): void {
-    if (this.advertenciaMonto() && this.movimiento.tipoMovimiento === 'ENTRADA') {
-      return;
-    }
+    /* ───────── VALIDACIONES PREVIAS (las conservás tal como están) ───────── */
+    if (this.advertenciaMonto() && this.movimiento.tipoMovimiento === 'ENTRADA') return;
   
     this.movimiento.detalles = this.detalles;
-  
     if (this.movimiento.tipoMovimiento === 'SALIDA') {
       this.esMovimientoSalida(this.movimiento.id);
     }
   
-    // Validar que haya al menos un pago
     if (!this.movimiento.cajaMovimientos || this.movimiento.cajaMovimientos.length === 0) {
       Swal.fire('VALIDACIÓN', 'Debe ingresar al menos un pago para guardar el movimiento.', 'warning');
       return;
     }
-      
   
     this.isLoading = true;
   
-    const afterSave = () => {
-      if (this.movimiento.tipoMovimiento === 'ENTRADA' && this.movimiento.paciente?.id) {
-        const cristalesPorDetalle = this.movimiento.detalles?.filter(detalle =>
-          detalle.producto.categorias.some(c => c.nombre.toLowerCase() === 'cristal')
-        ) || [];
-    
-        cristalesPorDetalle.forEach(detalle => {
-          const modelo = detalle.producto.modelo;
-          const marca = detalle.producto.marca.nombre;
-          const nombreCristal = `${modelo} ${marca}`;
-    
-          this.pacienteService.guardarCristal(this.movimiento.paciente!.id, nombreCristal).subscribe({
-            next: () => console.log(`Cristal guardado: ${nombreCristal}`),
-            error: err => console.error('Error al guardar cristal:', err)
-          });
-        });
-    
-        // También podés mantener lo de los detallesAdicionales si lo querés seguir usando:
-        if (this.movimiento.detallesAdicionales) {
-          const cristalesTexto = this.movimiento.detallesAdicionales
-            .filter(d => d.descripcion.toLowerCase().includes('cristal'))
-            .map(d => {
-              const texto = d.descripcion.toLowerCase();
-              const index = texto.indexOf('cristal');
-              return d.descripcion.substring(index + 7).trim();
-            });
-    
-          cristalesTexto.forEach(nombreCristal => {
-            this.pacienteService.guardarCristal(this.movimiento.paciente!.id, nombreCristal).subscribe({
-              next: () => console.log(`Cristal guardado: ${nombreCristal}`),
-              error: err => console.error('Error al guardar cristal desde texto:', err)
-            });
-          });
-        }
+    /* ───────── FUNCIÓN AUXILIAR para registrar cristales ───────── */
+    const registrarCristales = (mov: Movimiento) => {
+      if (mov.tipoMovimiento !== 'ENTRADA' || !mov.paciente?.id) return;
+  
+      /* === tu lógica original, pero usando mov en lugar de this.movimiento === */
+      const cristalesPorDetalle = mov.detalles
+        ?.filter(d => d.producto.categorias.some(c => c.nombre.toLowerCase() === 'cristal')) || [];
+  
+      cristalesPorDetalle.forEach(det => {
+        const nombreCristal = `${det.producto.modelo} ${det.producto.marca.nombre}`;
+        this.pacienteService.guardarCristal(mov.paciente!.id, nombreCristal).subscribe();
+      });
+  
+      if (mov.detallesAdicionales) {
+        mov.detallesAdicionales
+          .filter(d => d.descripcion.toLowerCase().includes('cristal'))
+          .map(d => d.descripcion.substring(d.descripcion.toLowerCase().indexOf('cristal') + 7).trim())
+          .forEach(nombreCristal =>
+            this.pacienteService.guardarCristal(mov.paciente!.id, nombreCristal).subscribe()
+          );
       }
-    
-      this.isLoading = false;
-      Swal.fire('MOVIMIENTO GUARDADO', 'El movimiento ha sido guardado con éxito', 'success');
-      this.router.navigate(['/adminitrarCaja']);
     };
   
+    /* ───────── UPDATE ───────── */
     if (this.movimiento.id) {
       this.movimientoService.updateMovimiento(this.movimiento).subscribe({
         next: () => {
           this.isLoading = false;
-          Swal.fire('MOVIMIENTO GUARDADO', 'El movimiento ha sido guardado con éxito', 'success');
-          this.router.navigate(['/adminitrarCaja']);
+          Swal.fire('MOVIMIENTO GUARDADO', 'El movimiento ha sido guardado con éxito', 'success')
+            .then(() => this.router.navigate(['/adminitrarCaja']));
         },
-        error: (e) => {
-          this.isLoading = false;
-        }
+        error: () => (this.isLoading = false)
       });
-    } else {
+    }
+  
+    /* ───────── CREATE (flujo nuevo con pregunta de factura) ───────── */
+    else {
       this.movimientoService.createMovimiento(this.movimiento).subscribe({
-        next: afterSave,
-        error: (e) => {
+        next: (movimientoCreado) => {
+          registrarCristales(movimientoCreado);
           this.isLoading = false;
-        }
+  
+          Swal.fire({
+            title: 'Movimiento guardado',
+            text: '¿Deseás emitir la factura ahora?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, emitir',
+            cancelButtonText: 'No, volver'
+          }).then(res => {
+            if (res.isConfirmed) {
+              // 👉 lleva al componente de facturación con el id recién creado
+              this.router.navigate(['/facturar', movimientoCreado.id]);
+            } else {
+              this.router.navigate(['/adminitrarCaja']);
+            }
+          });
+        },
+        error: () => (this.isLoading = false)
       });
     }
   }
@@ -387,17 +432,16 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     //si es editar
     if(idMovimiento){
       this.movimiento.estadoMovimiento=null;
-      this.movimiento.cajaMovimientos[0].metodoPago=this.metodoSalida;
+      this.movimiento.cajaMovimientos[0]=this.metodoSalida;
       this.movimiento.cajaMovimientos[0].monto=this.movimiento.total;
       this.movimiento.cajaMovimientos[0].montoImpuesto=this.movimiento.total;
       this.movimiento.cajaMovimientos[0].fecha=this.movimiento.fecha;
     }else{
       //si es crear
       this.movimiento.estadoMovimiento=null;
-      const nuevoPago: CajaMovimiento = new CajaMovimiento();
+      const nuevoPago = Object.assign(new CajaMovimiento(), this.metodoSalida);
       nuevoPago.monto=this.movimiento.total;
       nuevoPago.montoImpuesto=this.movimiento.total;
-      nuevoPago.metodoPago=this.metodoSalida;
       nuevoPago.fecha=this.obtenerFechaHoyConHora();
 
       this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
@@ -517,17 +561,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
     }
   }
 
-  agregarPago(): void {
-    
-    const nuevoPago: CajaMovimiento = new CajaMovimiento();
-    nuevoPago.monto=0;
-    nuevoPago.montoImpuesto=0;
-    nuevoPago.metodoPago=this.metodosPago[0];
-    nuevoPago.fecha=this.obtenerFechaHoyConHora();
 
-    this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
-    this.movimiento.cajaMovimientos.push(nuevoPago);
-  }
 
   calcularDeuda(): void {
     if (!this.movimiento || !this.movimiento.cajaMovimientos) {
@@ -646,4 +680,77 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   volverAInicio() {
     this.router.navigate(['/adminitrarCaja']); // Cambia '/inicio' por la ruta deseada
   }
+
+  filtrarTiposTarjeta(tipoMetodo: string): TipoTarjeta[] {
+    if (tipoMetodo === 'TARJETA_CREDITO') {
+      return this.tiposTarjeta.filter(t => t.tipo === 'CREDITO');
+    } else if (tipoMetodo === 'TARJETA_DEBITO') {
+      return this.tiposTarjeta.filter(t => t.tipo === 'DEBITO');
+    } else {
+      return [];
+    }
+  }
+
+  agregarPago(): void {
+    const nuevoPago: CajaMovimiento = new CajaMovimiento();
+    nuevoPago.monto = 0;
+    nuevoPago.montoImpuesto = 0;
+    nuevoPago.fecha = this.obtenerFechaHoyConHora();
+  
+    // Inicializar con el primer método de pago disponible
+    nuevoPago.metodoPago = {
+      id: this.metodosPago[0].id,
+      tipo: this.metodosPago[0].tipo
+    };
+  
+    // Inicializar tarjetaDetalle solo si es tarjeta
+    if (nuevoPago.metodoPago.tipo === 'TARJETA_CREDITO' || nuevoPago.metodoPago.tipo === 'TARJETA_DEBITO') {
+      nuevoPago.tarjetaDetalle = {
+        tipoTarjeta: undefined,
+        nombreOtro: ''
+      };
+    }
+  
+    this.movimiento.cajaMovimientos = this.movimiento.cajaMovimientos || [];
+    this.movimiento.cajaMovimientos.push(nuevoPago);
+  }
+  
+  onCambioMetodoPago(cajaMovimiento: CajaMovimiento): void {
+    const tipo = cajaMovimiento.metodoPago.tipo;
+  
+    // Actualizar ID según selección
+    const metodoSeleccionado = this.metodosPago.find(m => m.tipo === tipo);
+    if (metodoSeleccionado) {
+      cajaMovimiento.metodoPago.id = metodoSeleccionado.id;
+    }
+  
+    // Reset campos
+    cajaMovimiento.descripcionOtras = '';
+    cajaMovimiento.tarjetaDetalle = undefined;
+  
+    // Solo inicializar tarjetaDetalle si corresponde
+    if (tipo === 'TARJETA_CREDITO' || tipo === 'TARJETA_DEBITO') {
+      cajaMovimiento.tarjetaDetalle = {
+        tipoTarjeta: undefined,
+        nombreOtro: ''
+      };
+    }
+  }
+
+  onCambioMetodoSalida(): void {
+    const tipo = this.metodoSalida?.metodoPago?.tipo;
+  
+    // Reset tarjetaDetalle y descripcionOtras
+    this.metodoSalida.tarjetaDetalle = undefined;
+    this.metodoSalida.descripcionOtras = '';
+  
+    // Inicializar tarjetaDetalle si corresponde
+    if (tipo === 'TARJETA_CREDITO' || tipo === 'TARJETA_DEBITO') {
+      this.metodoSalida.tarjetaDetalle = {
+        tipoTarjeta: undefined,
+        nombreOtro: ''
+      };
+    }
+  }
+
 }

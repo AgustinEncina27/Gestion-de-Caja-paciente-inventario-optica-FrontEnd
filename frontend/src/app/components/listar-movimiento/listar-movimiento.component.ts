@@ -9,6 +9,7 @@ import { MovimientoService } from 'src/app/services/movimiento.service';
 import { MetodoPagoService } from 'src/app/services/metodoPago.service';
 import { MetodoPago } from 'src/app/models/metodoPago';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CajaMovimiento } from 'src/app/models/cajaMovimiento';
 
 @Component({
   selector: 'app-listar-movimiento',
@@ -269,4 +270,27 @@ export class ListarMovimientoComponent {
       f1.getMinutes() === f2.getMinutes()
     );
   }
+
+  formatearMetodo(tipo: string): string {
+    return tipo.replace('_', ' ').toUpperCase();
+  }
+
+  mostrarMetodoPago(cajaMovimiento: CajaMovimiento): string {
+    const tipo = cajaMovimiento.metodoPago?.tipo;
+    let texto = tipo?.replace('_', ' ') ?? '';
+  
+    if (tipo === 'TARJETA_CREDITO' || tipo === 'TARJETA_DEBITO') {
+      const detalle = cajaMovimiento.tarjetaDetalle; // 🔁 ahora está directamente en CajaMovimiento
+      if (detalle?.tipoTarjeta) {
+        texto += ' - ' + detalle.tipoTarjeta.nombre;
+  
+        if (detalle.tipoTarjeta.nombre === 'OTRA' && detalle.nombreOtro) {
+          texto += ` (${detalle.nombreOtro})`;
+        }
+      }
+    }
+  
+    return texto;
+  }
+  
 }

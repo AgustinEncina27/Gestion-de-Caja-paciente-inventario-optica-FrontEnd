@@ -52,7 +52,6 @@
           <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarCategoria']">Categorías</a></li>
           <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarMarca']">Marcas</a></li>
           <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarMaterial']">Materiales</a></li>
-          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarMetodoPago']">Método de Pago</a></li>
           <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarLocal']">Locales</a></li>
           <li><a class="dropdown-item" [routerLink]="['/adminitrarPaciente']">Pacientes</a></li>
           <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/adminitrarProveedor']">Proveedores</a></li>
