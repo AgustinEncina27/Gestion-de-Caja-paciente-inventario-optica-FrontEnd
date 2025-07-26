@@ -98,7 +98,7 @@
           <div class="col-md-3"><span class="form-control">{{ detalle.producto.modelo }}</span></div>
           <div class="col-md-3"><span class="form-control">{{ detalle.producto.marca.nombre }}</span></div>
           <div class="col-md-2"><input type="number" placeholder="Cantidad" class="form-control" [(ngModel)]="detalle.cantidad" name="cantidad{{ i }}" (change)="verificarCantidad(detalle)" required /></div>
-          <div class="col-md-2"><span class="form-control">{{ detalle.subtotal | currency }}</span></div>
+          <div class="col-md-2"><input type="number" placeholder="subtotal" class="form-control" [(ngModel)]="detalle.subtotal" name="subtotal{{ i }}" (change)="calcularSubtotal(detalle)" required /></div>
           <div class="col-md-2"><button type="button" class="btn btn-danger w-100" (click)="eliminarDetalle(i)">Eliminar</button></div>
         </div>
 

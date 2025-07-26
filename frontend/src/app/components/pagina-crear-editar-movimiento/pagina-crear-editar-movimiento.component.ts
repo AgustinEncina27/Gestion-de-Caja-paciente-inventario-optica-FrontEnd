@@ -414,7 +414,7 @@ export class PaginaCrearEditarMovimientoComponent implements OnInit {
   }
 
   calcularSubtotal(detalle: DetalleMovimiento): void {
-    detalle.subtotal=detalle.cantidad * detalle.precioUnitario;
+    detalle.subtotal=detalle.cantidad * detalle.subtotal;
     this.calcularTotalAdicional(); // Llama al cálculo del total
   }
 
