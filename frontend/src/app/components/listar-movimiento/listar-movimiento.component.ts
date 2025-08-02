@@ -158,9 +158,6 @@ export class ListarMovimientoComponent {
         this.paginador = response;
         this.generarPaginador(response.totalPages); // Generar paginador
         
-        // Calcular totales solo si hay fecha seleccionada
-        this.calcularTotalesPorMetodo();
-
         // Calcular totales basados en los filtros aplicados
         this.movimientoService.getTotales(this.localSeleccionado).subscribe({
           next: (totales) => {
@@ -177,6 +174,18 @@ export class ListarMovimientoComponent {
         Swal.fire('ERROR', 'No se pudieron cargar los movimientos.', 'error');
       }
     });
+
+    // ✅ Solo llamar al endpoint completo si hay fecha seleccionada
+    if (this.fechaSeleccionada) {
+      this.movimientoService.getMovimientosFiltradosCompletos(filtros).subscribe({
+        next: (todos) => {
+          this.calcularTotalesPorMetodoTodasPaginas(todos);
+        },
+        error: (error) => console.error('Error al obtener movimientos completos:', error),
+      });
+    } else {
+      this.totalesPorMetodo = {}; // limpiar si no hay fecha
+    }
   }
 
   getKeys(obj: any): string[] {
@@ -274,17 +283,17 @@ export class ListarMovimientoComponent {
     );
   }
 
-  calcularTotalesPorMetodo(): void {
+  calcularTotalesPorMetodoTodasPaginas(movimientos: Movimiento[]): void {
     this.totalesPorMetodo = {};
-  
-    if (!this.fechaSeleccionada || this.movimientos.length === 0) return;
+    console.log(movimientos);
+    if (!this.fechaSeleccionada || movimientos.length === 0) return;
   
     const [year, month, day] = this.fechaSeleccionada.split('-').map(Number);
     const fechaFiltro = new Date(year, month - 1, day);
   
-    const procesados = new Set<number>(); // Usamos ID del cajaMovimiento
+    const procesados = new Set<number>();
   
-    this.movimientos.forEach(movimiento => {
+    movimientos.forEach(movimiento => {
       if (movimiento.cajaMovimientos && movimiento.cajaMovimientos.length > 0) {
         movimiento.cajaMovimientos.forEach(caja => {
           const fechaCajaObj = new Date(caja.fecha);
@@ -314,5 +323,9 @@ export class ListarMovimientoComponent {
         });
       }
     });
+  }
+
+  getTotalGeneral(): number {
+    return Object.values(this.totalesPorMetodo).reduce((acc, val) => acc + val, 0);
   }
 }

@@ -188,14 +188,24 @@
     </ul>
   </nav>
 
-  <!-- Totales por método de pago -->
+  <!-- Totales por método de pago para todas las páginas -->
   <div class="container mt-3" *ngIf="fechaSeleccionada && totalesPorMetodo && authService.hasRoles()">
     <h5 class="fw-bold">Totales por Método de Pago ({{ fechaSeleccionada }})</h5>
     <ul class="list-group">
-      <li *ngFor="let metodo of getKeys(totalesPorMetodo)" class="list-group-item d-flex justify-content-between">
+      <li *ngFor="let metodo of getKeys(totalesPorMetodo)" 
+          class="list-group-item d-flex justify-content-between"
+          [ngClass]="{'text-success': totalesPorMetodo[metodo] >= 0, 'text-danger': totalesPorMetodo[metodo] < 0}">
         <span>{{ metodo }}</span>
         <span class="fw-bold">{{ totalesPorMetodo[metodo] | currency }}</span>
       </li>
     </ul>
+
+    <!-- Total general -->
+    <div class="mt-2 fw-bold">
+      Total General: 
+      <span [ngClass]="{'text-success': getTotalGeneral() >= 0, 'text-danger': getTotalGeneral() < 0}">
+        {{ getTotalGeneral() | currency }}
+      </span>
+    </div>
   </div>
 </div>
