@@ -30,6 +30,7 @@ export class ListarMovimientoComponent {
   nombrePaciente: string = '';
   fechaSeleccionada: string = '';
   metodoPagoSeleccionado: string = '';
+  totalesPorMetodo: { [key: string]: number } = {};
 
  constructor(private movimientoService: MovimientoService,
   private localService: LocalService,
@@ -173,6 +174,18 @@ export class ListarMovimientoComponent {
         Swal.fire('ERROR', 'No se pudieron cargar los movimientos.', 'error');
       }
     });
+
+    // ✅ Solo llamar al endpoint completo si hay fecha seleccionada
+    if (this.fechaSeleccionada) {
+      this.movimientoService.getMovimientosFiltradosCompletos(filtros).subscribe({
+        next: (todos) => {
+          this.calcularTotalesPorMetodoTodasPaginas(todos);
+        },
+        error: (error) => console.error('Error al obtener movimientos completos:', error),
+      });
+    } else {
+      this.totalesPorMetodo = {}; // limpiar si no hay fecha
+    }
   }
 
   getKeys(obj: any): string[] {
@@ -268,5 +281,51 @@ export class ListarMovimientoComponent {
       f1.getHours() === f2.getHours() &&
       f1.getMinutes() === f2.getMinutes()
     );
+  }
+
+  calcularTotalesPorMetodoTodasPaginas(movimientos: Movimiento[]): void {
+    this.totalesPorMetodo = {};
+    console.log(movimientos);
+    if (!this.fechaSeleccionada || movimientos.length === 0) return;
+  
+    const [year, month, day] = this.fechaSeleccionada.split('-').map(Number);
+    const fechaFiltro = new Date(year, month - 1, day);
+  
+    const procesados = new Set<number>();
+  
+    movimientos.forEach(movimiento => {
+      if (movimiento.cajaMovimientos && movimiento.cajaMovimientos.length > 0) {
+        movimiento.cajaMovimientos.forEach(caja => {
+          const fechaCajaObj = new Date(caja.fecha);
+  
+          if (
+            fechaCajaObj.getFullYear() === fechaFiltro.getFullYear() &&
+            fechaCajaObj.getMonth() === fechaFiltro.getMonth() &&
+            fechaCajaObj.getDate() === fechaFiltro.getDate()
+          ) {
+            if (!procesados.has(caja.id)) {
+              procesados.add(caja.id);
+  
+              const metodo = caja.metodoPago.nombre;
+              const montoImpuesto = caja.montoImpuesto || 0;
+  
+              if (!this.totalesPorMetodo[metodo]) {
+                this.totalesPorMetodo[metodo] = 0;
+              }
+  
+              if (movimiento.tipoMovimiento === 'SALIDA') {
+                this.totalesPorMetodo[metodo] -= montoImpuesto;
+              } else {
+                this.totalesPorMetodo[metodo] += montoImpuesto;
+              }
+            }
+          }
+        });
+      }
+    });
+  }
+
+  getTotalGeneral(): number {
+    return Object.values(this.totalesPorMetodo).reduce((acc, val) => acc + val, 0);
   }
 }
