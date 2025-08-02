@@ -30,6 +30,7 @@ export class ListarMovimientoComponent {
   nombrePaciente: string = '';
   fechaSeleccionada: string = '';
   metodoPagoSeleccionado: string = '';
+  totalesPorMetodo: { [key: string]: number } = {};
 
  constructor(private movimientoService: MovimientoService,
   private localService: LocalService,
@@ -156,7 +157,10 @@ export class ListarMovimientoComponent {
         this.movimientos = response.content as Movimiento[];
         this.paginador = response;
         this.generarPaginador(response.totalPages); // Generar paginador
-  
+        
+        // Calcular totales solo si hay fecha seleccionada
+        this.calcularTotalesPorMetodo();
+
         // Calcular totales basados en los filtros aplicados
         this.movimientoService.getTotales(this.localSeleccionado).subscribe({
           next: (totales) => {
@@ -268,5 +272,47 @@ export class ListarMovimientoComponent {
       f1.getHours() === f2.getHours() &&
       f1.getMinutes() === f2.getMinutes()
     );
+  }
+
+  calcularTotalesPorMetodo(): void {
+    this.totalesPorMetodo = {};
+  
+    if (!this.fechaSeleccionada || this.movimientos.length === 0) return;
+  
+    const [year, month, day] = this.fechaSeleccionada.split('-').map(Number);
+    const fechaFiltro = new Date(year, month - 1, day);
+  
+    const procesados = new Set<number>(); // Usamos ID del cajaMovimiento
+  
+    this.movimientos.forEach(movimiento => {
+      if (movimiento.cajaMovimientos && movimiento.cajaMovimientos.length > 0) {
+        movimiento.cajaMovimientos.forEach(caja => {
+          const fechaCajaObj = new Date(caja.fecha);
+  
+          if (
+            fechaCajaObj.getFullYear() === fechaFiltro.getFullYear() &&
+            fechaCajaObj.getMonth() === fechaFiltro.getMonth() &&
+            fechaCajaObj.getDate() === fechaFiltro.getDate()
+          ) {
+            if (!procesados.has(caja.id)) {
+              procesados.add(caja.id);
+  
+              const metodo = caja.metodoPago.nombre;
+              const montoImpuesto = caja.montoImpuesto || 0;
+  
+              if (!this.totalesPorMetodo[metodo]) {
+                this.totalesPorMetodo[metodo] = 0;
+              }
+  
+              if (movimiento.tipoMovimiento === 'SALIDA') {
+                this.totalesPorMetodo[metodo] -= montoImpuesto;
+              } else {
+                this.totalesPorMetodo[metodo] += montoImpuesto;
+              }
+            }
+          }
+        });
+      }
+    });
   }
 }
