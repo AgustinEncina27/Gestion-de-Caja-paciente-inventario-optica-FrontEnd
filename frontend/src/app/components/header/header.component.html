@@ -1,8 +1,8 @@
 <nav class="navbar p-0">
-  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.facebook.com/profile.php?id=100072610396385" target="_blank"><img src="/assets/iconos/facebook.svg" class="iconos" alt="Facebook"></a>
-  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.instagram.com/optica.urbana21/" target="_blank"><img src="/assets/iconos/instagram.svg" class="iconos" alt="Instagram"></a>
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.facebook.com/profile.php?id=100088675393833" target="_blank"><img src="/assets/iconos/facebook.svg" class="iconos" alt="Facebook"></a>
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://www.instagram.com/Opticabellavista23/" target="_blank"><img src="/assets/iconos/instagram.svg" class="iconos" alt="Instagram"></a>
   <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" [routerLink]="['/visitanos']" ><img src="/assets/iconos/geo-alt.svg" class="iconos me-1">VISITANOS</a>
-  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://wa.me/+5493772432787" target="_blank"><img src="/assets/iconos/telephone.svg" class="iconos me-1" alt="Teléfono">+54 9 3772-432787</a>
+  <a type="button" class="btn btn-outline-primary col rounded-0 navbar-item headerA d-flex align-items-center justify-content-center" href="https://wa.me/+5493878566731" target="_blank"><img src="/assets/iconos/telephone.svg" class="iconos me-1" alt="Teléfono">+54 9 3878566731</a>
   <div *ngIf="!authService.isAuthenticated()" class="col ">
     <a [routerLink]="['/login']" class="btn btn-outline-primary rounded-0 col-12 navbar-item headerA d-flex align-items-center justify-content-center">INICIAR SESIÓN</a>
   </div>
@@ -18,8 +18,8 @@
 
 <!-- Navbar 2-->
 <nav class="navbar navbar2 p-3 navbar-expand-lg bg-transparent text-body d-flex justify-content-around">
-  <a class="navbar-brand m-1 " [routerLink]="['/inicio']">
-    <img src="/assets/avatar.jpg" alt="Bootstrap" width="150" height="150">
+  <a class="navbar-brand m-1" [routerLink]="['/inicio']">
+    <img src="/assets/avatar.jpg" alt="Bootstrap" width="150" height="150" style="border-radius: 50%;">
   </a>
   <button class="navbar-toggler m-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -40,7 +40,7 @@
           GESTIONAR PRODUCTOS
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
-          <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/crearVariosProductos']">Crear productos</a></li>
+          <li *ngIf="authService.hasRoles()"><a class="dropdown-item" [routerLink]="['/crearVariosProductos']">Crear productos</a></li>
           <li *ngIf="authService.hasRole('ROLE_ADMIN')"><a class="dropdown-item" [routerLink]="['/actualizar-productos']">Actualizar precio o costo</a></li>
         </ul>
       </li>
@@ -67,7 +67,7 @@
     </ul>
   </div>
   <a type="button" id="botonImagen" class="btn btn-success btn-lg  rounded m-1 " 
-  href="https://wa.me/+5493772432787" target="_blank" *ngIf="!authService.hasRole('ROLE_ADMIN')">
+  href="https://wa.me/+5493878566731" target="_blank" *ngIf="!authService.hasRole('ROLE_ADMIN')">
   <img src="/assets/iconos/whatsapp.svg"  alt="Bootstrap">Whatsapp</a> 
 </nav>
 

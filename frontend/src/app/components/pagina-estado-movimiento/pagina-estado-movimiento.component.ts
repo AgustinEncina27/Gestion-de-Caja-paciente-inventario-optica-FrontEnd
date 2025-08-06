@@ -75,11 +75,11 @@ export class PaginaEstadoMovimientoComponent implements OnInit {
   
     switch (this.movimiento.estadoMovimiento) {
       case 'PEDIDO_CRISTALES':
-        return 'Tu pedido está en proceso de solicitud de cristales. Recuerda que el pedido tiene un tiempo estimado de entrega de entre 10 y 15 días hábiles.';
+        return 'Tu pedido está en proceso. Te avisaremos cuando esté finalizado o nos comunicaremos con vos para coordinar la entrega.';
       case 'ARMANDO_PEDIDO':
-        return 'Estamos terminando de armar tu pedido. Entre hoy y mañana estará listo para que lo retires.';
+        return '¡Tu pedido está tomando forma! En pocos días nos comunicaremos para coordinar el retiro.';
       case 'ANTEOJO_TERMINADO':
-        return '¡Tu pedido está listo! Podés pasar a retirarlo cuando gustes.';
+        return '¡Tu pedido ya está listo! Recordá que tenés 30 días para retirarlo. Si no lo hacés dentro de ese plazo, se aplicarán los términos acordados al momento de dejar la seña.';
       case 'ENTREGADO':
         return 'Gracias por confiar en nosotros. Tu pedido ya fue entregado. ¡Que lo disfrutes!';
       default:

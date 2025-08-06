@@ -289,7 +289,7 @@ export class PaginaCrearEditarProductoComponent implements OnInit {
   }
 
   calcularPrecio(costo:number){
-    this.producto.precio= costo*3;
+    this.producto.precio= (costo*4)+(costo*0.21);
   }
 
   esSoloCristalSeleccionado(): boolean {
