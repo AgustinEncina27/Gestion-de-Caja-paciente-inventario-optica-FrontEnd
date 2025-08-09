@@ -81,7 +81,15 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     this.paciente.genero = this.genero;
     this.paciente.creadoEn = new Date();
     this.paciente.ultimaActualizacion = new Date();
+
+    
+    if (this.documentoInvalido()) {
+      Swal.fire("Error", "El número de documento ingresado no es válido para el tipo seleccionado.", "error");
+      return;
+    }
+
     this.isLoading = true;
+
     
     this.pacienteService.createPaciente(this.paciente).subscribe({
       next: (response) => {
@@ -103,6 +111,11 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     this.paciente.local = this.local;
     this.paciente.genero = this.genero;
     this.paciente.ultimaActualizacion = new Date();
+    
+    if (this.documentoInvalido()) {
+      Swal.fire("Error", "El número de documento ingresado no es válido para el tipo seleccionado.", "error");
+      return;
+    }
 
     this.isLoading = true;
 
@@ -326,4 +339,56 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     });
   }
 
+  mostrarCamposDocumento(): boolean {
+    return true; // Siempre se puede mostrar si quiere ingresarlo
+  }
+
+  documentoEsRequerido(): boolean {
+    return this.paciente.condicionIva !== 'CONSUMIDOR_FINAL';
+  }
+  
+  getPlaceholderDocumento(): string {
+    switch (this.paciente.tipoDocumento) {
+      case 'CUIT': return 'Ej: 20123456783';
+      case 'DNI': return 'Ej: 12345678';
+      default: return '';
+    }
+  }
+
+  getTiposDocumentoDisponibles(): string[] {
+    switch (this.paciente.condicionIva) {
+      case 'RESPONSABLE_INSCRIPTO':
+      case 'MONOTRIBUTISTA':
+        return ['CUIT'];
+      case 'EXENTO':
+        return ['CUIT', 'CUIL'];
+      case 'CONSUMIDOR_FINAL':
+        return ['DNI', 'CUIL', 'CUIT', 'PASAPORTE', 'OTRO'];
+      default:
+        return [];
+    }
+  }
+
+  documentoInvalido(): boolean {
+    const doc = this.paciente.documento;
+    if (!doc) return false;
+  
+    const tipo = this.paciente.tipoDocumento;
+  
+    if (tipo === 'CUIT' || tipo === 'CUIL') {
+      return !/^\d{11}$/.test(doc); // Solo 11 dígitos numéricos
+    }
+  
+    if (tipo === 'DNI') {
+      return !/^\d{7,8}$/.test(doc); // 7 u 8 dígitos
+    }
+  
+    if (tipo === 'PASAPORTE') {
+      return !/^[A-Z0-9]{5,15}$/i.test(doc); // Letras o números
+    }
+  
+    return false; // Para OTRO no validamos nada
+  }
+
+  
 }

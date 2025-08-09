@@ -29,6 +29,9 @@
       </div>
     </div>
 
+
+
+
     <!-- Detalles del movimiento -->
     <div class="card mb-4">
       <div class="card-body">
@@ -93,11 +96,27 @@
 
     <!-- Formulario para emitir factura -->
     <form [formGroup]="form" (ngSubmit)="emitirFactura()" class="form-group">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Opciones de Facturación</h5>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">¿Usar datos del paciente?</label>
+              <select class="form-select" formControlName="usarDatosPaciente">
+                <option [value]="true">Sí</option>
+                <option [value]="false">No (usar datos genéricos)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       <div class="card mb-5">
         <div class="card-body">
           <h5 class="card-title">Datos de la Factura</h5>
 
-          <div class="row g-3">
+          <div class="row g-3"*ngIf="form.value.usarDatosPaciente">
             <div class="col-md-4">
               <label class="form-label">Tipo de Comprobante</label>
               <select class="form-select" formControlName="tipoComprobante">
@@ -115,7 +134,7 @@
                 <option value="RESPONSABLE_INSCRIPTO">Responsable Inscripto</option>
               </select>
             </div>
-
+          
             <div class="col-md-4">
               <label class="form-label">DNI o CUIT</label>
               <input class="form-control" formControlName="dni" placeholder="Ej: 12345678" />

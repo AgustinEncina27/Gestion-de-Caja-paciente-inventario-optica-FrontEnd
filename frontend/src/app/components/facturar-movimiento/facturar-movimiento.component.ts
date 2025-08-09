@@ -25,10 +25,12 @@ export class FacturarMovimientoComponent implements OnInit {
     private facturaService: FacturaService,
   ) {
     this.form = this.fb.group({
+      usarDatosPaciente: [true, Validators.required],
       tipoComprobante: ['B', Validators.required],
-      tipoCliente: ['CONSUMIDOR_FINAL', Validators.required],
-      dni: [null, [Validators.required, Validators.pattern(/^\d{7,9}$/)]]
+      tipoCliente: ['CONSUMIDOR_FINAL'],
+      dni: ['']
     });
+
   }
 
   ngOnInit(): void {
@@ -40,13 +42,39 @@ export class FacturarMovimientoComponent implements OnInit {
         this.cargando = false;
 
         // Prellenar DNI si el paciente lo tiene
-        if (movimiento.paciente?.documento) {
-          this.form.patchValue({ dni: movimiento.paciente.documento });
+        if (movimiento.paciente) {
+          const paciente = movimiento.paciente;
+        
+          this.form.patchValue({
+            tipoCliente: paciente.condicionIva || 'CONSUMIDOR_FINAL',
+            dni: paciente.documento || ''
+          });
+        
+          this.form.get('dni')?.enable();
+          this.form.get('tipoCliente')?.enable();
         }
       },
       error: () => {
         Swal.fire('Error', 'No se encontró el movimiento.', 'error');
         this.router.navigate(['/caja']);
+      }
+    });    
+    
+    this.form.get('usarDatosPaciente')?.valueChanges.subscribe(usar => {
+      if (usar && this.movimiento.paciente) {
+        this.form.patchValue({
+          tipoCliente: this.movimiento.paciente.condicionIva || 'CONSUMIDOR_FINAL',
+          dni: this.movimiento.paciente.documento || ''
+        });
+        this.form.get('dni')?.enable();
+        this.form.get('tipoCliente')?.enable();
+      } else {
+        this.form.patchValue({
+          tipoCliente: 'CONSUMIDOR_FINAL',
+          dni: '99999999'
+        });
+        this.form.get('dni')?.disable();
+        this.form.get('tipoCliente')?.disable();
       }
     });
   }
@@ -64,9 +92,9 @@ export class FacturarMovimientoComponent implements OnInit {
       if (result.isConfirmed) {
         const dto: SolicitudFacturaDTO = {
           movimientoId: this.idMovimiento!,
-          tipoComprobante: this.form.value.tipoComprobante,
-          tipoCliente: this.form.value.tipoCliente,
-          dni: this.form.value.dni
+          tipoComprobante: this.form.getRawValue().tipoComprobante,
+          tipoCliente: this.form.getRawValue().tipoCliente,
+          dni: this.form.getRawValue().dni
         };
 
         this.facturaService.emitirFactura(dto).subscribe({

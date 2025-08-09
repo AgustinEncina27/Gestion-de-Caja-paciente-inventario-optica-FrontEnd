@@ -31,11 +31,35 @@
             <input type="text" class="form-control" id="InputCelular" 
                    [(ngModel)]="paciente.celular" name="celular" required>
           </div>
-          <!-- Documento -->
+          <!-- Condición IVA -->
           <div class="col-md-6">
-            <label for="InputDocumento" class="form-label fw-bold">Documento/Pasaporte</label>
-            <input type="text" class="form-control" id="InputDocumento" 
-                   [(ngModel)]="paciente.documento" name="documento" >
+            <label class="form-label fw-bold">Condición frente al IVA</label>
+            <select class="form-select" [(ngModel)]="paciente.condicionIva" name="condicionIva" required>
+              <option value="CONSUMIDOR_FINAL">Consumidor Final</option>
+              <option value="MONOTRIBUTISTA">Monotributista</option>
+              <option value="RESPONSABLE_INSCRIPTO">Responsable Inscripto</option>
+              <option value="EXENTO">Exento</option>
+            </select>
+          </div>
+
+          <!-- Tipo de documento -->
+          <div class="col-md-6" *ngIf="mostrarCamposDocumento()">
+            <label class="form-label fw-bold">Tipo de Documento</label>
+            <select class="form-select" [(ngModel)]="paciente.tipoDocumento" name="tipoDocumento"
+                    [required]="documentoEsRequerido()">
+              <option value="" disabled selected>Seleccione</option>
+              <option *ngFor="let tipo of getTiposDocumentoDisponibles()" [value]="tipo">{{ tipo }}</option>
+            </select>
+          </div>
+
+          <!-- Número de documento -->
+          <div class="col-md-6" *ngIf="mostrarCamposDocumento() && paciente.tipoDocumento">
+            <label class="form-label fw-bold">Número de Documento</label>
+            <input type="text" class="form-control"
+                  [(ngModel)]="paciente.documento" name="documento"
+                  [required]="documentoEsRequerido()" 
+                  [placeholder]="getPlaceholderDocumento()"
+                  [ngClass]="{ 'is-invalid': documentoInvalido() }" />
           </div>
         </div>
 

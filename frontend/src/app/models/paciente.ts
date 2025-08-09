@@ -6,6 +6,8 @@ export class Paciente {
   direccion?: string;
   celular!: string;
   documento?: string;
+  tipoDocumento?: 'DNI' | 'CUIT' | 'CUIL' | 'PASAPORTE' | 'OTRO';
+  condicionIva?: 'CONSUMIDOR_FINAL' | 'MONOTRIBUTISTA' | 'RESPONSABLE_INSCRIPTO' | 'EXENTO';
   correo?: string;
   medico?: string;
   obraSocial?: string;
