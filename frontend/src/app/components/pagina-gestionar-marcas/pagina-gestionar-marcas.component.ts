@@ -14,6 +14,9 @@ export class PaginaGestionarMarcasComponent {
   marca: Marca= new Marca;
   marcas: Marca[]= [];
   seleccionado = false;
+
+  // regex: punto, punto y coma, barra, barra invertida
+  private invalidMarcaChars = /[.;\/\\]/;
  
 
   constructor(private marcaService: MarcaService,
@@ -43,6 +46,8 @@ export class PaginaGestionarMarcasComponent {
   }
 
   crearMarca(){
+    if (!this.validarMarcaNombre()) return;
+
     this.marcaService.crearMarca(this.marca).subscribe( 
       response=>{
         Swal.fire('MARCA CREADA', 'La marca fue cargada con éxito!','success')
@@ -52,12 +57,35 @@ export class PaginaGestionarMarcasComponent {
   }
 
   editarMarca(){
+    if (!this.validarMarcaNombre()) return;
+
     this.marcaService.actualizarMarca(this.marca).subscribe( 
       response=>{
         Swal.fire('MARCA EDITADA', 'La Marca fue editada con éxito!','success')
         this.cargarMarcas();
         this.limpiarSeleccion();
       })
+  }
+
+  /** Valida nombre de marca antes de crear/editar */
+  private validarMarcaNombre(): boolean {
+    const nombre = (this.marca?.nombre || '').trim();
+
+    if (!nombre) {
+      Swal.fire('Error', 'El nombre de la marca es obligatorio.', 'error');
+      return false;
+    }
+    if (this.invalidMarcaChars.test(nombre)) {
+      Swal.fire(
+        'Error',
+        'El nombre no debe contener punto (.), punto y coma (;), barra (/), ni barra invertida (\\).',
+        'error'
+      );
+      return false;
+    }
+    // opcional: normalizar espacios
+    this.marca.nombre = nombre;
+    return true;
   }
 
   eliminarMarca(){
