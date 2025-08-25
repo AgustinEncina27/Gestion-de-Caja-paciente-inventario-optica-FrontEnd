@@ -266,7 +266,7 @@
                       <tbody>
                         <tr *ngFor="let grad of getGraduacionesPorTipo(ficha, 'CERCA'); let j = index">
                           <td>{{grad.ojo}}</td>
-                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.esferico)" name="cercaEsferico{{i}}{{j}}"></td>
+                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.esferico)"   (blur)="actualizarConSigno($event, grad, 'esferico')" name="cercaEsferico{{i}}{{j}}"></td>
                           <td><input type="text" class="form-control" [value]="formatearConSigno(grad.cilindrico)" (blur)="actualizarConSigno($event, grad, 'cilindrico')" name="cercaCilindrico{{i}}{{j}}"></td>
                           <td><input type="text" class="form-control" [(ngModel)]="grad.eje" (blur)="normalizarNumero(grad, 'eje')" name="cercaEje{{i}}{{j}}"></td>
                         </tr>
