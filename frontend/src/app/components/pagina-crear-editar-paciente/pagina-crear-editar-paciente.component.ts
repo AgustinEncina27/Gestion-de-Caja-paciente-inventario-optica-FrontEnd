@@ -260,10 +260,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
     if (lejos && cerca) {
       if (typeof valor === 'number' && typeof lejos.esferico === 'number' && valor !== 0) {
         cerca.esferico = parseFloat((lejos.esferico + valor).toFixed(2));
-      } else {
-        // Si valor no es número o es 0, se asigna 0
-        cerca.esferico = 0;
-      }
+      } 
     }
   }
 
@@ -292,21 +289,7 @@ export class PaginaCrearEditarPacienteComponent implements OnInit {
           ficha.graduaciones.push(cerca);
         }
         cerca.esferico = parseFloat((esf + adicion).toFixed(2));
-      } else if (adicion === 0) {
-        // Si la adición es cero, aseguramos que exista una cerca con esférico en 0
-        if (!cerca) {
-          cerca = {
-            ojo,
-            tipo: 'CERCA',
-            esferico: 0,
-            cilindrico: 0,
-            eje: 0
-          };
-          ficha.graduaciones.push(cerca);
-        } else {
-          cerca.esferico = 0;
-        }
-      }
+      } 
     }
   }
 
