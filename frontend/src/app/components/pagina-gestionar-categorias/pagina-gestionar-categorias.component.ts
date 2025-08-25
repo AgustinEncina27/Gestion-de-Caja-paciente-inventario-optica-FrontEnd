@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Categoria } from 'src/app/models/categoria';
-import { CategoriaService } from 'src/app/services/categoria.service';
 import Swal from 'sweetalert2';
+import { CategoriaService } from 'src/app/services/categoria.service';
+import { CategoriaDTO } from 'src/app/dto/CategoriaDTO';
 
 @Component({
   selector: 'app-pagina-gestionar-categorias',
@@ -10,72 +10,93 @@ import Swal from 'sweetalert2';
   styleUrls: ['./pagina-gestionar-categorias.component.css']
 })
 export class PaginaGestionarCategoriasComponent {
-  titulo:string='Administrar Categorias';
-  categoria: Categoria= new Categoria;
-  categorias: Categoria[]= [];
-  seleccionado = false;
- 
+  titulo = 'Administrar Categorías';
 
-  constructor(private categoriaService: CategoriaService,
-    private router: Router){}
+  categorias: CategoriaDTO[] = [];
+  categoriaSeleccionada: CategoriaDTO | null = null;
+
+  // Form sencillo con solo lo que usa el backend
+  form: CategoriaDTO = { nombre: '' };
+
+  constructor(private categoriaService: CategoriaService, private router: Router) {}
 
   ngOnInit(): void {
-    this.cargarCategorias()
+    this.cargarCategorias();
   }
 
-  cargarCategorias(){
-    this.categoriaService.getCategories().subscribe(
-      categorias=>{this.categorias=categorias
+  cargarCategorias(): void {
+    this.categoriaService.getCategories().subscribe(cats => (this.categorias = cats));
+  }
+
+  toggleCategorySelection(cat: CategoriaDTO): void {
+    this.categoriaSeleccionada = { ...cat };
+    this.form = { id: cat.id, nombre: cat.nombre };
+  }
+
+  limpiarSeleccion(): void {
+    this.categoriaSeleccionada = null;
+    this.form = { nombre: '' };
+  }
+
+  crearCategoria(): void {
+    const nombre = this.form.nombre?.trim();
+    if (!nombre) {
+      Swal.fire('Falta nombre', 'Ingresá un nombre para la categoría', 'warning');
+      return;
+    }
+    this.categoriaService.crearCategoria(nombre).subscribe({
+      next: _ => {
+        Swal.fire('CATEGORÍA CREADA', 'La categoría fue cargada con éxito!', 'success');
+        this.limpiarSeleccion();
+        this.cargarCategorias();
+        this.router.navigate(['/inicio']);
       }
-    )
-  }
-
-  toggleCategorySelection(categoria: Categoria) {
-    this.categoria = categoria; // Marca el radio button seleccionado
-  }
-  
-  limpiarSeleccion() {
-    this.categoria = new Categoria();
-    const radioButtons = document.querySelectorAll('input[type="radio"]');
-    radioButtons.forEach((radio: Element) => {
-      (radio as HTMLInputElement).checked = false; // Desmarca todos los radio buttons
     });
   }
 
-  crearCategoria(){
-    this.categoriaService.crearCategoria(this.categoria).subscribe( 
-      response=>{
-        Swal.fire('CATEGORÍA CREADA/EDITADA', 'La categoría fue cargada con éxito!','success')
+  editarCategoria(): void {
+    if (!this.categoriaSeleccionada?.id) {
+      Swal.fire('Sin selección', 'Seleccioná una categoría para editar', 'info');
+      return;
+    }
+    const nombre = this.form.nombre?.trim();
+    if (!nombre) {
+      Swal.fire('Falta nombre', 'Ingresá un nombre para la categoría', 'warning');
+      return;
+    }
+    this.categoriaService.actualizarCategoria(this.categoriaSeleccionada.id!, nombre).subscribe({
+      next: _ => {
+        Swal.fire('CATEGORÍA EDITADA', 'La categoría fue editada con éxito!', 'success');
+        this.limpiarSeleccion();
+        this.cargarCategorias();
         this.router.navigate(['/inicio']);
-      })
+      }
+    });
   }
 
-  editarCategoria(){
-    this.categoriaService.actualizarCategoria(this.categoria).subscribe( 
-      response=>{
-        Swal.fire('CATEGORÍA EDITADA', 'La categoría fue editada con éxito!','success')
-        this.router.navigate(['/inicio']);
-      })
-  }
-
-  eliminarCategoria(){
+  eliminarCategoria(): void {
+    if (!this.categoriaSeleccionada?.id) {
+      Swal.fire('Sin selección', 'Seleccioná una categoría para eliminar', 'info');
+      return;
+    }
     Swal.fire({
       title: '¿Estás seguro?',
-      text: "No puedes revertir este cambio",
+      text: 'No puedes revertir este cambio',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, eliminarlo'
-    }).then((result) => {
+      confirmButtonText: 'Sí, eliminarlo',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
       if (result.isConfirmed) {
-        this.categoriaService.eliminarCategoria(this.categoria.id).subscribe( 
-          response=>{
-            Swal.fire('CATEGORÍA ELIMINADA', 'La categoría fue eliminada con éxito!','success')
+        this.categoriaService.eliminarCategoria(this.categoriaSeleccionada!.id!).subscribe({
+          next: _ => {
+            Swal.fire('CATEGORÍA ELIMINADA', 'La categoría fue eliminada con éxito!', 'success');
+            this.limpiarSeleccion();
+            this.cargarCategorias();
             this.router.navigate(['/inicio']);
-          })
+          }
+        });
       }
-    })
+    });
   }
-  
 }

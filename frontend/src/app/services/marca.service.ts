@@ -1,84 +1,63 @@
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, tap, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, map, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
-import { Marca } from '../models/marca';
-
 import { URL_BACKEND } from '../config/config';
+import { MarcaDTO } from '../dto/MarcaDTO';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class MarcaService{
-  private urlEndPointMarca:string =URL_BACKEND+'/api/marca';
+interface MarcaCreateUpdate { nombre: string; }
 
-  constructor(private http: HttpClient) { }
+@Injectable({ providedIn: 'root' })
+export class MarcaService {
+  private base = `${URL_BACKEND}/api/marcas`; // ✅ plural
 
-  getMarcas(): Observable<Marca[]> {
-    return this.http.get<Marca[]>(this.urlEndPointMarca)
+  constructor(private http: HttpClient) {}
+
+  getMarcas(): Observable<MarcaDTO[]> {
+    return this.http.get<MarcaDTO[]>(this.base);
   }
 
-  crearMarca(marca:Marca): Observable<any>{
-    return this.http.post<any>(this.urlEndPointMarca,marca).pipe(
-      map((response: any)=>response.marca as Marca),
-      catchError(e=>{
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          Swal.fire("ERROR AL CREAR LA MARCA",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          Swal.fire(e.error.mensaje,e.error.error,'error');
+  crearMarca(nombre: string): Observable<MarcaDTO> {
+    const body: MarcaCreateUpdate = { nombre: nombre.trim() };
+    return this.http.post<any>(this.base, body).pipe(
+      map(res => res.marca as MarcaDTO),
+      catchError((e: HttpErrorResponse) => {
+        if (e.status === 400 && e.error?.errors) {
+          const msg = e.error.errors.join(' ');
+          Swal.fire('ERROR AL CREAR LA MARCA', msg, 'error');
+        } else if (e.error?.mensaje) {
+          Swal.fire(e.error.mensaje, e.error.error, 'error');
         }
         return throwError(() => e);
       })
-    )
+    );
   }
 
-  actualizarMarca(marca:Marca): Observable<any>{
-    return this.http.put<any>(`${this.urlEndPointMarca}/${marca.id}`,marca).pipe(
-      map((response: any)=>response.marca as Marca),
-      catchError(e=>{
-
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          Swal.fire("ERROR AL ACTUALIZAR LA MARCA",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          Swal.fire(e.error.mensaje,e.error.error,'error');
+  actualizarMarca(id: number, nombre: string): Observable<MarcaDTO> {
+    const body: MarcaCreateUpdate = { nombre: nombre.trim() };
+    return this.http.put<any>(`${this.base}/${id}`, body).pipe(
+      map(res => res.marca as MarcaDTO),
+      catchError((e: HttpErrorResponse) => {
+        if (e.status === 400 && e.error?.errors) {
+          const msg = e.error.errors.join(' ');
+          Swal.fire('ERROR AL ACTUALIZAR LA MARCA', msg, 'error');
+        } else if (e.error?.mensaje) {
+          Swal.fire(e.error.mensaje, e.error.error, 'error');
         }
         return throwError(() => e);
       })
-    )
+    );
   }
 
-  eliminarMarca(id:number): Observable<any>{
-    return this.http.delete<any>(`${this.urlEndPointMarca}/${id}`).pipe(
-      catchError(e => {
-        let error = "";
-    
-        switch (e.status) {
-          case 400:
-            error = e.error.errors.join(" ");
-            Swal.fire("ERROR AL ELIMINAR LA MARCA", error, 'error');
-            break;
-    
-          case 500:
-            Swal.fire("ERROR AL ELIMINAR LA MARCA", "Existen Productos con la marca. Por favor elimine esos productos para continuar", 'error');
-            break;
-    
-          default:
-            if (e.error.mensaje) {
-              console.error(e.error.mensaje);
-              Swal.fire(e.error.mensaje, e.error.error, 'error');
-            }
-            break;
+  eliminarMarca(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.base}/${id}`).pipe(
+      catchError((e: HttpErrorResponse) => {
+        if (e.error?.mensaje) {
+          // Backend envía mensaje legible si hay productos asociados
+          Swal.fire('ERROR AL ELIMINAR LA MARCA', e.error.mensaje, 'error');
         }
         return throwError(() => e);
       })
-    )
+    );
   }
-
-
 }

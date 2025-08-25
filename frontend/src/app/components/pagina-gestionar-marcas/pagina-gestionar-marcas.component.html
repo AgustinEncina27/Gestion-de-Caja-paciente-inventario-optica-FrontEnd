@@ -1,55 +1,91 @@
 <div class="d-flex justify-content-center my-5 cont">
-    <div class="card bg-light text-dark shadow-sm" style="width: 80%; border: 1px solid #ddd;">
-      <!-- Encabezado -->
-      <div class="card-header text-white fw-bold" style="background-color: var(--color-principal);">
-        {{titulo}}
+  <div class="card bg-light text-dark shadow-sm" style="width: 80%; border: 1px solid #ddd;">
+    <div class="card-header text-white fw-bold" style="background-color: var(--color-principal);">
+      {{ titulo }}
+    </div>
+
+    <div class="card-body">
+      <!-- Lista de Marcas -->
+      <div class="mb-3 mx-3 group mt-3">
+        <p id="listaMarcas" class="form-label fw-bold">Lista de marcas</p>
+        <div class="marca-lista-container">
+          <div class="form-check" *ngFor="let m of marcas">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="marcaRadio"
+              [id]="'marca-' + m.id"
+              (change)="toggleMarcaSelection(m)"
+              [checked]="marcaSeleccionada?.id === m.id"
+            />
+            <label class="form-check-label" [for]="'marca-' + m.id">
+              {{ m.nombre }}
+            </label>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline-secondary mt-3" (click)="limpiarSeleccion()">
+          Limpiar selección
+        </button>
+
+        <div class="mt-2" *ngIf="marcaSeleccionada">
+          <small class="text-muted">
+            Seleccionada: <strong>{{ marcaSeleccionada.nombre }}</strong>
+          </small>
+        </div>
       </div>
-      <div class="card-body">
-        <!-- Lista de Marcas -->
-        <div class="mb-3 mx-3 group mt-3">
-          <p id="listaMarcas" class="form-label fw-bold">Lista de marcas</p>
-          <div class="marca-lista-container">
-            <div class="form-check" *ngFor="let marca of marcas">
-              <input class="form-check-input" type="radio" name="flexRadioDefault" [id]="marca.id"
-                     (change)="toggleMarcaSelection(marca)">
-              <label class="form-check-label" [for]="marca.id">
-                {{marca.nombre}}
-              </label>
-            </div>
-          </div>          
-          <button type="button" class="btn btn-outline-secondary mt-3" (click)="limpiarSeleccion();">
-            Limpiar selección
+
+      <!-- Formulario -->
+      <form #marcaForm="ngForm" novalidate>
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="InputMarca" class="form-label fw-bold">Nombre de la Marca</label>
+            <input
+              type="text"
+              class="form-control"
+              id="InputMarca"
+              [(ngModel)]="form.nombre"
+              name="nombre"
+              required
+              maxlength="40"
+            />
+            <small
+              class="text-danger"
+              *ngIf="marcaForm.controls['nombre']?.invalid && (marcaForm.controls['nombre']?.touched || marcaForm.submitted)"
+            >
+              El nombre es obligatorio (máx. 40 caracteres).
+            </small>
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <button
+            type="button"
+            class="btn btn-success me-2"
+            (click)="crearMarca()"
+            [disabled]="!marcaForm.form.valid || !!marcaSeleccionada"
+          >
+            Crear Marca
           </button>
-        </div>  
-  
-        <!-- Formulario -->
-        <form #marcaForm="ngForm">
-          <!-- Nombre de la Marca -->
-          <div class="row mb-3">
-            <div class="col-md-12">
-              <label for="InputMarca" class="form-label fw-bold">Nombre de la Marca</label>
-              <input type="text" class="form-control" id="InputMarca" [(ngModel)]="marca.nombre" 
-                     name="marca" required>
-            </div>
-          </div>
-  
-          <!-- Botones -->
-          <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success me-2" (click)="crearMarca()" 
-                    [disabled]="!marcaForm.form.valid || marca.id!=null">
-              Crear Marca
-            </button>
-            <button type="submit" class="btn btn-primary me-2" (click)="editarMarca()" 
-                    [disabled]="marca.id==null">
-              Editar Marca
-            </button>
-            <button type="submit" class="btn btn-danger" (click)="eliminarMarca()" 
-                    [disabled]="marca.id==null">
-              Eliminar Marca
-            </button>
-          </div>
-        </form>
-      </div>
+
+          <button
+            type="button"
+            class="btn btn-primary me-2"
+            (click)="editarMarca()"
+            [disabled]="!marcaSeleccionada || !marcaForm.form.valid"
+          >
+            Editar Marca
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="eliminarMarca()"
+            [disabled]="!marcaSeleccionada"
+          >
+            Eliminar Marca
+          </button>
+        </div>
+      </form>
     </div>
   </div>
-  
+</div>

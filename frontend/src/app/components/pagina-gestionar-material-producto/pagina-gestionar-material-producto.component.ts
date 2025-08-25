@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { MaterialProducto } from 'src/app/models/materialProducto';
+import { MaterialProductoDTO } from 'src/app/dto/MaterialProductoDTO';
 import { MaterialProductoService } from 'src/app/services/materialProducto.service';
 import Swal from 'sweetalert2';
 
@@ -10,71 +10,94 @@ import Swal from 'sweetalert2';
   styleUrls: ['./pagina-gestionar-material-producto.component.css']
 })
 export class PaginaGestionarMaterialProductoComponent {
-  titulo:string='Administrar Materiales';
-  materialProducto: MaterialProducto= new MaterialProducto;
-  materialesProducto: MaterialProducto[]= [];
-  seleccionado = false;
- 
+  titulo = 'Administrar Materiales';
 
-  constructor(private materialProductoService: MaterialProductoService,
-    private router: Router){}
+  materiales: MaterialProductoDTO[] = [];
+  materialSeleccionado: MaterialProductoDTO | null = null;
+
+  // form simple: solo lo que pide el backend
+  form: MaterialProductoDTO = { nombre: '' };
+
+  constructor(private materialSrv: MaterialProductoService, private router: Router) {}
 
   ngOnInit(): void {
-    this.cargarMaterialProducto()
+    this.cargarMateriales();
   }
 
-  cargarMaterialProducto(){
-    this.materialProductoService.getMaterialesProducto().subscribe(
-      materialesProducto=>{this.materialesProducto=materialesProducto
+  cargarMateriales(): void {
+    this.materialSrv.getMateriales().subscribe(list => this.materiales = list);
+  }
+
+  toggleMaterialProductoSelection(mat: MaterialProductoDTO): void {
+    this.materialSeleccionado = { ...mat };
+    this.form = { id: mat.id, nombre: mat.nombre };
+  }
+
+  limpiarSeleccion(): void {
+    this.materialSeleccionado = null;
+    this.form = { nombre: '' };
+    document.querySelectorAll('input[type="radio"]').forEach(r => ((r as HTMLInputElement).checked = false));
+  }
+
+  crearMaterialProducto(): void {
+    const nombre = this.form.nombre?.trim();
+    if (!nombre) {
+      Swal.fire('Falta nombre', 'Ingresá un nombre para el material', 'warning');
+      return;
+    }
+    this.materialSrv.crear(nombre).subscribe({
+      next: _ => {
+        Swal.fire('MATERIAL CREADO', 'El material fue cargado con éxito!', 'success');
+        this.limpiarSeleccion();
+        this.cargarMateriales();
+        this.router.navigate(['/inicio']);
       }
-    )
-  }
-
-  toggleMaterialProductoSelection(materialProducto: MaterialProducto) {
-    this.materialProducto = materialProducto; // Marca el radio button seleccionado
-  }
-  
-  limpiarSeleccion() {
-    this.materialProducto = new MaterialProducto();
-    const radioButtons = document.querySelectorAll('input[type="radio"]');
-    radioButtons.forEach((radio: Element) => {
-      (radio as HTMLInputElement).checked = false; // Desmarca todos los radio buttons
     });
   }
 
-  crearMaterialProducto(){
-    this.materialProductoService.crearMaterialProducto(this.materialProducto).subscribe( 
-      response=>{
-        Swal.fire('MATERIAL CREADO', 'El material fue cargado con éxito!','success')
+  editarMaterialProducto(): void {
+    if (!this.materialSeleccionado?.id) {
+      Swal.fire('Sin selección', 'Seleccioná un material para editar', 'info');
+      return;
+    }
+    const nombre = this.form.nombre?.trim();
+    if (!nombre) {
+      Swal.fire('Falta nombre', 'Ingresá un nombre para el material', 'warning');
+      return;
+    }
+    this.materialSrv.actualizar(this.materialSeleccionado.id!, nombre).subscribe({
+      next: _ => {
+        Swal.fire('MATERIAL EDITADO', 'El material fue editado con éxito!', 'success');
+        this.limpiarSeleccion();
+        this.cargarMateriales();
         this.router.navigate(['/inicio']);
-      })
+      }
+    });
   }
 
-  editarMaterialProducto(){
-    this.materialProductoService.actualizarMaterialProducto(this.materialProducto).subscribe( 
-      response=>{
-        Swal.fire('MATERIAL EDITADO', 'El material fue editado con éxito!','success')
-        this.router.navigate(['/inicio']);
-      })
-  }
-
-  eliminarMaterialProducto(){
+  eliminarMaterialProducto(): void {
+    if (!this.materialSeleccionado?.id) {
+      Swal.fire('Sin selección', 'Seleccioná un material para eliminar', 'info');
+      return;
+    }
     Swal.fire({
       title: '¿Estás seguro?',
-      text: "No puedes revertir este cambio",
+      text: 'No puedes revertir este cambio',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, eliminarlo'
-    }).then((result) => {
+      confirmButtonText: 'Sí, eliminarlo',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
       if (result.isConfirmed) {
-        this.materialProductoService.eliminarMaterialProducto(this.materialProducto.id).subscribe( 
-          response=>{
-            Swal.fire('MATERIAL ELIMINADO', 'El material fue eliminado con éxito!','success')
+        this.materialSrv.eliminar(this.materialSeleccionado!.id!).subscribe({
+          next: _ => {
+            Swal.fire('MATERIAL ELIMINADO', 'El material fue eliminado con éxito!', 'success');
+            this.limpiarSeleccion();
+            this.cargarMateriales();
             this.router.navigate(['/inicio']);
-          })
+          }
+        });
       }
-    })
+    });
   }
 }

@@ -1,28 +1,41 @@
 <div class="estado-movimiento-container">
-  
   <h3 class="estado-titulo">Estado de tu pedido</h3>
 
-  <div class="progress-container">
-    <div class="progress-bar">
-      <div class="progress" [style.width]="getProgressWidth()" [ngClass]="getProgressClass()"></div>
-    </div>
-    <div class="progress-labels">
-      <div class="progress-label" *ngFor="let estado of estados">
-        <img 
-          [src]="estado.image" 
-          [alt]="estado.label" 
-          class="estado-image" 
-          [ngClass]="{ 'active-image': movimiento?.estadoMovimiento === estado.key }"
-        />
-        <span [ngClass]="{ 'active': movimiento?.estadoMovimiento === estado.key }">{{ estado.label }}</span>
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center my-4">
+    Cargando...
+  </div>
+
+  <!-- Sin estado (p. ej. SALIDA o entrada sin estado) -->
+  <div *ngIf="!isLoading && (!movimiento || !movimiento.estadoMovimiento)" class="alert alert-info">
+    Este movimiento no tiene seguimiento de estado.
+  </div>
+
+  <!-- Barra de progreso -->
+  <ng-container *ngIf="!isLoading && movimiento?.estadoMovimiento">
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress" [style.width]="getProgressWidth()" [ngClass]="getProgressClass()"></div>
+      </div>
+
+      <div class="progress-labels">
+        <div class="progress-label" *ngFor="let estado of estados">
+          <img
+            [src]="estado.image"
+            [alt]="estado.label"
+            class="estado-image"
+            [ngClass]="{ 'active-image': movimiento?.estadoMovimiento === estado.key }"
+          />
+          <span [ngClass]="{ 'active': movimiento?.estadoMovimiento === estado.key }">
+            {{ estado.label }}
+          </span>
+        </div>
       </div>
     </div>
-  </div>
-  <br>
-  <br>
-  <br>
-  <p class="tiempo-estimado-texto">
-    {{ getEstadoTexto() }}
-  </p>
-</div>
 
+    <br /><br /><br />
+    <p class="tiempo-estimado-texto">
+      {{ getEstadoTexto() }}
+    </p>
+  </ng-container>
+</div>

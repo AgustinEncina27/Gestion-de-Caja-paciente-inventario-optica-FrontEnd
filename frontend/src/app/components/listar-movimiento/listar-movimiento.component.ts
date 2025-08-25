@@ -1,279 +1,188 @@
-import { Component } from '@angular/core';
-import { AuthService } from 'src/app/services/auth.service';
-import Swal from 'sweetalert2';
-import { URL_FRONTEND } from 'src/app/config/config';
-import { Local } from 'src/app/models/local';
-import { LocalService } from 'src/app/services/local.service';
-import { Movimiento } from 'src/app/models/movimiento';
-import { MovimientoService } from 'src/app/services/movimiento.service';
-import { MetodoPagoService } from 'src/app/services/metodoPago.service';
-import { MetodoPago } from 'src/app/models/metodoPago';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
+import { AuthService } from 'src/app/services/auth.service';
+import { LocalService } from 'src/app/services/local.service';
+import { MetodoPagoService } from 'src/app/services/metodoPago.service';
+import { MovimientoService } from 'src/app/services/movimiento.service';
+
+import { MovimientoDTO, Page } from 'src/app/dto/movimiento.dto';
+
+// DTOs mínimos que usa la UI
+interface LocalDTO { id: number; nombre: string; }
+interface MetodoPagoDTO { id: number; nombre: string; }
 
 @Component({
   selector: 'app-listar-movimiento',
   templateUrl: './listar-movimiento.component.html',
-  styleUrls: ['./listar-movimiento.component.css']
+  styleUrls: ['./listar-movimiento.component.css'],
 })
-export class ListarMovimientoComponent {
-  movimientos: Movimiento[] = [];
-  movimiento:Movimiento= new Movimiento();
-  paginador: any;
-  pages: number[] = []; // Array para el paginador
-  URL_FRONTEND: string=URL_FRONTEND;
-  totales: { [key: string]: number } = {};
-  mostrarTotales: boolean = false;
-  locales: Local[] = [];  // Lista de locales obtenida desde el servicio
-  localSeleccionado: number = 0; // Almacena el ID del local seleccionado
-  metodosPago: MetodoPago[] = [];
-  tipoMovimientoSeleccionado: string = '';
-  nombrePaciente: string = '';
-  fechaSeleccionada: string = '';
-  metodoPagoSeleccionado: string = '';
-  totalesPorMetodo: { [key: string]: number } = {};
+export class ListarMovimientoComponent implements OnInit {
 
- constructor(private movimientoService: MovimientoService,
-  private localService: LocalService,
-  public authService: AuthService,
-  private activatedRoute: ActivatedRoute,
-  private router: Router,
-  private metodoPagoService: MetodoPagoService,
-  ){
-  }
+  // Listado + paginación
+  movimientos: MovimientoDTO[] = [];
+  paginador: Page<MovimientoDTO> | null = null;
+  pages: number[] = [];
 
-  ngOnInit(): void{
+  // Totales por método (desde /api/movimientos/totales)
+  totalesPorMetodo: { [metodo: string]: number } = {};
+  mostrarTotales = false;
+
+  // Filtros
+  locales: LocalDTO[] = [];
+  localSeleccionado: number = 0;        // solo ADMIN usa este filtro
+  metodosPago: MetodoPagoDTO[] = [];
+  tipoMovimientoSeleccionado: '' | 'ENTRADA' | 'SALIDA' = '';
+  nombrePaciente = '';
+  fechaSeleccionada = '';               // yyyy-MM-dd
+  metodoPagoSeleccionado = '';
+
+  constructor(
+    private movimientoService: MovimientoService,
+    private localService: LocalService,
+    private metodoPagoService: MetodoPagoService,
+    public authService: AuthService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {
     this.cargarLocales();
-    this.cargarFiltroConFicha();
     this.cargarMetodosPago();
+    this.cargarFiltroDesdeRuta();
     this.aplicarFiltros();
   }
 
-  cargarLocales(){
-    this.localService.getLocales().subscribe(data => {
-      this.locales = data; // Almacena los locales en el array
+  // ====== Cargas iniciales ======
+  private cargarLocales(): void {
+    this.localService.getLocales().subscribe((data: any[]) => {
+      this.locales = (data || []).map(l => ({ id: l.id, nombre: l.nombre })) as LocalDTO[];
     });
   }
 
-  cargarFiltroConFicha() {
-    this.activatedRoute.paramMap.subscribe((params) => {
-      const pacienteFicha = params.get('pacienteFicha'); // No conviertas a número aún
-      const rutaActual = this.router.url; // Obtiene la ruta actual
-    
-      if (rutaActual.includes("adminitrarCajaPaciente")) {
-        if (pacienteFicha) {
-          this.nombrePaciente = pacienteFicha.toString();
-        } 
+  private cargarMetodosPago(): void {
+    this.metodoPagoService.getmetodosPagos().subscribe((data: any[]) => {
+      this.metodosPago = (data || []).map(m => ({ id: m.id, nombre: m.nombre })) as MetodoPagoDTO[];
+    });
+  }
+
+  private cargarFiltroDesdeRuta(): void {
+    this.activatedRoute.paramMap.subscribe(params => {
+      const pacienteFicha = params.get('pacienteFicha');
+      const rutaActual = this.router.url;
+      if (rutaActual.includes('adminitrarCajaPaciente') && pacienteFicha) {
+        // el filtro del backend es por nombrePaciente (string)
+        this.nombrePaciente = pacienteFicha;
       }
     });
   }
 
-  cargarMetodosPago(): void {
-    this.metodoPagoService.getmetodosPagos().subscribe(data => {
-      this.metodosPago = data;
-    });
-  }
-
-  eliminarMovimiento(movimientoAEliminar:Movimiento){
+  // ====== Acciones ======
+  eliminarMovimiento(m: MovimientoDTO): void {
     Swal.fire({
-      title: '¿Estás seguro ?',
-      text: "No puedes revertir este cambio",
+      title: '¿Estás seguro?',
+      text: 'No puedes revertir este cambio',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, eliminarlo'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.movimientoService.deleteMovimiento(movimientoAEliminar.id).subscribe(
-          response=>{
-            Swal.fire(
-              'MOVIMIENTO ELIMINADO','El movimiento ha sido eliminado con éxito!','success'
-            )
-            this.aplicarFiltros();
-          }
-        )
-        
-      }
-    })
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then(result => {
+      if (!result.isConfirmed) return;
+      this.movimientoService.eliminar(m.id).subscribe({
+        next: () => {
+          Swal.fire('MOVIMIENTO ELIMINADO', 'El movimiento ha sido eliminado con éxito', 'success');
+          this.aplicarFiltros(this.paginador?.number ?? 0);
+        },
+        error: () => {},
+      });
+    });
   }
-  
-  paginaAnterior() {
-    const paginaActual = this.paginador.number;
-    if (paginaActual > 0) {
-      this.cambiarPagina(paginaActual - 1);
-    }
-  }
-  
-  paginaSiguiente() {
-    const paginaActual = this.paginador.number;
-    if (paginaActual < this.paginador.totalPages - 1) {
-      this.cambiarPagina(paginaActual + 1);
-    }
-  }
-  
-  cambiarPagina(page: number) {
-    if (page >= 0 && page < this.paginador.totalPages) {
-      this.aplicarFiltros(page);
-    }
-  }
-  
-  
-  generarPaginador(totalPages: number) {
-    const maxPagesToShow = 5; // Número máximo de páginas visibles
-    const currentPage = this.paginador.number; // Página actual
-  
-    let startPage = Math.max(0, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
-  
-    // Ajuste si la página inicial está muy cerca del inicio
-    if (endPage - startPage < maxPagesToShow - 1) {
-      startPage = Math.max(0, endPage - maxPagesToShow + 1);
-    }
-  
-    this.pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
-  }
-  
 
-  limpiarFiltros() {
-    this.localSeleccionado=0;
-    this.tipoMovimientoSeleccionado='';
-    this.nombrePaciente='';
-    this.fechaSeleccionada='';
-    this.metodoPagoSeleccionado='';
-    this.aplicarFiltros(); // Vuelve a cargar todos los pacientes sin filtros
+  // ====== Paginación ======
+  paginaAnterior(): void {
+    if (!this.paginador) return;
+    const prev = this.paginador.number - 1;
+    if (prev >= 0) this.cambiarPagina(prev);
+  }
+
+  paginaSiguiente(): void {
+    if (!this.paginador) return;
+    const next = this.paginador.number + 1;
+    if (next < this.paginador.totalPages) this.cambiarPagina(next);
+  }
+
+  cambiarPagina(page: number): void {
+    if (!this.paginador) return;
+    if (page < 0 || page >= this.paginador.totalPages) return;
+    this.aplicarFiltros(page);
+  }
+
+  private generarPaginador(totalPages: number): void {
+    if (!this.paginador) { this.pages = []; return; }
+    const max = 5;
+    const current = this.paginador.number;
+    let start = Math.max(0, current - Math.floor(max / 2));
+    let end = Math.min(totalPages - 1, start + max - 1);
+    if (end - start < max - 1) start = Math.max(0, end - max + 1);
+    this.pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }
+
+  // ====== Filtros ======
+  limpiarFiltros(): void {
+    this.localSeleccionado = 0;
+    this.tipoMovimientoSeleccionado = '';
+    this.nombrePaciente = '';
+    this.fechaSeleccionada = '';
+    this.metodoPagoSeleccionado = '';
+    this.aplicarFiltros(0);
   }
 
   aplicarFiltros(page: number = 0): void {
-    const filtros = {
-      local: this.localSeleccionado,
-      tipoMovimiento: this.tipoMovimientoSeleccionado,
-      nombrePaciente: this.nombrePaciente,
-      fecha: this.fechaSeleccionada,
-      metodoPago: this.metodoPagoSeleccionado
+    // armamos filtros para el endpoint /filtrar
+    const filtros: any = {
+      // Sólo ADMIN puede pasar idLocal; para vendedor se omite y el back usa el tenant
+      ...(this.authService.hasRole('ROLE_ADMIN') && this.localSeleccionado
+        ? { local: this.localSeleccionado }
+        : {}),
+      ...(this.tipoMovimientoSeleccionado ? { tipoMovimiento: this.tipoMovimientoSeleccionado } : {}),
+      ...(this.nombrePaciente ? { nombrePaciente: this.nombrePaciente } : {}),
+      ...(this.fechaSeleccionada ? { fecha: this.fechaSeleccionada } : {}),
+      ...(this.metodoPagoSeleccionado ? { metodoPago: this.metodoPagoSeleccionado } : {}),
     };
 
-    this.movimientoService.getMovimientosFiltrados(filtros, page).subscribe({
-      next: (response) => {
-        this.movimientos = response.content as Movimiento[];
-        this.paginador = response;
-        this.generarPaginador(response.totalPages); // Generar paginador
-  
-        // Calcular totales basados en los filtros aplicados
-        this.movimientoService.getTotales(this.localSeleccionado).subscribe({
-          next: (totales) => {
-            this.totales = totales;
-          },
-          error: (error) => {
-            console.error('Error al calcular los totales:', error);
-            Swal.fire('ERROR', 'No se pudieron calcular los totales.', 'error');
-          }
-        });
+    this.movimientoService.filtrar(filtros, page, 10).subscribe({
+      next: (resp) => {
+        this.movimientos = resp.content || [];
+        this.paginador = resp;
+        this.generarPaginador(resp.totalPages);
       },
-      error: (error) => {
-        console.error('Error al aplicar filtros:', error);
+      error: () => {
         Swal.fire('ERROR', 'No se pudieron cargar los movimientos.', 'error');
-      }
+      },
     });
 
-    // ✅ Solo llamar al endpoint completo si hay fecha seleccionada
-    if (this.fechaSeleccionada) {
-      this.movimientoService.getMovimientosFiltradosCompletos(filtros).subscribe({
-        next: (todos) => {
-          this.calcularTotalesPorMetodoTodasPaginas(todos);
-        },
-        error: (error) => console.error('Error al obtener movimientos completos:', error),
-      });
-    } else {
-      this.totalesPorMetodo = {}; // limpiar si no hay fecha
-    }
+    // Totales por método (no filtra por fecha; el back calcula por local/tenant)
+    const idLocal = this.authService.hasRole('ROLE_ADMIN') && this.localSeleccionado ? this.localSeleccionado : undefined;
+    this.movimientoService.totalesPorMetodoPago(idLocal).subscribe({
+      next: (t) => (this.totalesPorMetodo = t || {}),
+      error: () => (this.totalesPorMetodo = {}),
+    });
   }
 
+  // ====== Helpers UI ======
   getKeys(obj: any): string[] {
-    return Object.keys(obj);
-  }
-  
-  generarPdfCliente(idMovimiento: number): void {
-    this.movimientoService.generarReporteMovimientoCliente(idMovimiento).subscribe({
-      next: (pdfBlob) => {
-        const blob = new Blob([pdfBlob], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-  
-        // Crear un enlace temporal para descargar el archivo
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `reporte_movimiento_cliente_${idMovimiento}.pdf`;
-        a.click();
-  
-        // Liberar memoria
-        window.URL.revokeObjectURL(url);
-      },
-      error: (error) => {
-        console.error('Error al generar el PDF:', error);
-        Swal.fire('ERROR', 'No se pudo generar el PDF.', 'error');
-      },
-    });
+    return Object.keys(obj || {});
   }
 
-  generarPdfOptica(idMovimiento: number): void {
-    this.movimientoService.generarReporteMovimientoOptica(idMovimiento).subscribe({
-      next: (pdfBlob) => {
-        const blob = new Blob([pdfBlob], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-  
-        // Crear un enlace temporal para descargar el archivo
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `reporte_movimiento_optica_${idMovimiento}.pdf`;
-        a.click();
-  
-        // Liberar memoria
-        window.URL.revokeObjectURL(url);
-      },
-      error: (error) => {
-        console.error('Error al generar el PDF:', error);
-        Swal.fire('ERROR', 'No se pudo generar el PDF.', 'error');
-      },
-    });
+  esPagoTotal(mov: MovimientoDTO): boolean {
+    const totalPagado = (mov.pagos || []).reduce((s, p) => s + (p.monto || 0), 0);
+    return totalPagado >= (mov.total || 0);
   }
 
-  esPagoTotal(movimiento: any): boolean {
-    if (!movimiento.cajaMovimientos || movimiento.cajaMovimientos.length === 0) {
-      return false;
-    }
-  
-    const totalPagado = movimiento.cajaMovimientos.reduce((sum: number, caja: any) => sum + caja.monto, 0);
-    return totalPagado >= movimiento.total;
-  }
-
-
-
-  copiarEnlace(id: number): void {
-    const enlace = `${this.URL_FRONTEND}/estadoCompra/${id}`;
-    navigator.clipboard.writeText(enlace).then(() => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Enlace copiado',
-        text: 'El enlace fue copiado al portapapeles.',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true
-      });
-    }).catch(err => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No se pudo copiar el enlace.',
-      });
-      console.error('Error al copiar el enlace:', err);
-    });
-  }
-
-  esMismaFechaHoraMinuto(fecha1: string | Date, fecha2: string | Date): boolean {
-    const f1 = new Date(fecha1);
-    const f2 = new Date(fecha2);
-  
+  esMismaFechaHoraMinuto(a: string | Date, b: string | Date): boolean {
+    const f1 = new Date(a);
+    const f2 = new Date(b);
     return (
       f1.getFullYear() === f2.getFullYear() &&
       f1.getMonth() === f2.getMonth() &&
@@ -283,49 +192,24 @@ export class ListarMovimientoComponent {
     );
   }
 
-  calcularTotalesPorMetodoTodasPaginas(movimientos: Movimiento[]): void {
-    this.totalesPorMetodo = {};
-    console.log(movimientos);
-    if (!this.fechaSeleccionada || movimientos.length === 0) return;
-  
-    const [year, month, day] = this.fechaSeleccionada.split('-').map(Number);
-    const fechaFiltro = new Date(year, month - 1, day);
-  
-    const procesados = new Set<number>();
-  
-    movimientos.forEach(movimiento => {
-      if (movimiento.cajaMovimientos && movimiento.cajaMovimientos.length > 0) {
-        movimiento.cajaMovimientos.forEach(caja => {
-          const fechaCajaObj = new Date(caja.fecha);
-  
-          if (
-            fechaCajaObj.getFullYear() === fechaFiltro.getFullYear() &&
-            fechaCajaObj.getMonth() === fechaFiltro.getMonth() &&
-            fechaCajaObj.getDate() === fechaFiltro.getDate()
-          ) {
-            if (!procesados.has(caja.id)) {
-              procesados.add(caja.id);
-  
-              const metodo = caja.metodoPago.nombre;
-              const montoImpuesto = caja.montoImpuesto || 0;
-  
-              if (!this.totalesPorMetodo[metodo]) {
-                this.totalesPorMetodo[metodo] = 0;
-              }
-  
-              if (movimiento.tipoMovimiento === 'SALIDA') {
-                this.totalesPorMetodo[metodo] -= montoImpuesto;
-              } else {
-                this.totalesPorMetodo[metodo] += montoImpuesto;
-              }
-            }
-          }
-        });
+  copiarEnlace(id: number): void {
+    const enlace = `${location.origin}/estadoCompra/${id}`;
+    navigator.clipboard.writeText(enlace).then(
+      () =>
+        Swal.fire({
+          icon: 'success',
+          title: 'Enlace copiado',
+          text: 'El enlace fue copiado al portapapeles.',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        }),
+      (err) => {
+        Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo copiar el enlace.' });
+        console.error(err);
       }
-    });
-  }
-
-  getTotalGeneral(): number {
-    return Object.values(this.totalesPorMetodo).reduce((acc, val) => acc + val, 0);
+    );
   }
 }

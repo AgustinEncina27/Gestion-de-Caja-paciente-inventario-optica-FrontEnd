@@ -1,65 +1,104 @@
 <div class="d-flex justify-content-center my-5 cont">
-    <div class="card bg-light text-dark shadow-sm" style="width: 80%; border: 1px solid #ddd;">
-      <!-- Encabezado -->
-      <div class="card-header text-white fw-bold" style="background-color: var(--color-principal);">
-        {{titulo}}
-      </div>
-      <div class="card-body">
-        <!-- Lista de Proveedores -->
-        <div class="mb-3 mx-3 group mt-3">
-          <p id="listaProveedor" class="form-label fw-bold">Lista de proveedores</p>
-          <div class="proveedor-lista-container">  
-            <div class="form-check" *ngFor="let proveedor of proveedores">
-              <input class="form-check-input" type="radio" name="flexRadioDefault" [id]="proveedor.id"
-                    (change)="toggleProveedorSelection(proveedor)">
-              <label class="form-check-label" [for]="proveedor.id">
-                {{proveedor.nombre}}
-              </label>
-            </div>
-          </div>
-          <button type="button" class="btn btn-outline-secondary mt-3" (click)="limpiarSeleccion();">
-            Limpiar selección
-          </button>
-        </div>  
-  
-        <!-- Formulario -->
-        <form #proveedorForm="ngForm">
-          <!-- Nombre del Proveedor -->
-          <div class="row mb-4">
-            <div class="col-md-12">
-              <label class="form-label fw-bold" for="InputProveedor">Nombre del Proveedor</label>
-              <input type="text" class="form-control" id="InputProveedor" 
-                     [(ngModel)]="proveedor.nombre" name="proveedorNombre" required>
-            </div>
-          </div>
+  <div class="card bg-light text-dark shadow-sm" style="width: 80%; border: 1px solid #ddd;">
+    <div class="card-header text-white fw-bold" style="background-color: var(--color-principal);">
+      {{ titulo }}
+    </div>
 
-          <!-- Celular del Proveedor -->
-          <div class="row mb-4">
-            <div class="col-md-12">
-              <label class="form-label fw-bold" for="InputProveedorCelular">Celular de Proveedor</label>
-              <input type="text" class="form-control" id="InputProveedorCelular" 
-                     [(ngModel)]="proveedor.celular" name="proveedorCelular" required>
-            </div>
+    <div class="card-body">
+      <!-- Lista de Proveedores -->
+      <div class="mb-3 mx-3 group mt-3">
+        <p id="listaProveedor" class="form-label fw-bold">Lista de proveedores</p>
+        <div class="proveedor-lista-container">
+          <div class="form-check" *ngFor="let p of proveedores">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="proveedorRadio"
+              [id]="'prov-' + p.id"
+              (change)="toggleProveedorSelection(p)"
+              [checked]="proveedorSeleccionado?.id === p.id"
+            />
+            <label class="form-check-label" [for]="'prov-' + p.id">
+              {{ p.nombre }}
+            </label>
           </div>
-  
-  
-          <!-- Botones -->
-          <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success me-2" (click)="crearProveedor()" 
-                    [disabled]="!proveedorForm.form.valid || proveedor.id!=null">
-              Crear Proveedor
-            </button>
-            <button type="submit" class="btn btn-primary me-2" (click)="editarProveedor()" 
-                    [disabled]="proveedor.id==null">
-              Editar Proveedor
-            </button>
-            <button type="submit" class="btn btn-danger" (click)="eliminarProveedor()" 
-                    [disabled]="proveedor.id==null">
-              Eliminar Proveedor
-            </button>
-          </div>
-        </form>
+        </div>
+        <button type="button" class="btn btn-outline-secondary mt-3" (click)="limpiarSeleccion()">
+          Limpiar selección
+        </button>
       </div>
+
+      <!-- Formulario -->
+      <form #proveedorForm="ngForm" novalidate>
+        <!-- Nombre -->
+        <div class="row mb-4">
+          <div class="col-md-12">
+            <label class="form-label fw-bold" for="InputProveedor">Nombre del Proveedor</label>
+            <input
+              type="text"
+              class="form-control"
+              id="InputProveedor"
+              [(ngModel)]="form.nombre"
+              name="nombre"          
+              required
+              maxlength="40"
+            />
+            <small class="text-danger"
+                   *ngIf="proveedorForm.controls['nombre']?.invalid && (proveedorForm.controls['nombre']?.touched || proveedorForm.submitted)">
+              El nombre es obligatorio (máx. 40 caracteres).
+            </small>
+          </div>
+        </div>
+
+        <!-- Celular -->
+        <div class="row mb-4">
+          <div class="col-md-12">
+            <label class="form-label fw-bold" for="InputProveedorCelular">Celular del Proveedor</label>
+            <input
+              type="text"
+              class="form-control"
+              id="InputProveedorCelular"
+              [(ngModel)]="form.celular"
+              name="celular"          
+              maxlength="20"
+            />
+            <small class="text-muted">Opcional. Máx. 20 caracteres.</small>
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="text-center mt-4">
+          <!-- Crear: solo si NO hay selección -->
+          <button
+            type="button"
+            class="btn btn-success me-2"
+            (click)="crearProveedor()"
+            [disabled]="!proveedorForm.form.valid || !!proveedorSeleccionado"
+          >
+            Crear Proveedor
+          </button>
+
+          <!-- Editar: solo si hay selección -->
+          <button
+            type="button"
+            class="btn btn-primary me-2"
+            (click)="editarProveedor()"
+            [disabled]="!proveedorSeleccionado || !proveedorForm.form.valid"
+          >
+            Editar Proveedor
+          </button>
+
+          <!-- Eliminar: solo si hay selección -->
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="eliminarProveedor()"
+            [disabled]="!proveedorSeleccionado"
+          >
+            Eliminar Proveedor
+          </button>
+        </div>
+      </form>
     </div>
   </div>
-  
+</div>

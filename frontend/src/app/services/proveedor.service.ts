@@ -1,73 +1,65 @@
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, tap, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, map, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { URL_BACKEND } from '../config/config';
-import { Proveedor } from '../models/proveedor';
+import { ProveedorDTO } from '../dto/ProveedorDTO';
 
+interface ProveedorCreateUpdate {
+  nombre: string;
+  celular?: string | null;
+}
 
-@Injectable({
-  providedIn: 'root'
-})
-export class ProveedorService{
-  private urlEndPointProveedor:string =URL_BACKEND+'/api/proveedor';
+@Injectable({ providedIn: 'root' })
+export class ProveedorService {
+  private base = `${URL_BACKEND}/api/proveedores`; // ✅ plural
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getProveedores(): Observable<Proveedor[]> {
-    return this.http.get<Proveedor[]>(this.urlEndPointProveedor)
+  getProveedores(): Observable<ProveedorDTO[]> {
+    return this.http.get<ProveedorDTO[]>(this.base);
   }
 
-  crearProveedor(proveedor:Proveedor): Observable<any>{
-    return this.http.post<any>(this.urlEndPointProveedor,proveedor).pipe(
-      map((response: any)=>response.proveedor as Proveedor),
-      catchError(e=>{
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          Swal.fire("ERROR AL CREAR EL PROVEEDOR",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          Swal.fire(e.error.mensaje,e.error.error,'error');
+  crearProveedor(nombre: string, celular?: string | null): Observable<ProveedorDTO> {
+    const body: ProveedorCreateUpdate = { nombre, celular: celular ?? null };
+    return this.http.post<any>(this.base, body).pipe(
+      map(res => res.proveedor as ProveedorDTO),
+      catchError((e: HttpErrorResponse) => {
+        if (e.status === 400 && e.error?.errors) {
+          const msg = e.error.errors.join(' ');
+          Swal.fire('ERROR AL CREAR EL PROVEEDOR', msg, 'error');
+        } else if (e.error?.mensaje) {
+          Swal.fire(e.error.mensaje, e.error.error, 'error');
         }
         return throwError(() => e);
       })
-    )
+    );
   }
 
-  actualizarProveedor(proveedor:Proveedor): Observable<any>{
-    return this.http.put<any>(`${this.urlEndPointProveedor}/${proveedor.id}`,proveedor).pipe(
-      map((response: any)=>response.proveedor as Proveedor),
-      catchError(e=>{
-
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          Swal.fire("ERROR AL ACTUALIZAR EL PROVEEDOR",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          Swal.fire(e.error.mensaje,e.error.error,'error');
+  actualizarProveedor(id: number, nombre: string, celular?: string | null): Observable<ProveedorDTO> {
+    const body: ProveedorCreateUpdate = { nombre, celular: celular ?? null };
+    return this.http.put<any>(`${this.base}/${id}`, body).pipe(
+      map(res => res.proveedor as ProveedorDTO),
+      catchError((e: HttpErrorResponse) => {
+        if (e.status === 400 && e.error?.errors) {
+          const msg = e.error.errors.join(' ');
+          Swal.fire('ERROR AL ACTUALIZAR EL PROVEEDOR', msg, 'error');
+        } else if (e.error?.mensaje) {
+          Swal.fire(e.error.mensaje, e.error.error, 'error');
         }
         return throwError(() => e);
       })
-    )
+    );
   }
 
-  eliminarProveedor(id:number): Observable<any>{
-    return this.http.delete<any>(`${this.urlEndPointProveedor}/${id}`).pipe(
-      catchError(e=>{
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          Swal.fire("ERROR AL ELIMINAR EL PROVEEDOR",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          Swal.fire(e.error.mensaje,e.error.error,'error');
+  eliminarProveedor(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.base}/${id}`).pipe(
+      catchError((e: HttpErrorResponse) => {
+        if (e.error?.mensaje) {
+          Swal.fire(e.error.mensaje, e.error.error, 'error');
         }
         return throwError(() => e);
       })
-    )
+    );
   }
-
-
 }

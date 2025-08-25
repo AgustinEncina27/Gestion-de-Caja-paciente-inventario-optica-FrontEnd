@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Marca } from 'src/app/models/marca';
-import { MarcaService } from 'src/app/services/marca.service';
 import Swal from 'sweetalert2';
+import { MarcaService } from 'src/app/services/marca.service';
+import { MarcaDTO } from 'src/app/dto/MarcaDTO';
 
 @Component({
   selector: 'app-pagina-gestionar-marcas',
@@ -10,74 +10,94 @@ import Swal from 'sweetalert2';
   styleUrls: ['./pagina-gestionar-marcas.component.css']
 })
 export class PaginaGestionarMarcasComponent {
-  titulo:string='Administrar Marcas';
-  marca: Marca= new Marca;
-  marcas: Marca[]= [];
-  seleccionado = false;
- 
+  titulo = 'Administrar Marcas';
 
-  constructor(private marcaService: MarcaService,
-    private router: Router){}
+  marcas: MarcaDTO[] = [];
+  marcaSeleccionada: MarcaDTO | null = null;
+
+  // Form liviano: exactamente lo que pide el backend
+  form: MarcaDTO = { nombre: '' };
+
+  constructor(private marcaSrv: MarcaService, private router: Router) {}
 
   ngOnInit(): void {
-    this.cargarMarcas()
+    this.cargarMarcas();
   }
 
-  cargarMarcas(){
-    this.marcaService.getMarcas().subscribe(
-      marcas=>{this.marcas=marcas
+  cargarMarcas(): void {
+    this.marcaSrv.getMarcas().subscribe(list => (this.marcas = list));
+  }
+
+  toggleMarcaSelection(m: MarcaDTO): void {
+    this.marcaSeleccionada = { ...m };
+    this.form = { id: m.id, nombre: m.nombre };
+  }
+
+  limpiarSeleccion(): void {
+    this.marcaSeleccionada = null;
+    this.form = { nombre: '' };
+    document.querySelectorAll('input[type="radio"]').forEach(r => ((r as HTMLInputElement).checked = false));
+  }
+
+  crearMarca(): void {
+    const nombre = this.form.nombre?.trim();
+    if (!nombre) {
+      Swal.fire('Falta nombre', 'Ingresá un nombre para la marca', 'warning');
+      return;
+    }
+    this.marcaSrv.crearMarca(nombre).subscribe({
+      next: _ => {
+        Swal.fire('MARCA CREADA', 'La marca fue cargada con éxito!', 'success');
+        this.limpiarSeleccion();
+        this.cargarMarcas();
+        this.router.navigate(['/inicio']);
       }
-    )
-  }
-
-  toggleMarcaSelection(marca: Marca) {
-    this.marca = marca; // Marca el radio button seleccionado
-  }
-  
-  limpiarSeleccion() {
-    this.marca = new Marca();
-    const radioButtons = document.querySelectorAll('input[type="radio"]');
-    radioButtons.forEach((radio: Element) => {
-      (radio as HTMLInputElement).checked = false; // Desmarca todos los radio buttons
     });
   }
 
-  crearMarca(){
-    this.marcaService.crearMarca(this.marca).subscribe( 
-      response=>{
-        Swal.fire('MARCA CREADA', 'La marca fue cargada con éxito!','success')
-        this.cargarMarcas();
+  editarMarca(): void {
+    if (!this.marcaSeleccionada?.id) {
+      Swal.fire('Sin selección', 'Seleccioná una marca para editar', 'info');
+      return;
+    }
+    const nombre = this.form.nombre?.trim();
+    if (!nombre) {
+      Swal.fire('Falta nombre', 'Ingresá un nombre para la marca', 'warning');
+      return;
+    }
+    this.marcaSrv.actualizarMarca(this.marcaSeleccionada.id!, nombre).subscribe({
+      next: _ => {
+        Swal.fire('MARCA EDITADA', 'La marca fue editada con éxito!', 'success');
         this.limpiarSeleccion();
-      })
+        this.cargarMarcas();
+        this.router.navigate(['/inicio']);
+      }
+    });
   }
 
-  editarMarca(){
-    this.marcaService.actualizarMarca(this.marca).subscribe( 
-      response=>{
-        Swal.fire('MARCA EDITADA', 'La Marca fue editada con éxito!','success')
-        this.cargarMarcas();
-        this.limpiarSeleccion();
-      })
-  }
-
-  eliminarMarca(){
+  eliminarMarca(): void {
+    if (!this.marcaSeleccionada?.id) {
+      Swal.fire('Sin selección', 'Seleccioná una marca para eliminar', 'info');
+      return;
+    }
     Swal.fire({
       title: '¿Estás seguro?',
-      text: "No puedes revertir este cambio",
+      text: 'No puedes revertir este cambio',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, eliminarlo'
-    }).then((result) => {
+      confirmButtonText: 'Sí, eliminarla',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
       if (result.isConfirmed) {
-        this.marcaService.eliminarMarca(this.marca.id).subscribe( 
-          response=>{
-            Swal.fire('MARCA ELIMINADA', 'La marca fue eliminada con éxito!','success')
-            this.cargarMarcas();
+        this.marcaSrv.eliminarMarca(this.marcaSeleccionada!.id!).subscribe({
+          next: _ => {
+            Swal.fire('MARCA ELIMINADA', 'La marca fue eliminada con éxito!', 'success');
             this.limpiarSeleccion();
-          })
+            this.cargarMarcas();
+            this.router.navigate(['/inicio']);
+          }
+        });
       }
-    })
+    });
   }
 }

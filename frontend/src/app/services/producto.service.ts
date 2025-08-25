@@ -1,103 +1,80 @@
 import { Injectable } from '@angular/core';
-import { Producto } from '../models/producto';
-import { Observable,Subject,catchError,map,tap,throwError} from 'rxjs';
-import { HttpClient, HttpParams} from '@angular/common/http';
-
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, Subject, catchError, map, tap, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { URL_BACKEND } from '../config/config';
 import { StockTotalSucursal } from '../dto/StockTotalSucursal';
 import { StockPorMaterial } from '../dto/StockPorMaterial';
 import { ActualizacionRequest } from '../dto/ActualizacionRequest';
+import { ProductoDTO } from '../dto/ProductoDTO';
+import { ProductoUpsertDTO } from '../dto/ProductoUpsertDTO';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ProductoService {
-  private urlEndPointProducto:string =URL_BACKEND+'/api/productos';
+  private base = `${URL_BACKEND}/api/productos`;
   private dataUpdated = new Subject<void>();
-  
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getProducto(id:number): Observable<Producto>{
-    return this.http.get<Producto>(`${this.urlEndPointProducto}/${id}`).pipe(
-      catchError(e=>{
-        if (e.status == 400) {
-          let error = e.error.errors.join(" ")
-          Swal.fire("ERROR AL OBTENER LOS PRODUCTOS",error,'error');
-        }
-        if (e.error.mensaje) {
-          console.error(e.error.mensaje);
-          Swal.fire(e.error.mensaje,e.error.error,'error');
-        }
-        return throwError(() => e);
-      })
-    )
-  }
-
-  getProductos(page:number): Observable<any> {
-    return this.http.get(this.urlEndPointProducto+'/page/'+page).pipe(
-      tap((response:any)=> (response.content as Producto[]))
-    )
-  }
-
-  getProductosPorModelo(modelo: string): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.urlEndPointProducto}/buscar-por-modelo/${modelo}`)
-  }
-
-  getProductosPorModeloNoEstricto(modelo: string): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.urlEndPointProducto}/modelo/${modelo}`)
-  }
-
-  getProductosPorMarcaNoEstricto(marca: string): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.urlEndPointProducto}/marca/${marca}`)
-  }
-
-
-  getProductosPorModeloYLocal(modelo: string, localId: number): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.urlEndPointProducto}/buscar?modelo=${modelo}&localId=${localId}`);
-  }
-
-  obtenerStockTotalPorSucursal(): Observable<StockTotalSucursal[]> {
-    return this.http.get<StockTotalSucursal[]>(`${this.urlEndPointProducto}/stock-total-sucursal`);
-  }
-
-  obtenerStockPorMaterialYSucursal(localId: number): Observable<StockPorMaterial[]> {
-    return this.http.get<StockPorMaterial[]>(`${this.urlEndPointProducto}/stock-material`, {
-      params: { localId: localId.toString() }
-    });
-  }
-
-  createProducto(note:Producto): Observable<any>{
-    return this.http.post<any>(this.urlEndPointProducto,note).pipe(
-      map((response: any)=>response.producto as Producto),
-      catchError(e=>{
-        if (e.status === 400 && e.error.mensaje) {
-          // Mostrar el mensaje enviado por el backend
-          Swal.fire('ERROR', e.error.mensaje, 'error');
-        } else {
-          // Manejo genérico de otros errores
-          Swal.fire('ERROR', 'Ocurrió un error al guardar el producto', 'error');
-        }
-        return throwError(() => e);
-      })
-    )
-  }
-
-  actualizarMasivo(payload: ActualizacionRequest): Observable<any> {
-    return this.http.post(`${this.urlEndPointProducto}/actualizar-precios`, payload).pipe(
-      tap(() => {
-        Swal.fire('Actualización Exitosa', 'Los precios o costos se actualizaron correctamente.', 'success');
-      }),
-      catchError((e) => {
-        Swal.fire('Error', 'Ocurrió un error al actualizar los productos', 'error');
+  getProducto(id: number): Observable<ProductoDTO> {
+    return this.http.get<ProductoDTO>(`${this.base}/${id}`).pipe(
+      catchError(e => {
+        if (e.error?.mensaje) Swal.fire('ERROR', e.error.mensaje, 'error');
         return throwError(() => e);
       })
     );
   }
 
-  createVariosProductos(productos: Producto[]) {
-    return this.http.post<any>(`${this.urlEndPointProducto}/crearVarios`, productos).pipe(
+  getProductos(page: number): Observable<{ content: ProductoDTO[]; [k: string]: any }> {
+    return this.http.get<{ content: ProductoDTO[]; [k: string]: any }>(`${this.base}/page/${page}`).pipe(
+      tap(() => {})
+    );
+  }
+
+  getProductosPorModelo(modelo: string): Observable<ProductoDTO[]> {
+    return this.http.get<ProductoDTO[]>(`${this.base}/buscar-por-modelo/${modelo}`);
+  }
+
+  getProductosPorModeloNoEstricto(modelo: string): Observable<ProductoDTO[]> {
+    return this.http.get<ProductoDTO[]>(`${this.base}/modelo/${modelo}`);
+  }
+
+  getProductosPorMarcaNoEstricto(marca: string): Observable<ProductoDTO[]> {
+    return this.http.get<ProductoDTO[]>(`${this.base}/marca/${marca}`);
+  }
+
+  // ahora el backend usa el tenant; no se envía localId
+  getProductosPorModeloEnMiLocal(modelo: string): Observable<ProductoDTO[]> {
+    const params = new HttpParams().set('modelo', modelo);
+    return this.http.get<ProductoDTO[]>(`${this.base}/buscar`, { params });
+  }
+
+  obtenerStockTotalPorSucursal(): Observable<StockTotalSucursal[]> {
+    return this.http.get<StockTotalSucursal[]>(`${this.base}/stock-total-sucursal`);
+  }
+
+  // localId es opcional (si omitís, el backend usa tenant.currentLocalId())
+  obtenerStockPorMaterialYSucursal(localId?: number): Observable<StockPorMaterial[]> {
+    const options = localId != null ? { params: { localId: String(localId) } } : {};
+    return this.http.get<StockPorMaterial[]>(`${this.base}/stock-material`, options);
+  }
+
+  // Crear 1 (si quisieras)
+  createProducto(dto: ProductoUpsertDTO): Observable<ProductoDTO> {
+    return this.http.post<any>(this.base, dto).pipe(
+      map(res => res.producto as ProductoDTO),
       catchError(e => {
-        if (e.status === 400 && e.error.mensaje) {
+        Swal.fire('ERROR', e.error?.mensaje ?? 'Error al guardar el producto', 'error');
+        return throwError(() => e);
+      })
+    );
+  }
+
+  // Crear varios (lo que usás en tu pantalla)
+  createVariosProductos(dtos: ProductoUpsertDTO[]): Observable<any> {
+    return this.http.post<any>(`${this.base}/crearVarios`, dtos).pipe(
+      catchError(e => {
+        if (e.status === 400 && e.error?.mensaje) {
           Swal.fire('ERROR', e.error.mensaje, 'error');
           console.error('Errores:', e.error.errores);
         } else {
@@ -108,63 +85,44 @@ export class ProductoService {
     );
   }
 
-  updateProducto(producto:Producto): Observable<any>{
-    return this.http.put<any>(`${this.urlEndPointProducto}/${producto.id}`,producto).pipe(
-      map((response: any)=>response.producto as Producto),
-      catchError(e=>{
-        if (e.status === 400 && e.error.mensaje) {
-          // Mostrar el mensaje enviado por el backend
-          Swal.fire('ERROR', e.error.mensaje, 'error');
-        } else {
-          // Manejo genérico de otros errores
-          Swal.fire('ERROR', 'Ocurrió un error al guardar el producto', 'error');
-        }
+  actualizarMasivo(payload: ActualizacionRequest): Observable<any> {
+    return this.http.post(`${this.base}/actualizar-precios`, payload).pipe(
+      tap(() => Swal.fire('Actualización Exitosa', 'Se actualizaron precios/costos.', 'success')),
+      catchError(e => {
+        Swal.fire('Error', 'Ocurrió un error al actualizar los productos', 'error');
         return throwError(() => e);
       })
-    )
+    );
   }
 
-  deleteProducto(id:number): Observable<any>{
-    return this.http.delete<any>(`${this.urlEndPointProducto}/${id}`).pipe(
+  updateProducto(id: number, dto: ProductoUpsertDTO): Observable<ProductoDTO> {
+    return this.http.put<any>(`${this.base}/${id}`, dto).pipe(
+      map(res => res.producto as ProductoDTO),
       catchError(e => {
-        let error = "";
-    
-        switch (e.status) {
-          case 400:
-            error = e.error.errors.join(" ");
-            Swal.fire("ERROR AL ELIMINAR EL PRODUCTO", error, 'error');
-            break;
-    
-          case 500:
-            Swal.fire("ERROR AL ELIMINAR EL PRODUCTO", "Existen Movimientos en la Caja. Por favor elimine esos movimientos para continuar", 'error');
-            break;
-    
-          default:
-            if (e.error.mensaje) {
-              console.error(e.error.mensaje);
-              Swal.fire(e.error.mensaje, e.error.error, 'error');
-            }
-            break;
-        }
+        Swal.fire('ERROR', e.error?.mensaje ?? 'Error al actualizar el producto', 'error');
         return throwError(() => e);
       })
-    )
-  }  
+    );
+  }
+
+  deleteProducto(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.base}/${id}`).pipe(
+      catchError(e => {
+        if (e.error?.mensaje) Swal.fire('ERROR AL ELIMINAR EL PRODUCTO', e.error.mensaje, 'error');
+        return throwError(() => e);
+      })
+    );
+  }
 
   getDataUpdatedObservable(): Observable<void> {
     return this.dataUpdated.asObservable();
   }
-
   triggerDataUpdated() {
     this.dataUpdated.next();
   }
 
   validarModelos(modelos: string[], marcaId: number): Observable<string[]> {
-    const url = `${this.urlEndPointProducto}/validar-modelos`; 
-    const params = new HttpParams().set('marcaId', marcaId.toString());
-  
-    return this.http.post<string[]>(url, modelos, { params });
+    const params = new HttpParams().set('marcaId', String(marcaId));
+    return this.http.post<string[]>(`${this.base}/validar-modelos`, modelos, { params });
   }
-  
-  
 }

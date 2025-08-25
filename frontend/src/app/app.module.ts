@@ -43,6 +43,7 @@ import { PaginaGestionarProveedoresComponent } from './components/pagina-gestion
 import { PaginaEstaditicaComponent } from './components/pagina-estadistica/pagina-estadistica.component';
 import { PaginaCrearVariosProductosComponent } from './components/pagina-crear-varios-productos/pagina-crear-varios-productos.component';
 import { PaginaActualizarProductosComponent } from './components/pagina-actualizar-productos/pagina-actualizar-productos.component';
+import { FichaGraduacionService } from './services/FichaGraduacionService';
 
 
 
@@ -89,6 +90,7 @@ import { PaginaActualizarProductosComponent } from './components/pagina-actualiz
     MarcaService,
     MaterialProductoService,
     PacienteService,
+    FichaGraduacionService,
     MovimientoService,
     LocalService,
     MetodoPagoService,

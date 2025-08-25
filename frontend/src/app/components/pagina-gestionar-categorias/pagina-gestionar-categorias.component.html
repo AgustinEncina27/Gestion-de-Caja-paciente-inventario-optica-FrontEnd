@@ -1,53 +1,100 @@
 <div class="d-flex justify-content-center my-5 cont">
-    <div class="card bg-light text-dark shadow-sm" style="width: 80%; border: 1px solid #ddd;">
-      <!-- Encabezado -->
-      <div class="card-header text-white fw-bold" style="background-color: var(--color-principal);">
-        {{titulo}}
+  <div class="card bg-light text-dark shadow-sm" style="width: 80%; border: 1px solid #ddd;">
+    <!-- Encabezado -->
+    <div class="card-header text-white fw-bold" style="background-color: var(--color-principal);">
+      {{ titulo }}
+    </div>
+
+    <div class="card-body">
+
+      <!-- Lista de Categorías -->
+      <div class="mb-3 mx-3 group mt-3">
+        <p id="listaCategoria" class="form-label fw-bold">Lista de categorías</p>
+
+        <div class="form-check" *ngFor="let cat of categorias">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="categoriaRadio"
+            [id]="'cat-' + cat.id"
+            (change)="toggleCategorySelection(cat)"
+            [checked]="categoriaSeleccionada?.id === cat.id"
+          />
+          <label class="form-check-label" [for]="'cat-' + cat.id">
+            {{ cat.nombre }}
+          </label>
+        </div>
+
+        <button type="button" class="btn btn-outline-secondary mt-3" (click)="limpiarSeleccion()">
+          Limpiar selección
+        </button>
+
+        <div class="mt-2" *ngIf="categoriaSeleccionada">
+          <small class="text-muted">
+            Seleccionada: <strong>{{ categoriaSeleccionada.nombre }}</strong>
+          </small>
+        </div>
       </div>
-      <div class="card-body">
-        <!-- Lista de Categorías -->
-        <div class="mb-3 mx-3 group mt-3">
-          <p id="listaCategoria" class="form-label fw-bold">Lista de categorías</p>
-          <div class="form-check" *ngFor="let categoria of categorias">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" [id]="categoria.id"
-                   (change)="toggleCategorySelection(categoria)">
-            <label class="form-check-label" [for]="categoria.id">
-              {{categoria.nombre}}
-            </label>
+
+      <!-- Formulario -->
+      <form #categoriaForm="ngForm" novalidate>
+
+        <!-- Nombre de la Categoría -->
+        <div class="row mb-4">
+          <div class="col-md-12">
+            <label class="form-label fw-bold" for="inputCategoria">Nombre de la categoría</label>
+            <input
+              type="text"
+              class="form-control"
+              id="inputCategoria"
+              [(ngModel)]="form.nombre"
+              name="nombre"
+              required
+              maxlength="40"
+            />
+            <small
+              class="text-danger"
+              *ngIf="categoriaForm.controls['nombre']?.invalid && (categoriaForm.controls['nombre']?.touched || categoriaForm.submitted)"
+            >
+              El nombre es obligatorio (máx. 40 caracteres).
+            </small>
           </div>
-          <button type="button" class="btn btn-outline-secondary mt-3" (click)="limpiarSeleccion();">
-            Limpiar selección
+        </div>
+
+        <!-- Botones -->
+        <div class="text-center mt-4">
+          <!-- Crear: solo cuando NO hay selección -->
+          <button
+            type="button"
+            class="btn btn-success me-2"
+            (click)="crearCategoria()"
+            [disabled]="!categoriaForm.form.valid || !!categoriaSeleccionada"
+          >
+            Crear categoría
           </button>
-        </div>  
-  
-        <!-- Formulario -->
-        <form #categoriaForm="ngForm">
-          <!-- Nombre de la Categoría -->
-          <div class="row mb-4">
-            <div class="col-md-12">
-              <label class="form-label fw-bold" for="InputMarca">Nombre de la Categoría</label>
-              <input type="text" class="form-control" id="InputMarca" 
-                     [(ngModel)]="categoria.nombre" name="marca" required>
-            </div>
-          </div>
-  
-          <!-- Botones -->
-          <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success me-2" (click)="crearCategoria()" 
-                    [disabled]="!categoriaForm.form.valid || categoria.id!=null">
-              Crear Categoría
-            </button>
-            <button type="submit" class="btn btn-primary me-2" (click)="editarCategoria()" 
-                    [disabled]="categoria.id==null">
-              Editar Categoría
-            </button>
-            <button type="submit" class="btn btn-danger" (click)="eliminarCategoria()" 
-                    [disabled]="categoria.id==null">
-              Eliminar Categoría
-            </button>
-          </div>
-        </form>
-      </div>
+
+          <!-- Editar: solo cuando SÍ hay selección -->
+          <button
+            type="button"
+            class="btn btn-primary me-2"
+            (click)="editarCategoria()"
+            [disabled]="!categoriaSeleccionada || !categoriaForm.form.valid"
+          >
+            Editar categoría
+          </button>
+
+          <!-- Eliminar: solo cuando SÍ hay selección -->
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="eliminarCategoria()"
+            [disabled]="!categoriaSeleccionada"
+          >
+            Eliminar categoría
+          </button>
+        </div>
+
+      </form>
     </div>
   </div>
-  
+</div>

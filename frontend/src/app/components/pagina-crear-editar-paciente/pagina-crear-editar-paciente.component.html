@@ -9,137 +9,132 @@
 
         <!-- Primera fila -->
         <div class="row mb-4">
-          <!-- Nombre Completo -->
           <div class="col-md-6">
-            <label for="InputNombreCompleto" class="form-label fw-bold">Nombre Completo</label>
-            <input type="text" class="form-control" id="InputNombreCompleto" 
+            <label class="form-label fw-bold" for="InputNombreCompleto">Nombre Completo</label>
+            <input id="InputNombreCompleto" type="text" class="form-control"
                    [(ngModel)]="paciente.nombreCompleto" name="nombreCompleto" required>
           </div>
-          <!-- Dirección -->
+
           <div class="col-md-6">
-            <label for="InputDirección" class="form-label fw-bold">Dirección</label>
-            <input type="text" class="form-control" id="InputDirección" 
-                   [(ngModel)]="paciente.direccion" name="direccion" >
+            <label class="form-label fw-bold" for="InputDireccion">Dirección</label>
+            <input id="InputDireccion" type="text" class="form-control"
+                   [(ngModel)]="paciente.direccion" name="direccion">
           </div>
         </div>
 
         <!-- Segunda fila -->
         <div class="row mb-4">
-          <!-- Celular -->
           <div class="col-md-6">
-            <label for="InputCelular" class="form-label fw-bold">Celular</label>
-            <input type="text" class="form-control" id="InputCelular" 
+            <label class="form-label fw-bold" for="InputCelular">Celular</label>
+            <input id="InputCelular" type="text" class="form-control"
                    [(ngModel)]="paciente.celular" name="celular" required>
           </div>
-          <!-- Documento -->
+
           <div class="col-md-6">
-            <label for="InputDocumento" class="form-label fw-bold">Documento/Pasaporte</label>
-            <input type="text" class="form-control" id="InputDocumento" 
-                   [(ngModel)]="paciente.documento" name="documento" >
+            <label class="form-label fw-bold" for="InputDocumento">Documento/Pasaporte</label>
+            <input id="InputDocumento" type="text" class="form-control"
+                   [(ngModel)]="paciente.documento" name="documento">
           </div>
         </div>
 
         <!-- Tercera fila -->
         <div class="row mb-4">
-          <!-- Correo -->
           <div class="col-md-6">
-            <label for="InputCorreo" class="form-label fw-bold">Correo</label>
-            <input type="text" class="form-control" id="InputCorreo" 
-                   [(ngModel)]="paciente.correo" name="correo" >
+            <label class="form-label fw-bold" for="InputCorreo">Correo</label>
+            <input id="InputCorreo" type="text" class="form-control"
+                   [(ngModel)]="paciente.correo" name="correo">
           </div>
-          <!-- Médico -->
+
           <div class="col-md-6">
-            <label for="InputMedico" class="form-label fw-bold">Médico</label>
-            <input type="text" class="form-control" id="InputMedico" 
-                   [(ngModel)]="paciente.medico" name="medico" >
+            <label class="form-label fw-bold" for="InputMedico">Médico</label>
+            <input id="InputMedico" type="text" class="form-control"
+                   [(ngModel)]="paciente.medico" name="medico">
           </div>
         </div>
 
         <!-- Cuarta fila -->
         <div class="row mb-4">
-          <!-- Obra Social -->
           <div class="col-md-6">
-            <label for="InputObraSocial" class="form-label fw-bold">Obra Social</label>
-            <input type="text" class="form-control" id="InputObraSocial" 
-                   [(ngModel)]="paciente.obraSocial" name="obraSocial" >
+            <label class="form-label fw-bold" for="InputObraSocial">Obra Social</label>
+            <input id="InputObraSocial" type="text" class="form-control"
+                   [(ngModel)]="paciente.obraSocial" name="obraSocial">
           </div>
-          <!-- observaciones -->
+
           <div class="col-md-6">
-            <label for="InputObservaciones" class="form-label fw-bold">Observaciones</label>
-            <input type="text" class="form-control" id="InputObservaciones" 
-                   [(ngModel)]="paciente.observaciones" name="observaciones" >
+            <label class="form-label fw-bold" for="InputObservaciones">Observaciones</label>
+            <input id="InputObservaciones" type="text" class="form-control"
+                   [(ngModel)]="paciente.observaciones" name="observaciones">
           </div>
         </div>
 
-        <!-- Quinta fila -->
+        <!-- Quinta fila: acciones -->
         <div class="row mb-4">
           <div class="col-md-6">
-            <!-- Botón para abrir el modal -->
+            <!-- Modal fichas -->
             <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#modalFicha">
               Gestionar Ficha de Graduaciones
-            </button>            
-        
-            <!-- Botón para ir a los movimientos de caja del paciente -->
-            <button type="button" class="btn btn-primary" [routerLink]="['/adminitrarCajaPaciente', paciente.nombreCompleto]" *ngIf="paciente?.id != null">
+            </button>
+
+            <!-- Ver compras -->
+            <button type="button" class="btn btn-primary"
+                    [routerLink]="['/adminitrarCajaPaciente', paciente.nombreCompleto]"
+                    *ngIf="paciente?.id != null">
               Ver compras
             </button>
           </div>
-        
-          <!-- Botón para registrar un movimiento -->
+
+          <!-- Registrar movimiento -->
           <div class="col-md-6" *ngIf="paciente?.id != null">
-            <button type="button" class="btn btn-success" (click)="editarPaciente()" >
+            <button type="button" class="btn btn-success"
+                    [routerLink]="['/crearMovimiento', paciente.id]">
               Registrar un movimiento
             </button>
           </div>
         </div>
-        
 
-        <!-- Sexta fila -->
+        <!-- Sexta fila: Género -->
         <div class="row mb-4">
-          <!-- Local -->
           <div class="col-md-6">
-            <p class="form-label fw-bold">Local</p>
-            <div class="form-check mx-1" *ngFor="let local of locales">
-              <input class="form-check-input" type="radio" name="local" [id]="+local.id+'local'" 
-                     (change)="selecionLocal(local)" [checked]="localSeleccionado(local)">
-              <label class="form-check-label" [for]="+local.id+'local'">
-                {{local.nombre}}
-              </label>
-            </div>
-          </div>
-          <!-- Género -->
-          <div class="col-md-6">
-            <label for="InputGenero" class="form-label fw-bold">Género</label>
+            <label class="form-label fw-bold">Género</label>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="genero" id="hombreGenero" 
+              <input class="form-check-input" type="radio" name="genero" id="generoH"
                      (change)="selecionGenero('Hombre')" [checked]="generoSeleccionado('Hombre')">
-              <label class="form-check-label" for="hombreGenero">Hombre</label>
+              <label class="form-check-label" for="generoH">Hombre</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="genero" id="mujerGenero" 
+              <input class="form-check-input" type="radio" name="genero" id="generoM"
                      (change)="selecionGenero('Mujer')" [checked]="generoSeleccionado('Mujer')">
-              <label class="form-check-label" for="mujerGenero">Mujer</label>
+              <label class="form-check-label" for="generoM">Mujer</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="genero" id="xGenero" 
+              <input class="form-check-input" type="radio" name="genero" id="generoX"
                      (change)="selecionGenero('X')" [checked]="generoSeleccionado('X')">
-              <label class="form-check-label" for="xGenero">X</label>
+              <label class="form-check-label" for="generoX">X</label>
             </div>
           </div>
         </div>
 
         <!-- Botones -->
         <div class="text-center mt-4">
-          <button type="submit" class="btn btn-success me-2" (click)="crearPaciente()" 
-                  *ngIf="paciente.id==null" 
-                  [disabled]="!pacienteForm.form.valid || local.id===undefined || !genero">
+          <button type="button" class="btn btn-success me-2"
+                  (click)="crearPaciente()"
+                  *ngIf="paciente.id==null"
+                  [disabled]="!pacienteForm.form.valid || !genero || isLoading">
             Crear Paciente
           </button>
-          <button type="submit" class="btn btn-success" (click)="editarPaciente()" 
-                  *ngIf="paciente.id!=null" 
-                  [disabled]="!pacienteForm.form.valid || local.id===undefined || !genero">
+
+          <button type="button" class="btn btn-success"
+                  (click)="editarPaciente()"
+                  *ngIf="paciente.id!=null"
+                  [disabled]="!pacienteForm.form.valid || !genero || isLoading">
             Editar Paciente
           </button>
+        </div>
+
+        <!-- Spinner -->
+        <div *ngIf="isLoading" class="overlay">
+          <div class="spinner"></div>
+          <p>Guardando...</p>
         </div>
 
       </form>
@@ -147,6 +142,7 @@
   </div>
 </div>
 
+<!-- Modal Fichas -->
 <div class="modal fade" id="modalFicha" tabindex="-1" aria-labelledby="modalFichaLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
@@ -154,73 +150,100 @@
         <h5 class="modal-title" id="modalFichaLabel">Historial de Fichas de Graduación</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
+
       <div class="modal-body">
         <div class="accordion" id="accordionFichas">
           <div class="accordion-item" *ngFor="let ficha of paciente.historialFichas; let i = index">
             <h2 class="accordion-header" id="heading{{i}}">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse'+i" aria-expanded="false" [attr.aria-controls]="'collapse'+i">
+              <button class="accordion-button collapsed" type="button"
+                      data-bs-toggle="collapse"
+                      [attr.data-bs-target]="'#collapse'+i"
+                      aria-expanded="false"
+                      [attr.aria-controls]="'collapse'+i">
                 Ficha del {{ ficha.fecha ? (ficha.fecha | date: 'dd/MM/yyyy') : 'Sin fecha' }}
               </button>
             </h2>
-            <div [id]="'collapse'+i" class="accordion-collapse collapse" [attr.aria-labelledby]="'heading'+i" data-bs-parent="#accordionFichas">
+
+            <div [id]="'collapse'+i" class="accordion-collapse collapse"
+                 [attr.aria-labelledby]="'heading'+i" data-bs-parent="#accordionFichas">
               <div class="accordion-body p-3 bg-light border rounded">
-                <!-- Fecha editable -->
+
+                <!-- Fecha -->
                 <div class="mb-4 d-flex align-items-center gap-2">
                   <label class="form-label mb-0 fw-bold">Fecha de la Ficha:</label>
-                  <input type="date" class="form-control w-auto" [(ngModel)]="ficha.fecha" name="fichaFecha{{i}}">
+                  <input type="date" class="form-control w-auto"
+                         [(ngModel)]="ficha.fecha" name="fichaFecha{{i}}">
                 </div>
 
-                <!-- DATOS DEL PACIENTE -->
+                <!-- Datos del Paciente -->
                 <div class="mb-4 p-3 border-start border-4 border-primary bg-white shadow-sm">
                   <h6 class="fw-bold mb-3 text-primary">Datos del Paciente</h6>
                   <div class="row g-3">
                     <div class="col-md-3">
                       <label class="form-label">DNP Derecho</label>
-                      <input type="text" class="form-control" [(ngModel)]="ficha.dnpDerecho" name="dnpDerecho{{i}}" (blur)="normalizarNumero(ficha, 'dnpDerecho')">
+                      <input class="form-control" type="text"
+                             [(ngModel)]="ficha.dnpDerecho" name="dnpDerecho{{i}}"
+                             (blur)="normalizarNumero(ficha, 'dnpDerecho')">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">DNP Izquierdo</label>
-                      <input type="text" class="form-control" [(ngModel)]="ficha.dnpIzquierdo" name="dnpIzquierdo{{i}}" (blur)="normalizarNumero(ficha, 'dnpIzquierdo')">
+                      <input class="form-control" type="text"
+                             [(ngModel)]="ficha.dnpIzquierdo" name="dnpIzquierdo{{i}}"
+                             (blur)="normalizarNumero(ficha, 'dnpIzquierdo')">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">Altura Pupilar Derecho</label>
-                      <input type="text" class="form-control" [(ngModel)]="ficha.alturaPupilarDerecho" name="alturaPupilarDerecho{{i}}" (blur)="normalizarNumero(ficha, 'alturaPupilarDerecho')">
+                      <input class="form-control" type="text"
+                             [(ngModel)]="ficha.alturaPupilarDerecho" name="alturaPupilarDerecho{{i}}"
+                             (blur)="normalizarNumero(ficha, 'alturaPupilarDerecho')">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">Altura Pupilar Izquierdo</label>
-                      <input type="text" class="form-control" [(ngModel)]="ficha.alturaPupilarIzquierdo" name="alturaPupilarIzquierdo{{i}}" (blur)="normalizarNumero(ficha, 'alturaPupilarIzquierdo')">
+                      <input class="form-control" type="text"
+                             [(ngModel)]="ficha.alturaPupilarIzquierdo" name="alturaPupilarIzquierdo{{i}}"
+                             (blur)="normalizarNumero(ficha, 'alturaPupilarIzquierdo')">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">Altura Película</label>
-                      <input type="text" class="form-control" [(ngModel)]="ficha.alturaPelicula" name="alturaPelicula{{i}}" (blur)="normalizarNumero(ficha, 'alturaPelicula')">
+                      <input class="form-control" type="text"
+                             [(ngModel)]="ficha.alturaPelicula" name="alturaPelicula{{i}}"
+                             (blur)="normalizarNumero(ficha, 'alturaPelicula')">
                     </div>
                   </div>
                 </div>
-              
-                <!-- DATOS DEL ARMAZÓN -->
+
+                <!-- Datos del Armazón -->
                 <div class="mb-4 p-3 border-start border-4 border-secondary bg-white shadow-sm">
                   <h6 class="fw-bold mb-3 text-secondary">Datos del Armazón</h6>
                   <div class="row g-3">
                     <div class="col-md-3">
                       <label class="form-label">Puente</label>
-                      <input type="text" class="form-control" [(ngModel)]="ficha.puente" name="puente{{i}}" (blur)="normalizarNumero(ficha, 'puente')">
+                      <input class="form-control" type="text"
+                             [(ngModel)]="ficha.puente" name="puente{{i}}"
+                             (blur)="normalizarNumero(ficha, 'puente')">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">Diagonal Mayor</label>
-                      <input type="text" class="form-control" [(ngModel)]="ficha.diagonalMayor" name="diagonalMayor{{i}}" (blur)="normalizarNumero(ficha, 'diagonalMayor')">
+                      <input class="form-control" type="text"
+                             [(ngModel)]="ficha.diagonalMayor" name="diagonalMayor{{i}}"
+                             (blur)="normalizarNumero(ficha, 'diagonalMayor')">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">Largo</label>
-                      <input type="text" class="form-control" [(ngModel)]="ficha.largo" name="largo{{i}}" (blur)="normalizarNumero(ficha, 'largo')">
+                      <input class="form-control" type="text"
+                             [(ngModel)]="ficha.largo" name="largo{{i}}"
+                             (blur)="normalizarNumero(ficha, 'largo')">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">Altura Armazón</label>
-                      <input type="text" class="form-control" [(ngModel)]="ficha.alturaArmazon" name="alturaArmazon{{i}}" (blur)="normalizarNumero(ficha, 'alturaArmazon')">
+                      <input class="form-control" type="text"
+                             [(ngModel)]="ficha.alturaArmazon" name="alturaArmazon{{i}}"
+                             (blur)="normalizarNumero(ficha, 'alturaArmazon')">
                     </div>
                   </div>
                 </div>
-              
-                <!-- GRADUACIONES LEJOS -->
+
+                <!-- Graduaciones LEJOS -->
                 <div class="mb-4 p-3 border-start border-4 border-info bg-white shadow-sm">
                   <h6 class="fw-bold mb-3 text-info">Graduaciones - Lejos</h6>
                   <div class="table-responsive">
@@ -231,31 +254,52 @@
                       <tbody>
                         <tr *ngFor="let grad of getGraduacionesPorTipo(ficha, 'LEJOS'); let j = index">
                           <td>{{grad.ojo}}</td>
-                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.esferico)" (blur)="actualizarEsfericoLejosYRecalcularCerca($event, ficha, grad)" name="lejosEsferico{{i}}{{j}}"></td>
-                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.cilindrico)" (blur)="actualizarConSigno($event, grad, 'cilindrico')" name="lejosCilindrico{{i}}{{j}}"></td>
-                          <td><input type="text" class="form-control" [(ngModel)]="grad.eje" (blur)="normalizarNumero(grad, 'eje')" name="lejosEje{{i}}{{j}}"></td>
+                          <td>
+                            <input class="form-control" type="text"
+                                   [value]="formatearConSigno(grad.esferico)"
+                                   (blur)="actualizarEsfericoLejosYRecalcularCerca($event, ficha, grad)"
+                                   name="lejosEsferico{{i}}{{j}}">
+                          </td>
+                          <td>
+                            <input class="form-control" type="text"
+                                   [value]="formatearConSigno(grad.cilindrico)"
+                                   (blur)="actualizarConSigno($event, grad, 'cilindrico')"
+                                   name="lejosCilindrico{{i}}{{j}}">
+                          </td>
+                          <td>
+                            <input class="form-control" type="text"
+                                   [(ngModel)]="grad.eje"
+                                   (blur)="normalizarNumero(grad, 'eje')"
+                                   name="lejosEje{{i}}{{j}}">
+                          </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
-              
-                <!-- ADICIÓN -->
+
+                <!-- Adiciones -->
                 <div class="mb-4 p-3 border-start border-4 border-success bg-white shadow-sm">
                   <h6 class="fw-bold mb-3 text-success">Adición</h6>
                   <div class="row g-3">
                     <div class="col-md-3">
                       <label class="form-label">Adición Derecho</label>
-                      <input type="text" class="form-control" [value]="formatearConSigno(ficha.adicionDerecho)" (blur)="actualizarAdicionYRecalcularCerca($event, ficha, 'DERECHO')" name="adicionDerecho{{i}}">
+                      <input class="form-control" type="text"
+                             [value]="formatearConSigno(ficha.adicionDerecho)"
+                             (blur)="actualizarAdicionYRecalcularCerca($event, ficha, 'DERECHO')"
+                             name="adicionDerecho{{i}}">
                     </div>
                     <div class="col-md-3">
                       <label class="form-label">Adición Izquierdo</label>
-                      <input type="text" class="form-control" [value]="formatearConSigno(ficha.adicionIzquierdo)" (blur)="actualizarAdicionYRecalcularCerca($event, ficha, 'IZQUIERDO')" name="adicionIzquierdo{{i}}">
+                      <input class="form-control" type="text"
+                             [value]="formatearConSigno(ficha.adicionIzquierdo)"
+                             (blur)="actualizarAdicionYRecalcularCerca($event, ficha, 'IZQUIERDO')"
+                             name="adicionIzquierdo{{i}}">
                     </div>
                   </div>
                 </div>
-              
-                <!-- GRADUACIONES CERCA -->
+
+                <!-- Graduaciones CERCA -->
                 <div class="mb-4 p-3 border-start border-4 border-warning bg-white shadow-sm">
                   <h6 class="fw-bold mb-3 text-warning">Graduaciones - Cerca</h6>
                   <div class="table-responsive">
@@ -266,32 +310,66 @@
                       <tbody>
                         <tr *ngFor="let grad of getGraduacionesPorTipo(ficha, 'CERCA'); let j = index">
                           <td>{{grad.ojo}}</td>
-                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.esferico)" name="cercaEsferico{{i}}{{j}}"></td>
-                          <td><input type="text" class="form-control" [value]="formatearConSigno(grad.cilindrico)" (blur)="actualizarConSigno($event, grad, 'cilindrico')" name="cercaCilindrico{{i}}{{j}}"></td>
-                          <td><input type="text" class="form-control" [(ngModel)]="grad.eje" (blur)="normalizarNumero(grad, 'eje')" name="cercaEje{{i}}{{j}}"></td>
+                          <td>
+                            <input class="form-control" type="text"
+                                   [value]="formatearConSigno(grad.esferico)"
+                                   name="cercaEsferico{{i}}{{j}}">
+                          </td>
+                          <td>
+                            <input class="form-control" type="text"
+                                   [value]="formatearConSigno(grad.cilindrico)"
+                                   (blur)="actualizarConSigno($event, grad, 'cilindrico')"
+                                   name="cercaCilindrico{{i}}{{j}}">
+                          </td>
+                          <td>
+                            <input class="form-control" type="text"
+                                   [(ngModel)]="grad.eje"
+                                   (blur)="normalizarNumero(grad, 'eje')"
+                                   name="cercaEje{{i}}{{j}}">
+                          </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
-              
-                <!-- HISTORIAL DE CRISTALES -->
+
+                <!-- Cristales -->
                 <div class="mb-4 p-3 border-start border-4 border-dark bg-white shadow-sm">
                   <h6 class="fw-bold mb-3 text-dark">Historial de Cristales</h6>
                   <table class="table table-sm">
-                    <thead><tr><th>Nombre</th><th>Fecha</th><th>Acción</th></tr></thead>
+                    <thead>
+                      <tr><th>Nombre</th><th>Fecha</th><th>Acción</th></tr>
+                    </thead>
                     <tbody>
                       <tr *ngFor="let cristal of ficha.cristales; let k = index">
-                        <td><input type="text" class="form-control" [(ngModel)]="cristal.nombre" name="cristalNombre{{i}}{{k}}"></td>
-                        <td><input type="date" class="form-control" [(ngModel)]="cristal.fecha" name="cristalFecha{{i}}{{k}}"></td>
-                        <td><button class="btn btn-danger btn-sm" (click)="ficha.cristales?.splice(k, 1)">Eliminar</button></td>
+                        <td>
+                          <input class="form-control" type="text"
+                                 [(ngModel)]="cristal.nombre"
+                                 name="cristalNombre{{i}}{{k}}">
+                        </td>
+                        <td>
+                          <input class="form-control" type="date"
+                                 [(ngModel)]="cristal.fecha"
+                                 name="cristalFecha{{i}}{{k}}">
+                        </td>
+                        <td>
+                          <button class="btn btn-danger btn-sm"
+                                  (click)="ficha.cristales.splice(k, 1)">
+                            Eliminar
+                          </button>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
+
                   <div class="text-end">
-                    <button class="btn btn-outline-primary btn-sm" (click)="agregarCristal(ficha)">Agregar Cristal</button>
+                    <button class="btn btn-outline-primary btn-sm"
+                            (click)="agregarCristal(ficha)">
+                      Agregar Cristal
+                    </button>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -306,6 +384,7 @@
             </button>
           </div>
         </div>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         </div>

@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ActualizacionRequest } from 'src/app/dto/ActualizacionRequest';
-import { Categoria } from 'src/app/models/categoria';
-import { Marca } from 'src/app/models/marca';
-import { MaterialProducto } from 'src/app/models/materialProducto';
-import { Proveedor } from 'src/app/models/proveedor';
-import { CategoriaService } from 'src/app/services/categoria.service';
-import { MarcaService } from 'src/app/services/marca.service';
-import { MaterialProductoService } from 'src/app/services/materialProducto.service';
-import { ProductoService } from 'src/app/services/producto.service';
-import { ProveedorService } from 'src/app/services/proveedor.service';
 import Swal from 'sweetalert2';
 
+import { ProductoService } from 'src/app/services/producto.service';
+import { CategoriaService } from 'src/app/services/categoria.service';
+import { ProveedorService } from 'src/app/services/proveedor.service';
+import { MarcaService } from 'src/app/services/marca.service';
+import { MaterialProductoService } from 'src/app/services/materialProducto.service';
+
+import { ActualizacionRequest } from 'src/app/dto/ActualizacionRequest';
+import { CategoriaDTO } from 'src/app/dto/CategoriaDTO';
+import { ProveedorDTO } from 'src/app/dto/ProveedorDTO';
+import { MarcaDTO } from 'src/app/dto/MarcaDTO';
+import { MaterialProductoDTO } from 'src/app/dto/MaterialProductoDTO';
 
 @Component({
   selector: 'app-pagina-actualizar-productos',
@@ -19,15 +20,26 @@ import Swal from 'sweetalert2';
   styleUrls: ['./pagina-actualizar-productos.component.css']
 })
 export class PaginaActualizarProductosComponent implements OnInit {
-  tipoActualizacion = 'precio'; // o 'costo'
-  tipoCambio = 'porcentaje';    // o 'fijo'
-  valor: number = 0;
-  busquedaProveedor: string = '';
-  busquedaMarca: string = '';
+  // controles
+  tipoActualizacion: 'precio' | 'costo' = 'precio';
+  tipoCambio: 'porcentaje' | 'fijo' = 'porcentaje';
+  valor = 0;
 
-  proveedoresFiltrados: Proveedor[] = [];
-  marcasFiltradas: Marca[] = [];
+  // filtros texto
+  busquedaProveedor = '';
+  busquedaMarca = '';
 
+  // listas base
+  categorias: CategoriaDTO[] = [];
+  proveedores: ProveedorDTO[] = [];
+  marcas: MarcaDTO[] = [];
+  materiales: MaterialProductoDTO[] = [];
+
+  // listas filtradas (auto-complete)
+  proveedoresFiltrados: ProveedorDTO[] = [];
+  marcasFiltradas: MarcaDTO[] = [];
+
+  // filtro seleccionado (ids o null)
   filtro: {
     categoria: number | null;
     proveedor: number | null;
@@ -40,20 +52,17 @@ export class PaginaActualizarProductosComponent implements OnInit {
     marca: null
   };
 
-  categorias: Categoria[]= [];
-  proveedores: Proveedor[]= [];
-  marcas: Marca[]= [];
-  materiales: MaterialProducto[]= [];
-
-  constructor(private productoService: ProductoService,
-              private categoriaService: CategoriaService,
-              private proveedorService: ProveedorService,
-              private marcaService: MarcaService,
-              private router: Router,
-              private materialService: MaterialProductoService) {}
+  constructor(
+    private productoService: ProductoService,
+    private categoriaService: CategoriaService,
+    private proveedorService: ProveedorService,
+    private marcaService: MarcaService,
+    private materialService: MaterialProductoService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.categoriaService.getCategories().subscribe(data => this.categorias = data);
+    this.categoriaService.getCategories().subscribe(data => (this.categorias = data));
     this.proveedorService.getProveedores().subscribe(data => {
       this.proveedores = data;
       this.proveedoresFiltrados = data;
@@ -62,20 +71,16 @@ export class PaginaActualizarProductosComponent implements OnInit {
       this.marcas = data;
       this.marcasFiltradas = data;
     });
-    this.materialService.getMaterialesProducto().subscribe(data => this.materiales = data);
+    // ✅ usamos el mismo método que en las otras pantallas
+    this.materialService.getMateriales().subscribe(data => (this.materiales = data));
   }
 
-  actualizar() {
+  actualizar(): void {
     if (this.tipoCambio === 'porcentaje' && (this.valor < 0 || this.valor > 100)) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Valor inválido',
-        text: 'El porcentaje debe estar entre 0 y 100.',
-        confirmButtonText: 'Aceptar'
-      });
+      Swal.fire('Valor inválido', 'El porcentaje debe estar entre 0 y 100.', 'warning');
       return;
     }
-  
+
     Swal.fire({
       icon: 'warning',
       title: '¿Estás seguro?',
@@ -84,63 +89,54 @@ export class PaginaActualizarProductosComponent implements OnInit {
       confirmButtonText: 'Sí, aplicar cambios',
       cancelButtonText: 'Cancelar'
     }).then(result => {
-      if (result.isConfirmed) {
-        const payload: ActualizacionRequest = {
-          tipo: this.tipoActualizacion as 'precio' | 'costo',
-          tipoCambio: this.tipoCambio as 'porcentaje' | 'fijo',
-          valor: this.valor,
-          categoria: this.filtro.categoria,
-          proveedor: this.filtro.proveedor,
-          material: this.filtro.material,
-          marca: this.filtro.marca
-        };
-  
-        this.productoService.actualizarMasivo(payload).subscribe({
-          next: () => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Actualización exitosa',
-              text: 'Los productos se actualizaron correctamente.',
-              confirmButtonText: 'Aceptar'
-            }).then(() => {
-              this.router.navigate(['/inicio']);
-            });
-          },
-          error: () => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error al actualizar',
-              text: 'Ocurrió un error al intentar actualizar los productos.',
-              confirmButtonText: 'Cerrar'
-            });
-          }
-        });
-      }
+      if (!result.isConfirmed) return;
+
+      const payload: ActualizacionRequest = {
+        tipo: this.tipoActualizacion,
+        tipoCambio: this.tipoCambio,
+        valor: this.valor,
+        categoria: this.filtro.categoria,
+        proveedor: this.filtro.proveedor,
+        material: this.filtro.material,
+        marca: this.filtro.marca
+      };
+
+      this.productoService.actualizarMasivo(payload).subscribe({
+        next: () => {
+          Swal.fire('Actualización exitosa', 'Los productos se actualizaron correctamente.', 'success')
+              .then(() => this.router.navigate(['/inicio']));
+        },
+        error: () => {
+          Swal.fire('Error al actualizar', 'Ocurrió un error al intentar actualizar los productos.', 'error');
+        }
+      });
     });
   }
 
-  filtrarProveedores() {
-    this.proveedoresFiltrados = this.proveedores.filter(p =>
-      p.nombre.toLowerCase().includes(this.busquedaProveedor.toLowerCase())
-    );
+  // ===== filtros de autocompletado =====
+  filtrarProveedores(): void {
+    const q = this.busquedaProveedor.toLowerCase().trim();
+    this.proveedoresFiltrados = q
+      ? this.proveedores.filter(p => p.nombre.toLowerCase().includes(q))
+      : this.proveedores.slice();
   }
-  
-  filtrarMarcas() {
-    this.marcasFiltradas = this.marcas.filter(m =>
-      m.nombre.toLowerCase().includes(this.busquedaMarca.toLowerCase())
-    );
+
+  filtrarMarcas(): void {
+    const q = this.busquedaMarca.toLowerCase().trim();
+    this.marcasFiltradas = q
+      ? this.marcas.filter(m => m.nombre.toLowerCase().includes(q))
+      : this.marcas.slice();
   }
-  
-  seleccionarProveedor(p: Proveedor) {
-    this.filtro.proveedor = p.id;
+
+  seleccionarProveedor(p: ProveedorDTO): void {
+    this.filtro.proveedor = p.id!;
     this.busquedaProveedor = p.nombre;
     this.proveedoresFiltrados = [];
   }
-  
-  seleccionarMarca(m: Marca) {
-    this.filtro.marca = m.id;
+
+  seleccionarMarca(m: MarcaDTO): void {
+    this.filtro.marca = m.id!;
     this.busquedaMarca = m.nombre;
     this.marcasFiltradas = [];
   }
-
 }
